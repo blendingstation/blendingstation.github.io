@@ -263,6 +263,8 @@
             /* Safety hidden on mobile home, shown in safety tab */
             #safetySummaryContainer { display: none; }
             #safetySummaryContainer.mobile-safety-active { display: block; }
+            /* Hide toggle on mobile — always active */
+            #safetyToggleWrap { display: none; }
             /* Prezzi hidden on mobile safety/setup/info tabs */
             body.mobile-safety #prezziSection,
             body.mobile-safety #asciiContainer { display: none !important; }
@@ -695,10 +697,16 @@
             <div class="card-title" style="color: var(--accent);">
                 <i class="fa-solid fa-shield-heart"></i> SAFETY CHECK ASSISTANT
             </div>
-
+            <div class="ios-toggle-wrap" id="safetyToggleWrap">
+                <span class="ios-toggle-label" id="iosToggleStatusLabel">OFF</span>
+                <label class="ios-switch">
+                    <input type="checkbox" id="safetyToggleCheckbox" onchange="toggleSafetyContent()">
+                    <span class="ios-slider"></span>
+                </label>
+            </div>
         </div>
         
-        <div id="safetyMainContent" class="safety-toggle-content">
+        <div id="safetyMainContent" class="safety-toggle-content hidden">
             <div class="depth-ppo2-row" style="margin-bottom: 15px;">
                 <label class="depth-label">Profondità di Immersione Pianificata:</label>
                 <input type="number" inputmode="decimal" pattern="[0-9]*" onfocus="this.select()" id="plannedDepth" value="60" oninput="calc()" style="width: 100px; padding: 6px 10px; font-size: 0.9rem; text-align: center; flex-shrink: 0;">
@@ -841,7 +849,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v41.99</b><br>
+            All Rights Reserved | Tool Version: <b>v42.00</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -993,7 +1001,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v41.99</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.00</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1137,7 +1145,21 @@
         document.getElementById(id).classList.toggle('active');
     }
 
-    function toggleSafetyContent() { /* toggle removed — safety always active */ }
+    function toggleSafetyContent() {
+        const checkbox = document.getElementById('safetyToggleCheckbox');
+        const mc = document.getElementById('safetyMainContent');
+        const label = document.getElementById('iosToggleStatusLabel');
+        const container = document.getElementById('safetySummaryContainer');
+        if (checkbox.checked) {
+            mc.classList.remove('hidden');
+            label.innerText = "ON";
+            calc();
+        } else {
+            mc.classList.add('hidden');
+            label.innerText = "OFF";
+            container.className = "safety-summary-container";
+        }
+    }
 
     function updateTankVisual(idPrefix, o2, he, n2) {
         const o2El = document.getElementById(idPrefix + 'O2'), heEl = document.getElementById(idPrefix + 'He'), n2El = document.getElementById(idPrefix + 'N2');
@@ -1147,6 +1169,10 @@
     }
 
     function handleSafetyEngine(oE, hE, pE, oS, hS, pS, dHe, dO2, dAir, dScarica) {
+        const checkbox = document.getElementById('safetyToggleCheckbox');
+        // On mobile safety tab: always run. On desktop: check toggle
+        const isMobileSafety = document.body.classList.contains('mobile-safety');
+        if (!isMobileSafety && checkbox && !checkbox.checked) return;
 
         const ppo2Limit = parseFloat(document.getElementById('ppo2Limit').value) || 1.4;
         const plannedDepth = parseFloat(document.getElementById('plannedDepth').value) || 0;
