@@ -889,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.50</b><br>
+            All Rights Reserved | Tool Version: <b>v42.52</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1055,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.50</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.52</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1665,7 +1665,16 @@
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             if (isIOS) {
                 const w = window.open();
-                w.document.write('<html><head><meta name="viewport" content="width=device-width"><title>Report</title></head><body style="margin:0;background:#fff;text-align:center;"><p style="font-family:sans-serif;font-size:14px;padding:10px;color:#475569;">Tieni premuta l'immagine per salvarla nelle Foto 📸</p><img src="' + dataUrl + '" style="max-width:100%;display:block;margin:0 auto;"><br></body></html>');
+                const html = [
+                    '<html><head><meta name="viewport" content="width=device-width">',
+                    '<title>Report</title></head>',
+                    '<body style="margin:0;background:#fff;text-align:center;">',
+                    '<p style="font-family:sans-serif;font-size:14px;padding:10px;color:#475569;">',
+                    'Tieni premuta l immagine per salvarla nelle Foto</p>',
+                    '<img src="' + dataUrl + '" style="max-width:100%;display:block;margin:0 auto;">',
+                    '</body></html>'
+                ].join('');
+                w.document.write(html);
                 w.document.close();
             } else {
                 const link = document.createElement('a');
