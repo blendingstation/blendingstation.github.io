@@ -494,6 +494,7 @@
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -888,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.41</b><br>
+            All Rights Reserved | Tool Version: <b>v42.44</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1036,9 +1037,10 @@
 
 <div id="asciiContainer">
     <div id="receipt" class="ascii-receipt"></div><br>
-    <div style="display:flex; gap:10px; margin-top:10px; justify-content:center; flex-wrap:wrap;">
-        <button onclick="printReceipt()" id="btn_print" style="padding:12px 25px; background:#1e293b; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:800; text-transform:uppercase;"><i class="fa-solid fa-print"></i> STAMPA</button>
-        <button onclick="downloadPDF()" id="btn_pdf" style="padding:12px 25px; background:var(--accent); color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:800; text-transform:uppercase;"><i class="fa-solid fa-file-pdf"></i> SCARICA PDF</button>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px; max-width:320px; margin-left:auto; margin-right:auto;">
+        <button onclick="printReceipt()" id="btn_print" style="padding:12px 25px; background:#1e293b; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:800; text-transform:uppercase; width:100%;"><i class="fa-solid fa-print"></i> STAMPA</button>
+        <button onclick="downloadPDF()" id="btn_pdf" style="padding:12px 25px; background:var(--accent); color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:800; text-transform:uppercase; width:100%;"><i class="fa-solid fa-file-pdf"></i> SCARICA PDF</button>
+        <button onclick="downloadImage()" id="btn_img" style="padding:12px 25px; background:#7c3aed; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:800; text-transform:uppercase; width:100%;"><i class="fa-solid fa-image"></i> SCARICA IMMAGINE</button>
     </div>
 </div>
 
@@ -1053,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.41</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.44</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1582,7 +1584,7 @@
                 const pad = Math.max(0, Math.floor((W - full.length) / 2));
                 return ' '.repeat(pad) + full;
             }).join('\n') + '\n';
-        })() : ``) + `------------------------------\n      GAS BLENDER REPORT\n------------------------------\n` + `DIVER: ${c}\nLISTINO: ${activeProfile}\n\nResiduo:\nO2: ${oS}% | HE: ${hS}% | N2: ${nS}%\nBAR: ${document.getElementById('pS').value} BAR\n\nTarget:\nO2: ${oE}% | HE: ${hE}% | N2: ${nE}%\nBAR: ${document.getElementById('pE').value} BAR\n\n------------------------------\nDATA: ${new Date().toLocaleDateString('it-IT')}\nBLENDER: ${b}\nFIRMA:\n\n\n──────────────────────────────\n------------------------------\nTOTALE: ${document.getElementById('resGrandTotal').innerText}\n------------------------------\n\n            ✦ ✦ ✦\n    Report di miscelazione\n        ad uso interno\n            ✦ ✦ ✦\n  Documento non valido ai fini fiscali\n            ✦ ✦ ✦`;
+        })() : ``) + `------------------------------\n      GAS BLENDER REPORT\n------------------------------\n` + `DIVER: ${c}\nLISTINO: ${activeProfile}\n\nResiduo:\nO2: ${oS}% | HE: ${hS}% | N2: ${nS}%\nBAR: ${document.getElementById('pS').value} BAR\n\nTarget:\nO2: ${oE}% | HE: ${hE}% | N2: ${nE}%\nBAR: ${document.getElementById('pE').value} BAR\n\n------------------------------\nDATA: ${new Date().toLocaleDateString('it-IT')}\nBLENDER: ${b}\nFIRMA:\n\n\n──────────────────────────────\n------------------------------\nTOTALE: ${document.getElementById('resGrandTotal').innerText}\n------------------------------\n\n            ✦ ✦ ✦\n    Report di miscelazione\n        ad uso interno\n            ✦ ✦ ✦\n  Documento non valido\n       ai fini fiscali\n            ✦ ✦ ✦`;
         document.getElementById('receipt').innerText = text; 
         document.getElementById('asciiContainer').style.display = 'block';
         if (window.innerWidth <= 768) mobileNav('home');
@@ -1641,6 +1643,37 @@
             }, 350);
         }
     }, true);
+
+    function downloadImage() {
+        const receipt = document.getElementById('receipt');
+        if (!receipt || !receipt.innerText.trim()) {
+            alert('Genera prima il report!');
+            return;
+        }
+        const btn = document.getElementById('btn_img');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
+        btn.disabled = true;
+
+        html2canvas(receipt, {
+            backgroundColor: '#ffffff',
+            scale: 3,
+            useCORS: true,
+            logging: false
+        }).then(canvas => {
+            const link = document.createElement('a');
+            const blender = (document.getElementById('blenderName').value || 'report').replace(/\s+/g, '_');
+            const date = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
+            link.download = 'blending_' + blender + '_' + date + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            btn.innerHTML = '<i class="fa-solid fa-image"></i> SCARICA IMMAGINE';
+            btn.disabled = false;
+        }).catch(err => {
+            alert('Errore: ' + err.message);
+            btn.innerHTML = '<i class="fa-solid fa-image"></i> SCARICA IMMAGINE';
+            btn.disabled = false;
+        });
+    }
 
     function downloadPDF() {
         const receipt = document.getElementById('receipt');
