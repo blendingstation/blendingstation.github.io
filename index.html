@@ -889,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.63</b><br>
+            All Rights Reserved | Tool Version: <b>v42.64</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1055,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.63</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.64</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1712,11 +1712,11 @@
 
         html2canvas(receipt, {
             backgroundColor: '#ffffff',
-            scale: 4,
+            scale: 2,
             useCORS: true,
             logging: false
         }).then(function(canvas) {
-            const imgData = canvas.toDataURL('image/png');
+            const imgData = canvas.toDataURL('image/jpeg', 0.85);
             const { jsPDF } = window.jspdf;
             const imgW = 60; // mm
             const imgH = canvas.height * imgW / canvas.width;
@@ -1726,9 +1726,10 @@
                 format: [imgW, imgH]
             });
             doc.addImage(imgData, 'PNG', 0, 0, imgW, imgH);
-            const blender = (document.getElementById('blenderName').value || 'report').replace(/\s+/g, '_');
+            const customer = (document.getElementById('customerName').value || '').replace(/\s+/g, '_');
             const date = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
-            doc.save('blending_' + blender + '_' + date + '.pdf');
+            const filename = customer ? 'blending_' + customer + '_' + date + '.pdf' : 'blending_' + date + '.pdf';
+            doc.save(filename);
             btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> SCARICA PDF';
             btn.disabled = false;
         }).catch(function(err) {
