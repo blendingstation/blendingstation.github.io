@@ -889,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.62</b><br>
+            All Rights Reserved | Tool Version: <b>v42.63</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1055,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.62</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.63</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1121,7 +1121,8 @@
             reale: { he: document.getElementById('pHe_reale').value, o2: document.getElementById('pO2_reale').value, air: document.getElementById('pAir_reale').value, fix: document.getElementById('pFix_reale').value },
             soci: { he: document.getElementById('pHe_soci').value, o2: document.getElementById('pO2_soci').value, air: document.getElementById('pAir_soci').value, fix: document.getElementById('pFix_soci').value },
             nonsoci: { he: document.getElementById('pHe_nonsoci').value, o2: document.getElementById('pO2_nonsoci').value, air: document.getElementById('pAir_nonsoci').value, fix: document.getElementById('pFix_nonsoci').value },
-            date: document.getElementById('priceDate').value, ppo2: document.getElementById('ppo2Limit').value 
+            date: document.getElementById('priceDate').value, ppo2: document.getElementById('ppo2Limit').value,
+            shopName: document.getElementById('shopName') ? document.getElementById('shopName').value : ''
         };
         localStorage.setItem('gasTemp', document.getElementById('gasTemp').value);
         localStorage.setItem('blenderMultiCosts', JSON.stringify(costs));
