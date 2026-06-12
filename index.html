@@ -487,10 +487,10 @@
             .op-action-text { text-align: center !important; font-size: 1.1em !important; font-weight: 900 !important; color: var(--accent) !important; letter-spacing: 0.1em; margin-bottom: 6px; }
             .op-center-block { display: flex !important; flex-direction: column !important; align-items: center !important; width: 100%; gap: 4px; }
             .op-group { display: flex; flex-direction: column; align-items: center; }
-            .op-delta-val { font-size: 2.4em !important; font-weight: 900 !important; line-height: 1.1; }
-            .op-label-top { font-size: 0.8em !important; margin-bottom: 0 !important; }
-            .op-gas-name { font-size: 1.8em !important; font-weight: 900 !important; }
-            .op-quota-val { font-size: 2.2em !important; font-weight: 900 !important; }
+            .op-delta-val { font-size: 1.8em !important; font-weight: 900 !important; line-height: 1.1; }
+            .op-label-top { font-size: 0.75em !important; margin-bottom: 0 !important; }
+            .op-gas-name { font-size: 1.4em !important; font-weight: 900 !important; }
+            .op-quota-val { font-size: 1.7em !important; font-weight: 900 !important; }
             .mix-box { width: 100%; text-align: center; min-width: unset; font-size: 1em !important; padding: 10px !important; margin-top: 6px; }
             .footer-card { min-width: 100%; } 
             .settings-dropdown { position: fixed !important; top: 60px !important; left: 16px !important; right: 16px !important; width: auto !important; max-width: none !important; border: 2px solid var(--accent) !important; box-shadow: 0 15px 45px rgba(0,0,0,0.5) !important; }
@@ -894,7 +894,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.83</b><br>
+            All Rights Reserved | Tool Version: <b>v42.85</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1060,7 +1060,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.83</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.85</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1663,9 +1663,11 @@
         const origWi = receipt.style.width;
         const origPi = receipt.style.padding;
         const origBi = receipt.style.border;
+        const origMa = receipt.style.margin;
         receipt.style.padding = '4px 6px';
         receipt.style.border = 'none';
         receipt.style.width = '380px';
+        receipt.style.margin = '0 auto';
         html2canvas(receipt, {
             backgroundColor: '#ffffff',
             scale: 3,
@@ -1676,6 +1678,7 @@
             receipt.style.width = origWi;
             receipt.style.padding = origPi;
             receipt.style.border = origBi;
+            receipt.style.margin = origMa;
             const dataUrl = canvas.toDataURL('image/png');
             // iOS Safari: open in new tab so user can save with long press
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -1728,9 +1731,11 @@
         const origWi = receipt.style.width;
         const origPi = receipt.style.padding;
         const origBi = receipt.style.border;
+        const origMa = receipt.style.margin;
         receipt.style.padding = '4px 6px';
         receipt.style.border = 'none';
         receipt.style.width = '380px';
+        receipt.style.margin = '0 auto';
         html2canvas(receipt, {
             backgroundColor: '#ffffff',
             scale: 3,
@@ -1741,6 +1746,7 @@
             receipt.style.width = origWi;
             receipt.style.padding = origPi;
             receipt.style.border = origBi;
+            receipt.style.margin = origMa;
             const imgData = canvas.toDataURL('image/jpeg', 0.92);
             const { jsPDF } = window.jspdf;
             const pageW = 60;
