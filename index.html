@@ -894,7 +894,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.87</b><br>
+            All Rights Reserved | Tool Version: <b>v42.91</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1060,7 +1060,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.87</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.91</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1666,23 +1666,25 @@
             useCORS: true,
             logging: false
         }).then(canvas => {
-            // 5mm margin each side on 60mm roll = 50mm text width
-            // 60mm at 96dpi * scale3 = 681px total, 50mm = 567px, margin = 57px each side
-            const ROLL = 681;   // 60mm * 96dpi/25.4 * 3
-            const MARGIN = 57;  // 5mm * 96dpi/25.4 * 3
-            const TEXT = ROLL - MARGIN * 2; // 50mm
+            // Fixed 60mm roll at 8px/mm = 480px wide
+            // 5mm margin each side = 10mm total margins
+            // Text width = 50mm = 400px
+            const PX_PER_MM = 8;
+            const ROLL_PX = 60 * PX_PER_MM;   // 480px
+            const TEXT_PX = 50 * PX_PER_MM;   // 400px
+            const MARGIN_PX = (ROLL_PX - TEXT_PX) / 2; // 40px each side
 
-            const srcH = canvas.height;
             const srcW = canvas.width;
-            const dstH = Math.round(srcH * TEXT / srcW);
+            const srcH = canvas.height;
+            const dstH = Math.round(srcH * TEXT_PX / srcW);
 
             const out = document.createElement('canvas');
-            out.width = ROLL;
+            out.width = ROLL_PX;
             out.height = dstH;
             const ctx = out.getContext('2d');
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, ROLL, dstH);
-            ctx.drawImage(canvas, MARGIN, 0, TEXT, dstH);
+            ctx.fillRect(0, 0, ROLL_PX, dstH);
+            ctx.drawImage(canvas, MARGIN_PX, 0, TEXT_PX, dstH);
 
             const dataUrl = out.toDataURL('image/png');
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -1697,8 +1699,8 @@
                     '.hint{margin-top:72px;padding:12px;color:#64748b;font-size:13px;}',
                     'img{max-width:100%;display:block;margin:0 auto;padding-bottom:20px;}',
                     '<\/style><\/head><body>',
-                    '<div class="bar"><span>Report Blending</span><button onclick="window.close()">✕ Chiudi</button></div>',
-                    '<p class="hint">Tieni premuta l immagine per salvarla nelle Foto</p>',
+                    '<div class="bar"><span>Report Blending</span><button onclick="window.close()">✕ Chiudi<\/button><\/div>',
+                    '<p class="hint">Tieni premuta l immagine per salvarla nelle Foto<\/p>',
                     '<img src="' + dataUrl + '">',
                     '<\/body><\/html>'
                 ].join('');
@@ -1731,33 +1733,36 @@
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
         btn.disabled = true;
 
-        const origWi = receipt.style.width;
-        const origPi = receipt.style.padding;
-        const origBi = receipt.style.border;
-        const origMa = receipt.style.margin;
-        receipt.style.padding = '4px 6px';
-        receipt.style.border = 'none';
-        receipt.style.width = '380px';
-        receipt.style.margin = '0 auto';
         html2canvas(receipt, {
             backgroundColor: '#ffffff',
             scale: 3,
             useCORS: true,
-            logging: false,
-            width: 380
+            logging: false
         }).then(canvas => {
-            receipt.style.width = origWi;
-            receipt.style.padding = origPi;
-            receipt.style.border = origBi;
-            receipt.style.margin = origMa;
-            const imgData = canvas.toDataURL('image/jpeg', 0.92);
+            // Same logic as image: 60mm roll, 5mm margins, 50mm text
+            const PX_PER_MM = 8;
+            const ROLL_PX = 60 * PX_PER_MM;
+            const TEXT_PX = 50 * PX_PER_MM;
+            const MARGIN_PX = (ROLL_PX - TEXT_PX) / 2;
+
+            const srcW = canvas.width;
+            const srcH = canvas.height;
+            const dstH = Math.round(srcH * TEXT_PX / srcW);
+
+            const out = document.createElement('canvas');
+            out.width = ROLL_PX;
+            out.height = dstH;
+            const ctx = out.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, ROLL_PX, dstH);
+            ctx.drawImage(canvas, MARGIN_PX, 0, TEXT_PX, dstH);
+
+            const imgData = out.toDataURL('image/jpeg', 0.92);
             const { jsPDF } = window.jspdf;
             const pageW = 60;
-            const imgW = canvas.width / (canvas.width / 51);
-            const imgH = canvas.height * 51 / canvas.width;
-            const marginX = (pageW - 51) / 2;
-            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pageW, imgH + 4] });
-            doc.addImage(imgData, 'JPEG', marginX, 2, 51, imgH);
+            const pageH = dstH * pageW / ROLL_PX;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pageW, pageH] });
+            doc.addImage(imgData, 'JPEG', 0, 0, pageW, pageH);
             const customer = (document.getElementById('customerName').value || '').replace(/\s+/g, '_');
             const date = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
             const filename = customer ? 'blending_' + customer + '_' + date + '.pdf' : 'blending_' + date + '.pdf';
