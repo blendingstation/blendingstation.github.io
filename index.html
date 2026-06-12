@@ -889,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.57</b><br>
+            All Rights Reserved | Tool Version: <b>v42.59</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1055,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.57</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.59</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1705,65 +1705,47 @@
             alert('Genera prima il report!');
             return;
         }
-        const { jsPDF } = window.jspdf;
-        let text = receipt.innerText;
-        // Replace unicode chars not supported by Courier in jsPDF
-        text = text.replace(/[^\x00-\x7E]/g, function(c) {
-            var code = c.charCodeAt(0);
-            if (code === 0x2500 || code === 0x2501 || code === 0x2014 || code === 0x2013) return '-';
-            if (code === 0x2502) return '|';
-            if (code === 0x2726 || code === 0x2665 || code === 0x25C6) return '*';
-            if (code === 0x20AC) return 'EUR';
-            if (code === 0x2018 || code === 0x2019) return "'";
-            if (code === 0x201C || code === 0x201D) return '"';
-            return '';
-        });
+        const text = receipt.innerText;
         const lines = text.split('\n');
 
-        // Calculate page height dynamically based on content
-        const fontSize = 11;
-        const lineHeight = 5.0;
-        const marginTop = 6;
-        const marginSide = 4;
-        const pageW = 58;
-        const totalH = Math.max(100, marginTop + lines.length * lineHeight + 10);
+        // Build clean HTML page optimized for 58mm thermal printing
+        const rows = lines.map(l => {
+            const escaped = l.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            return '<div>' + (escaped || '&nbsp;') + '</div>';
+        }).join('');
 
-        const doc = new jsPDF({
-            orientation: 'portrait',
-            unit: 'mm',
-            format: [pageW, totalH]
-        });
+        const html = [
+            '<!DOCTYPE html><html><head>',
+            '<meta charset="UTF-8">',
+            '<meta name="viewport" content="width=58mm">',
+            '<title>Blending Report</title>',
+            '<style>',
+            '@page { margin: 3mm; size: 60mm auto; }',
+            'body { font-family: "Courier New", Courier, monospace; font-size: 9pt;',
+            '       line-height: 1.3; margin: 0; padding: 0; width: 54mm; color: #000; }',
+            'div { white-space: pre-wrap; word-break: break-word; }',
+            '.btn-bar { position: fixed; top: 0; left: 0; right: 0; background: #1e293b;',
+            '           padding: 10px; display: flex; gap: 8px; justify-content: center;',
+            '           z-index: 999; }',
+            '.btn-bar button { padding: 8px 16px; border: none; border-radius: 6px;',
+            '                  font-size: 13px; font-weight: 700; cursor: pointer; }',
+            '.print-btn { background: #06b6d4; color: #fff; }',
+            '.close-btn { background: #ef4444; color: #fff; }',
+            '@media print { .btn-bar { display: none !important; } }',
+            '</style></head><body>',
+            '<div class="btn-bar">',
+            '<button class="print-btn" onclick="window.print()">🖨️ Stampa / Salva PDF</button>',
+            '<button class="close-btn" onclick="window.close()">✕ Chiudi</button>',
+            '</div>',
+            '<div style="margin-top:45px;">',
+            rows,
+            '</div>',
+            '</body></html>'
+        ].join('');
 
-        doc.setFontSize(fontSize);
-        doc.setFont('courier', 'normal');
-
-        let y = marginTop;
-        // Remove excessive blank lines
-        const cleanLines = [];
-        let blankCount = 0;
-        lines.forEach(line => {
-            if (line.trim() === '') {
-                blankCount++;
-                if (blankCount <= 1) cleanLines.push(line);
-            } else {
-                blankCount = 0;
-                cleanLines.push(line);
-            }
-        });
-
-        cleanLines.forEach(line => {
-            // Use splitTextToSize to handle long lines without adding blank lines
-            const wrapped = doc.splitTextToSize(line, pageW - marginSide * 2);
-            wrapped.forEach(wline => {
-                doc.text(wline, marginSide, y);
-                y += lineHeight;
-            });
-        });
-
-        // Get blender name for filename
-        const blender = (document.getElementById('blenderName').value || 'report').replace(/\s+/g, '_');
-        const date = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
-        doc.save('blending_' + blender + '_' + date + '.pdf');
+        const w = window.open('', '_blank');
+        w.document.write(html);
+        w.document.close();
     }
 
     function printReceipt() {
