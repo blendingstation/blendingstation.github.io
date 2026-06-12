@@ -889,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.70</b><br>
+            All Rights Reserved | Tool Version: <b>v42.78</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1055,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.70</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.78</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1684,12 +1684,12 @@
                     '.bar button{background:#ef4444;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:14px;font-weight:800;cursor:pointer;}',
                     '.hint{margin-top:72px;padding:12px;color:#64748b;font-size:13px;}',
                     'img{max-width:100%;display:block;margin:0 auto;padding-bottom:20px;}',
-                    '</style></head>',
+                    '<\/style><\/head>',
                     '<body>',
                     '<div class="bar"><span>Report Blending</span><button onclick="window.close()">✕ Chiudi</button></div>',
                     '<p class="hint">Tieni premuta l immagine per salvarla nelle Foto</p>',
                     '<img src="' + dataUrl + '">',
-                    '</body></html>'
+                    '<\/body><\/html>'
                 ].join('');
                 w.document.write(html);
                 w.document.close();
@@ -1711,48 +1711,36 @@
     }
 
     function downloadPDF() {
-        const receipt = document.getElementById('receipt');
+        var receipt = document.getElementById('receipt');
         if (!receipt || !receipt.innerText.trim()) {
             alert('Genera prima il report!');
             return;
         }
-        const btn = document.getElementById('btn_pdf');
+        var btn = document.getElementById('btn_pdf');
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
         btn.disabled = true;
 
-        // Increase font size 13.3% to stretch text from 45mm to 51mm
-        const origW = receipt.style.width;
-        const origP = receipt.style.padding;
-        const origB = receipt.style.border;
-        const origF = receipt.style.fontSize;
-        receipt.style.padding = '4px 8px';
-        receipt.style.border = 'none';
-        receipt.style.fontSize = '1.02em';
         html2canvas(receipt, {
             backgroundColor: '#ffffff',
             scale: 3,
             useCORS: true,
             logging: false
         }).then(function(canvas) {
-            receipt.style.width = origW;
-            receipt.style.padding = origP;
-            receipt.style.border = origB;
-            receipt.style.fontSize = origF;
-            const imgData = canvas.toDataURL('image/jpeg', 0.88);
-            const { jsPDF } = window.jspdf;
-            const pageW = 60;
-            const imgW = 51; // text width 51mm
-            const marginX = (pageW - imgW) / 2; // 4.5mm each side
-            const imgH = canvas.height * imgW / canvas.width;
-            const doc = new jsPDF({
+            var imgData = canvas.toDataURL('image/jpeg', 0.88);
+            var jsPDFLib = window.jspdf.jsPDF;
+            var pageW = 60;
+            var textW = 51;
+            var marginX = (pageW - textW) / 2;
+            var imgH = canvas.height * textW / canvas.width;
+            var doc = new jsPDFLib({
                 orientation: 'portrait',
                 unit: 'mm',
-                format: [pageW, imgH + 4]
+                format: [pageW, imgH + 6]
             });
-            doc.addImage(imgData, 'JPEG', marginX, 2, imgW, imgH);
-            const customer = (document.getElementById('customerName').value || '').replace(/\s+/g, '_');
-            const date = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
-            const filename = customer ? 'blending_' + customer + '_' + date + '.pdf' : 'blending_' + date + '.pdf';
+            doc.addImage(imgData, 'JPEG', marginX, 3, textW, imgH);
+            var customer = (document.getElementById('customerName').value || '').replace(/[\s]+/g, '_');
+            var date = new Date().toLocaleDateString('it-IT').replace(/[/]/g, '-');
+            var filename = customer ? 'blending_' + customer + '_' + date + '.pdf' : 'blending_' + date + '.pdf';
             doc.save(filename);
             btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> SCARICA PDF';
             btn.disabled = false;
