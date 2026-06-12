@@ -889,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.67</b><br>
+            All Rights Reserved | Tool Version: <b>v42.70</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1055,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.67</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.70</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1720,33 +1720,36 @@
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
         btn.disabled = true;
 
-        // Remove padding and set full width for capture
+        // Increase font size 13.3% to stretch text from 45mm to 51mm
         const origW = receipt.style.width;
         const origP = receipt.style.padding;
         const origB = receipt.style.border;
-        receipt.style.padding = '4px 6px';
+        const origF = receipt.style.fontSize;
+        receipt.style.padding = '4px 8px';
         receipt.style.border = 'none';
-        receipt.style.width = '380px';
+        receipt.style.fontSize = '1.02em';
         html2canvas(receipt, {
             backgroundColor: '#ffffff',
-            scale: 2,
+            scale: 3,
             useCORS: true,
-            logging: false,
-            width: 380
+            logging: false
         }).then(function(canvas) {
             receipt.style.width = origW;
             receipt.style.padding = origP;
             receipt.style.border = origB;
-            const imgData = canvas.toDataURL('image/jpeg', 0.85);
+            receipt.style.fontSize = origF;
+            const imgData = canvas.toDataURL('image/jpeg', 0.88);
             const { jsPDF } = window.jspdf;
-            const imgW = 60; // mm
+            const pageW = 60;
+            const imgW = 51; // text width 51mm
+            const marginX = (pageW - imgW) / 2; // 4.5mm each side
             const imgH = canvas.height * imgW / canvas.width;
             const doc = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
-                format: [imgW, imgH]
+                format: [pageW, imgH + 4]
             });
-            doc.addImage(imgData, 'PNG', 0, 0, imgW, imgH);
+            doc.addImage(imgData, 'JPEG', marginX, 2, imgW, imgH);
             const customer = (document.getElementById('customerName').value || '').replace(/\s+/g, '_');
             const date = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
             const filename = customer ? 'blending_' + customer + '_' + date + '.pdf' : 'blending_' + date + '.pdf';
