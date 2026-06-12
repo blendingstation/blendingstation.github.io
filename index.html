@@ -889,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.60</b><br>
+            All Rights Reserved | Tool Version: <b>v42.61</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1055,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.60</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.61</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1705,66 +1705,36 @@
             alert('Genera prima il report!');
             return;
         }
-        const { jsPDF } = window.jspdf;
-        let text = receipt.innerText;
+        const btn = document.getElementById('btn_pdf');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
+        btn.disabled = true;
 
-        // Replace unicode chars not supported by Courier in jsPDF
-        text = text.replace(/[^\x00-\x7E]/g, function(c) {
-            var code = c.charCodeAt(0);
-            if (code === 0x2500 || code === 0x2501 || code === 0x2014 || code === 0x2013) return '-';
-            if (code === 0x2502) return '|';
-            if (code === 0x2726 || code === 0x2665 || code === 0x25C6) return '*';
-            if (code === 0x20AC) return 'E';
-            if (code === 0x2018 || code === 0x2019) return "'";
-            if (code === 0x201C || code === 0x201D) return '"';
-            return '';
-        });
-
-        const lines = text.split('\n');
-        const fontSize = 9;
-        const lineHeight = 4.2;
-        const marginTop = 5;
-        const marginSide = 3;
-        const pageW = 60;
-
-        // Remove excessive blank lines
-        const cleanLines = [];
-        let blankCount = 0;
-        lines.forEach(function(line) {
-            if (line.trim() === '') {
-                blankCount++;
-                if (blankCount <= 1) cleanLines.push(line);
-            } else {
-                blankCount = 0;
-                cleanLines.push(line);
-            }
-        });
-
-        const totalH = Math.max(120, marginTop + cleanLines.length * lineHeight + 15);
-
-        const doc = new jsPDF({
-            orientation: 'portrait',
-            unit: 'mm',
-            format: [pageW, totalH]
-        });
-
-        doc.setFontSize(fontSize);
-        doc.setFont('courier', 'normal');
-
-        var y = marginTop;
-        var maxW = pageW - marginSide * 2;
-
-        cleanLines.forEach(function(line) {
-            var wrapped = doc.splitTextToSize(line, maxW);
-            wrapped.forEach(function(wline) {
-                doc.text(wline, marginSide, y);
-                y += lineHeight;
+        html2canvas(receipt, {
+            backgroundColor: '#ffffff',
+            scale: 3,
+            useCORS: true,
+            logging: false
+        }).then(function(canvas) {
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const imgW = 60; // mm
+            const imgH = canvas.height * imgW / canvas.width;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: [imgW, imgH]
             });
+            doc.addImage(imgData, 'PNG', 0, 0, imgW, imgH);
+            const blender = (document.getElementById('blenderName').value || 'report').replace(/\s+/g, '_');
+            const date = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
+            doc.save('blending_' + blender + '_' + date + '.pdf');
+            btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> SCARICA PDF';
+            btn.disabled = false;
+        }).catch(function(err) {
+            alert('Errore: ' + err.message);
+            btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> SCARICA PDF';
+            btn.disabled = false;
         });
-
-        const blender = (document.getElementById('blenderName').value || 'report').replace(/\s+/g, '_');
-        const date = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
-        doc.save('blending_' + blender + '_' + date + '.pdf');
     }
 
     function printReceipt() {
