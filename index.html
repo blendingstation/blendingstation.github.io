@@ -889,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.55</b><br>
+            All Rights Reserved | Tool Version: <b>v42.56</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1055,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.55</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.56</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1708,10 +1708,599 @@
         const { jsPDF } = window.jspdf;
         let text = receipt.innerText;
         // Replace unicode chars not supported by Courier in jsPDF
-        text = text.replace(/[─━─]/g, '-');
-        text = text.replace(/─/g, '-'); // ─
-        text = text.replace(/━/g, '-'); // ━
-        text = text.replace(/│/g, '|');
-        text = text.replace(/✦/g, '*'); // ✦
-        text = text.replace(/♥/g, '*');
-        text = text.replace(/[^
+        text = text.replace(/[^\x00-\x7E]/g, function(c) {
+            var code = c.charCodeAt(0);
+            if (code === 0x2500 || code === 0x2501 || code === 0x2014 || code === 0x2013) return '-';
+            if (code === 0x2502) return '|';
+            if (code === 0x2726 || code === 0x2665 || code === 0x25C6) return '*';
+            if (code === 0x20AC) return 'EUR';
+            if (code === 0x2018 || code === 0x2019) return "'";
+            if (code === 0x201C || code === 0x201D) return '"';
+            return '';
+        });
+        const lines = text.split('\n');
+
+        // Calculate page height dynamically based on content
+        const fontSize = 7;
+        const lineHeight = 3.2;
+        const marginTop = 5;
+        const marginSide = 3;
+        const pageW = 58;
+        const totalH = Math.max(100, marginTop + lines.length * lineHeight + 10);
+
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: [pageW, totalH]
+        });
+
+        doc.setFontSize(fontSize);
+        doc.setFont('courier', 'normal');
+
+        let y = marginTop;
+        // Remove excessive blank lines
+        const cleanLines = [];
+        let blankCount = 0;
+        lines.forEach(line => {
+            if (line.trim() === '') {
+                blankCount++;
+                if (blankCount <= 1) cleanLines.push(line);
+            } else {
+                blankCount = 0;
+                cleanLines.push(line);
+            }
+        });
+
+        cleanLines.forEach(line => {
+            // Use splitTextToSize to handle long lines without adding blank lines
+            const wrapped = doc.splitTextToSize(line, pageW - marginSide * 2);
+            wrapped.forEach(wline => {
+                doc.text(wline, marginSide, y);
+                y += lineHeight;
+            });
+        });
+
+        // Get blender name for filename
+        const blender = (document.getElementById('blenderName').value || 'report').replace(/\s+/g, '_');
+        const date = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
+        doc.save('blending_' + blender + '_' + date + '.pdf');
+    }
+
+    function printReceipt() {
+        const receiptText = document.getElementById('receipt').innerText;
+        const win = window.open('', '_blank', 'width=400,height=600');
+        win.document.write('<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GAS BLENDER REPORT<\/title><link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@500;700&display=swap" rel="stylesheet"><style>@page{margin:0;size:auto;}*{margin:0;padding:0;box-sizing:border-box;}html,body{background:#fff;}pre{font-family:\'Azeret Mono\',monospace;font-size:13px;white-space:pre;padding:10mm;color:#000;line-height:1.5;}<\/style><\/head><body><pre>' + receiptText + '<\/pre><script>window.onload=function(){setTimeout(function(){window.print();window.close();},400);};<\/script><\/body><\/html>');
+        win.document.close();
+    }
+
+    // ── FULLSCREEN OPERATIVE MODE ─────────────────────────────
+    let _fsIndex = 0;
+    const GAS_COLORS = {
+        'O2':    { bg: '#052e16', main: '#4ade80', label: '#bbf7d0', btn: '#16a34a' },
+        'HE':    { bg: '#1c0f00', main: '#cd7f32', label: '#f5d9b0', btn: '#92510a' },
+        'AIR':   { bg: '#1a1500', main: '#facc15', label: '#fef08a', btn: '#a16207' },
+        'DRAIN': { bg: '#450a0a', main: '#f87171', label: '#fecaca', btn: '#dc2626' },
+    };
+
+    function openFullscreen() {
+        if (!window._fsSteps || window._fsSteps.length === 0) return;
+        _fsIndex = 0;
+        document.getElementById('fsOverlay').style.display = 'flex';
+        document.body.classList.add('fs-active');
+        if (!wakeLock && !isManualDisabling) requestWakeLock();
+        fsRender();
+    }
+
+    window.addEventListener('orientationchange', function() {
+        var el = document.getElementById('fsOverlay');
+        if (el && el.style.display !== 'none') {
+            el.style.display = 'none';
+            requestAnimationFrame(function() {
+                el.style.display = 'flex';
+            });
+        }
+    });
+
+    function closeFullscreen() {
+        document.getElementById('fsOverlay').style.display = 'none';
+        document.body.classList.remove('fs-active');
+        // Rilascia il wakelock all'uscita dalla modalità operativa
+        if (wakeLock !== null) {
+            isManualDisabling = true;
+            wakeLock.release();
+            wakeLock = null;
+            updateWakeLockUI(false);
+        }
+    }
+
+    function fsNav(dir) {
+        const steps = window._fsSteps || [];
+        _fsIndex = Math.max(0, Math.min(steps.length - 1, _fsIndex + dir));
+        fsRender();
+    }
+
+    function fsRender() {
+        const steps = window._fsSteps || [];
+        const s = steps[_fsIndex];
+        if (!s) return;
+        const col = GAS_COLORS[s.type] || GAS_COLORS['AIR'];
+        const isLast = _fsIndex === steps.length - 1;
+        const isFirst = _fsIndex === 0;
+
+        document.getElementById('fsBg').style.background = col.bg;
+        document.getElementById('fsCounter').innerText = 'STEP ' + (_fsIndex + 1) + ' DI ' + steps.length;
+        document.getElementById('fsAction').innerText = s.action;
+        document.getElementById('fsAction').style.borderColor = col.main + '55';
+        document.getElementById('fsAction').style.color = col.label;
+        document.getElementById('fsQty').style.color = col.main;
+        document.getElementById('fsQty').innerHTML = '<span>' + s.qty.toFixed(1) + '</span><span style="font-size:0.45em; font-weight:800; margin-left:10px; vertical-align:middle;">BAR</span>';
+        document.getElementById('fsGasLabel').style.color = col.label;
+        document.getElementById('fsGasLabel').innerText = s.gas;
+        document.getElementById('fsFino').innerText = s.fino.toFixed(1) + ' bar';
+
+        const mixEl = document.getElementById('fsMixBox');
+        mixEl.innerHTML =
+            '<span style="color:#4ade80">O\u2082 ' + s.mix.o.toFixed(1) + '%<\/span>' +
+            '<span style="color:rgba(255,255,255,0.2); margin:0 14px;">|<\/span>' +
+            '<span style="color:#cd7f32">He ' + s.mix.h.toFixed(1) + '%<\/span>' +
+            '<span style="color:rgba(255,255,255,0.2); margin:0 14px;">|<\/span>' +
+            '<span style="color:#facc15">N\u2082 ' + s.mix.n.toFixed(1) + '%<\/span>';
+        mixEl.style.borderColor = col.main + '40';
+
+        const prev = document.getElementById('fsBtnPrev');
+        // PREV: hidden on first step
+        prev.style.display = isFirst ? 'none' : 'block';
+        prev.style.pointerEvents = isFirst ? 'none' : 'auto';
+
+        // NEXT
+        const next = document.getElementById('fsBtnNext');
+        next.style.background = isLast ? '#1e293b' : col.btn;
+        next.style.border = isLast ? '2px solid rgba(255,255,255,0.15)' : 'none';
+        next.innerText = isLast ? '\u2713 COMPLETATO' : 'AVANTI \u2192';
+        next.onclick = isLast ? closeFullscreen : function() { fsNav(1); };
+
+        // ESCI: visible on middle steps only (not first, not last)
+        document.getElementById('fsEsciBtn').style.display = isLast ? 'none' : 'block';
+    }
+    // ──────────────────────────────────────────────────────────
+
+    // ── GAS REALI — Fattori Z (NIST) ─────────────────────────
+    // Z interpolato per pressione (bar) e temperatura (°C)
+    // Dati: O2, He, N2 — valori da tabelle NIST/compressibility charts
+    // ── GAS REALI: Van der Waals solver ─────────────────────
+    // Coefficienti vdW (a in bar·L²/mol², b in L/mol)
+    const VDW_COEFFS = {
+        'O2': {a: 1.382,   b: 0.03186},
+        'HE': {a: 0.03457, b: 0.02370},
+        'N2': {a: 1.408,   b: 0.03913},
+    };
+    const R_GAS = 0.083145; // bar·L/(mol·K)
+
+    function zVdW(gas, p_bar, T_C) {
+        if (p_bar <= 0) return 1.0;
+        const T = (T_C || 20) + 273.15;
+        const {a, b} = VDW_COEFFS[gas] || VDW_COEFFS['N2'];
+        let V = R_GAS * T / p_bar;
+        for (let i = 0; i < 200; i++) {
+            const V_new = b + R_GAS * T / (p_bar + a / (V * V));
+            if (Math.abs(V_new - V) < 1e-10) break;
+            V = V_new;
+        }
+        return p_bar * V / (R_GAS * T);
+    }
+
+    function zMix(o, h, n, p, T_C) {
+        if (p <= 0) return 1.0;
+        return o * zVdW('O2', p, T_C) + h * zVdW('HE', p, T_C) + n * zVdW('N2', p, T_C);
+    }
+
+    function molesToBars(dn, gas, p_from, T_C) {
+        if (dn <= 0) return 0.0;
+        let dbar = dn;
+        for (let i = 0; i < 60; i++) {
+            const z = (zVdW(gas, p_from, T_C) + zVdW(gas, p_from + dbar, T_C)) / 2;
+            const dbar_new = dn * z;
+            if (Math.abs(dbar_new - dbar) < 1e-6) break;
+            dbar = dbar_new;
+        }
+        return dbar;
+    }
+
+    function solveRealGas(oS, hS, pS, oE, hE, pE, tfO2, tfN2, T_C) {
+        const nS = Math.max(0, 1 - oS - hS);
+        const nE = Math.max(0, 1 - oE - hE);
+        const zmS = zMix(oS, hS, nS, pS, T_C);
+        const nTotS = pS / zmS;
+
+        let pE_eff = pE;
+        let dHe_b = 0, dAir_b = 0, dO2_b = 0, pFin = pS;
+        let dn_he = 0, dn_o2 = 0, dn_n2 = 0, dn_air = 0;
+
+        for (let outer = 0; outer < 80; outer++) {
+            const zmE = zMix(oE, hE, nE, pE_eff, T_C);
+            const nTotE = pE_eff / zmE;
+
+            dn_he  = Math.max(0, hE * nTotE - hS * nTotS);
+            dn_o2  = Math.max(0, oE * nTotE - oS * nTotS);
+            dn_n2  = Math.max(0, nE * nTotE - nS * nTotS);
+            dn_air = tfN2 > 0 ? dn_n2 / tfN2 : 0;
+
+            dHe_b  = molesToBars(dn_he,  'HE', pS, T_C);
+            dAir_b = molesToBars(dn_air, 'N2', pS + dHe_b, T_C);
+            dO2_b  = molesToBars(dn_o2,  'O2', pS + dHe_b + dAir_b, T_C);
+
+            pFin = pS + dHe_b + dAir_b + dO2_b;
+            const err = pFin - pE;
+            if (Math.abs(err) < 0.01) break;
+            pE_eff -= err * 0.5;
+        }
+        return {dHe: dHe_b, dAir: dAir_b, dO2: dO2_b, pFin,
+                dn_he, dn_o2, dn_n2, nTotS};
+    }
+    // ──────────────────────────────────────────────────────────
+
+    function setGasModel(model) {
+        localStorage.setItem('gasModel', model);
+        ['', 'Mobile'].forEach(function(suffix) {
+            var tempInput = document.getElementById('gasTemp' + suffix);
+            var btnIdeal  = document.getElementById('btnGasIdeale' + suffix);
+            var btnReal   = document.getElementById('btnGasReale' + suffix);
+            if (!btnIdeal || !btnReal) return;
+            if (model === 'real') {
+                if (tempInput) { tempInput.disabled = false; tempInput.style.opacity = '1'; tempInput.style.cursor = 'auto'; }
+                btnReal.style.background = 'var(--accent)'; btnReal.style.color = '#fff'; btnReal.style.borderColor = 'var(--accent)';
+                btnIdeal.style.background = 'transparent'; btnIdeal.style.color = 'var(--text)'; btnIdeal.style.borderColor = 'var(--border-ui)';
+            } else {
+                if (tempInput) { tempInput.disabled = true; tempInput.style.opacity = '0.4'; tempInput.style.cursor = 'not-allowed'; }
+                btnIdeal.style.background = 'var(--accent)'; btnIdeal.style.color = '#fff'; btnIdeal.style.borderColor = 'var(--accent)';
+                btnReal.style.background = 'transparent'; btnReal.style.color = 'var(--text)'; btnReal.style.borderColor = 'var(--border-ui)';
+            }
+        });
+        // Update badge
+        var badge = document.getElementById('gasModelBadge');
+        if (badge) {
+            badge.innerText = model === 'real' ? 'GAS REALE' : 'GAS IDEALE';
+            badge.style.background = model === 'real' ? 'rgba(205,127,50,0.15)' : 'rgba(6,182,212,0.15)';
+            badge.style.color = model === 'real' ? '#cd7f32' : 'var(--accent)';
+            badge.style.borderColor = model === 'real' ? '#cd7f32' : 'var(--accent)';
+        }
+        calc();
+    }
+
+    function initGasModel() {
+        const saved = localStorage.getItem('gasModel') || 'ideal';
+        setGasModel(saved);
+        const savedTemp = localStorage.getItem('gasTemp');
+        if (savedTemp) document.getElementById('gasTemp').value = savedTemp;
+    }
+    // ──────────────────────────────────────────────────────────
+
+    // ── TOP-OFF GAS ──────────────────────────────────────────
+    function toggleTopOff() {
+        const on = document.getElementById('topOffToggle').checked;
+        document.getElementById('topOffCard').style.display = on ? 'block' : 'none';
+        localStorage.setItem('topOffEnabled', on ? '1' : '0');
+        calc();
+    }
+
+    function calcTopOffManual() {
+        const o2 = parseFloat(document.getElementById('toO2').value) || 0;
+        const he = parseFloat(document.getElementById('toHe').value) || 0;
+        const n2 = Math.max(0, 100 - o2 - he);
+        document.getElementById('toN2').value = n2.toFixed(1);
+        // Update tank visual segments
+        const tot = Math.max(1, o2 + he + n2);
+        document.getElementById('toO2seg').style.width = (o2/tot*100) + '%';
+        document.getElementById('toHeseg').style.width = (he/tot*100) + '%';
+        document.getElementById('toHeseg').style.display = he > 0 ? '' : 'none';
+        document.getElementById('toN2seg').style.width = (n2/tot*100) + '%';
+        localStorage.setItem('topOffO2saved', o2);
+        localStorage.setItem('topOffHesaved', he);
+        calc();
+    }
+
+    function getTopOffFractions() {
+        const on = document.getElementById('topOffToggle').checked;
+        if (!on) return null;
+        const o2 = parseFloat(document.getElementById('toO2').value) / 100 || 0.21;
+        const he = parseFloat(document.getElementById('toHe').value) / 100 || 0;
+        const n2 = Math.max(0, 1 - o2 - he);
+        return { o2, he, n2 };
+    }
+
+    function initTopOff() {
+        const enabled = localStorage.getItem('topOffEnabled') === '1';
+        const savedO2 = localStorage.getItem('topOffO2saved') || '21';
+        const savedHe = localStorage.getItem('topOffHesaved') || '0';
+        document.getElementById('toO2').value = savedO2;
+        document.getElementById('toHe').value = savedHe;
+        if (enabled) {
+            document.getElementById('topOffToggle').checked = true;
+            document.getElementById('topOffCard').style.display = 'block';
+        }
+        calcTopOffManual();
+    }
+    // ──────────────────────────────────────────────────────────
+
+    function mobileNav(tab) {
+        document.querySelectorAll('.fn-item').forEach(el => el.classList.remove('active'));
+        const btn = document.getElementById('fn-' + tab);
+        if (btn) btn.classList.add('active');
+
+        // Toggle body classes for CSS-driven show/hide
+        document.body.classList.toggle('mobile-safety', tab === 'safety');
+        if (tab === 'safety') calc();
+        document.body.classList.toggle('mobile-prezzi', tab === 'prezzi');
+        document.body.classList.toggle('mobile-setup', tab === 'impostazioni');
+        document.body.classList.toggle('mobile-info', tab === 'info');
+        // Block scroll on static tabs (works on iOS PWA too)
+        const staticTabs = ['impostazioni', 'info', 'prezzi'];
+        if (staticTabs.includes(tab)) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+        } else {
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+        }
+        if (tab === 'prezzi') syncMobileFromDesktop();
+        if (tab === 'impostazioni') syncSetupMobile();
+
+
+
+
+
+
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        localStorage.setItem('mobileTab', tab);
+    }
+
+    function syncPrice(targetId, val) {
+        const el = document.getElementById(targetId);
+        if (el) { el.value = val; saveAndCalc(); }
+    }
+
+    function syncSetupMobile() {
+        var _sn=document.getElementById('shopName'); var _snm=document.getElementById('shopNameMobile'); if(_sn&&_snm)_snm.value=_sn.value;
+        // Sync dark mode
+        const cb = document.getElementById('checkboxMobile');
+        const src = document.getElementById('checkbox');
+        if (cb && src) cb.checked = src.checked;
+        // Sync lang
+        const lm = document.getElementById('langSelectMobile');
+        const ls = document.getElementById('langSelect');
+        if (lm && ls) lm.value = ls.value;
+        // Sync gasTemp
+        const gtm = document.getElementById('gasTempMobile');
+        const gt  = document.getElementById('gasTemp');
+        if (gtm && gt) { gtm.value = gt.value; gtm.disabled = gt.disabled; gtm.style.opacity = gt.style.opacity; gtm.style.cursor = gt.style.cursor; }
+        // Sync topOff
+        const tom = document.getElementById('topOffToggleMobile');
+        const to  = document.getElementById('topOffToggle');
+        if (tom && to) tom.checked = to.checked;
+        // Sync font
+        const fsm = document.getElementById('fontSliderMobile');
+        const fss = document.getElementById('fontSlider');
+        if (fsm && fss) fsm.value = fss.value;
+        // Sync gas model buttons
+        const model = localStorage.getItem('gasModel') || 'ideal';
+        const bi = document.getElementById('btnGasIdealeMobile');
+        const br = document.getElementById('btnGasRealeMobile');
+        if (bi && br) {
+            if (model === 'real') {
+                br.style.background = 'var(--accent)'; br.style.color = '#fff'; br.style.borderColor = 'var(--accent)';
+                bi.style.background = 'transparent'; bi.style.color = 'var(--text)'; bi.style.borderColor = 'var(--border-ui)';
+                if (gtm) { gtm.disabled = false; gtm.style.opacity = '1'; gtm.style.cursor = 'auto'; }
+            } else {
+                bi.style.background = 'var(--accent)'; bi.style.color = '#fff'; bi.style.borderColor = 'var(--accent)';
+                br.style.background = 'transparent'; br.style.color = 'var(--text)'; br.style.borderColor = 'var(--border-ui)';
+            }
+        }
+    }
+
+    var _bestMixMode = 'nitrox';
+
+    function setBestMixMode(mode) {
+        _bestMixMode = mode;
+        const endWrap = document.getElementById('bestMixENDWrap');
+        const btnN = document.getElementById('btnModeNitrox');
+        const btnT = document.getElementById('btnModeTrimix');
+        if (mode === 'trimix') {
+            endWrap.style.display = 'flex';
+            btnT.style.background = 'var(--accent)'; btnT.style.color = '#fff'; btnT.style.borderColor = 'var(--accent)';
+            btnN.style.background = 'transparent'; btnN.style.color = 'var(--text)'; btnN.style.borderColor = 'var(--border-ui)';
+        } else {
+            endWrap.style.display = 'none';
+            btnN.style.background = 'var(--accent)'; btnN.style.color = '#fff'; btnN.style.borderColor = 'var(--accent)';
+            btnT.style.background = 'transparent'; btnT.style.color = 'var(--text)'; btnT.style.borderColor = 'var(--border-ui)';
+        }
+        calcBestMix();
+    }
+
+    function calcBestMix() {
+        const depth = parseFloat(document.getElementById('plannedDepth') ? document.getElementById('plannedDepth').value : 0) || 0;
+        const ppo2 = parseFloat(document.getElementById('ppo2Limit') ? document.getElementById('ppo2Limit').value : 1.4) || 1.4;
+        const result = document.getElementById('bestMixResult');
+        const btn = document.getElementById('bestMixBtn');
+
+        if (depth <= 0) {
+            result.innerHTML = '<span style="color:#64748b;">Inserisci la profondità pianificata.</span>';
+            btn.style.display = 'none';
+            return;
+        }
+
+        const ata = depth / 10 + 1;
+
+        // Best O2% — floor to never exceed PPO2 limit
+        let o2 = Math.floor((ppo2 / ata) * 100);
+        o2 = Math.max(10, Math.min(o2, 40));
+        let he = 0;
+
+        if (_bestMixMode === 'trimix') {
+            const end = parseFloat(document.getElementById('bestMixEND').value) || 30;
+            if (end >= depth) {
+                result.innerHTML = '<span style="color:#f59e0b;">⚠️ END deve essere minore della profondità.</span>';
+                btn.style.display = 'none';
+                return;
+            }
+            const endAta = end / 10 + 1;
+            he = Math.round((1 - (endAta / ata)) * (100 - o2));
+            he = Math.max(0, Math.min(he, 90 - o2));
+        }
+
+        const n2 = 100 - o2 - he;
+        window._bestMix = { o2, he };
+
+        if (_bestMixMode === 'nitrox') {
+            result.innerHTML = '<span style="color:var(--accent); font-size:1.1em;">Best Nitrox: <b>O2 ' + o2 + '%</b> / N2 ' + n2 + '%</span>';
+        } else {
+            result.innerHTML = '<span style="color:var(--accent); font-size:1.1em;">Best Trimix: <b>O2 ' + o2 + '% / He ' + he + '%</b> / N2 ' + n2 + '%</span>';
+        }
+        btn.style.display = 'block';
+    }
+
+    function applyBestMix() {
+        if (!window._bestMix) return;
+        const { o2, he } = window._bestMix;
+
+        // o2E = target O2%, heE = target He%
+        const tO2 = document.getElementById('o2E');
+        const tHe = document.getElementById('heE');
+        if (tO2) tO2.value = o2;
+        if (tHe) tHe.value = he;
+
+        // On desktop: force safety toggle ON so it recalculates
+        const checkbox = document.getElementById('safetyToggleCheckbox');
+        const mc = document.getElementById('safetyMainContent');
+        const label = document.getElementById('iosToggleStatusLabel');
+        if (checkbox && !checkbox.checked) {
+            checkbox.checked = true;
+            if (mc) mc.classList.remove('hidden');
+            if (label) label.innerText = 'ON';
+        }
+
+        saveAndCalc();
+        // Small delay to ensure DOM updates before safety recalc
+        setTimeout(() => { calc(); }, 50);
+
+        // Visual feedback
+        const btn = document.getElementById('bestMixBtn');
+        btn.innerHTML = '✅ Inserito!';
+        btn.style.background = '#10b981';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fa-solid fa-arrow-up-from-bracket"></i> Usa come Target';
+            btn.style.background = 'var(--accent)';
+        }, 1500);
+    }
+
+    function syncMobileFromDesktop() {
+        const ids = ['pHe_soci','pO2_soci','pAir_soci','pFix_soci',
+                     'pHe_nonsoci','pO2_nonsoci','pAir_nonsoci','pFix_nonsoci',
+                     'pHe_reale','pO2_reale','pAir_reale','pFix_reale'];
+        ids.forEach(id => {
+            const src = document.getElementById(id);
+            const dst = document.getElementById(id + '_m');
+            if (src && dst) dst.value = src.value;
+        });
+        const d = document.getElementById('priceDate');
+        const dm = document.getElementById('priceDate_m');
+        if (d && dm) dm.value = d.value;
+    }
+
+    window.onload = function() {
+        initTheme();
+        loadSavedCosts();
+        initGasModel();
+        initTopOff();
+        changeLang();
+
+        calc();
+        // Restore mobile tab
+        if (window.innerWidth <= 768) {
+            const lastTab = localStorage.getItem('mobileTab') || 'home';
+            mobileNav(lastTab);
+        }
+        requestWakeLock();
+    };
+</script>
+
+    <!-- FLOATING NAV -->
+    <div class="float-nav-wrap">
+        <nav class="float-nav" role="navigation" aria-label="Navigazione principale">
+            <button class="fn-item active" id="fn-home" onclick="mobileNav('home')" aria-label="Home">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </button>
+            <button class="fn-item" id="fn-safety" onclick="mobileNav('safety')" aria-label="Safety">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Safety</span>
+            </button>
+            <button class="fn-item" id="fn-prezzi" onclick="mobileNav('prezzi')" aria-label="Prezzi">
+                <i class="fa-solid fa-euro-sign"></i>
+                <span>Prezzi</span>
+            </button>
+            <button class="fn-item" id="fn-impostazioni" onclick="mobileNav('impostazioni')" aria-label="Opzioni">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Opzioni</span>
+            </button>
+            <button class="fn-item" id="fn-info" onclick="mobileNav('info')" aria-label="Info">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Info</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- FULLSCREEN OPERATIVE MODE OVERLAY -->
+    <div id="fsOverlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; width:100%; height:100%; z-index:9999; overflow:hidden;">
+        <div id="fsBg" style="position:absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; transition:background 0.3s ease; z-index:0;"></div>
+        <!-- scrollable inner wrapper — always works on any orientation -->
+        <div id="fsScroller" style="position:relative; z-index:1; width:100%; height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch; display:flex; align-items:center; justify-content:center; box-sizing:border-box; padding:16px;">
+            <div id="fsInner">
+                <div id="fsLeft">
+                    <div id="fsCounter"></div>
+                    <div id="fsAction"></div>
+                    <div id="fsQty"></div>
+                    <div id="fsDiLabel" style="font-size:0.9em; font-weight:800; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:0.18em;">di</div>
+                    <div id="fsGasLabel"></div>
+                </div>
+                <div id="fsRight">
+                    <div class="fs-fino-label">fino a</div>
+                    <div id="fsFino"></div>
+                    <div id="fsMixBox"></div>
+                    <div id="fsNavRow">
+                        <button id="fsBtnPrev" onclick="fsNav(-1)">&#8592; PREC</button>
+                        <button id="fsBtnNext"></button>
+                    </div>
+                    <button id="fsEsciBtn" onclick="closeFullscreen()" aria-label="Chiudi modalità operativa">&#x26F6; ESCI DALLA MODALIT&#192; OPERATIVA</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(reg => {
+            // Check for updates every time the app opens
+            reg.update();
+            reg.addEventListener('updatefound', () => {
+              const newSW = reg.installing;
+              newSW.addEventListener('statechange', () => {
+                if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                  // New version available — reload automatically
+                  newSW.postMessage('SKIP_WAITING');
+                  navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    window.location.reload();
+                  });
+                }
+              });
+            });
+          })
+          .catch(err => console.log('SW error:', err));
+      });
+    }
+  </script>
+</body>
+</html>
