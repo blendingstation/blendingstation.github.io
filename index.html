@@ -889,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.66</b><br>
+            All Rights Reserved | Tool Version: <b>v42.67</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1055,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.66</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.67</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1656,15 +1656,21 @@
         btn.disabled = true;
 
         const origWi = receipt.style.width;
-        receipt.style.width = '362px';
+        const origPi = receipt.style.padding;
+        const origBi = receipt.style.border;
+        receipt.style.padding = '4px 6px';
+        receipt.style.border = 'none';
+        receipt.style.width = '380px';
         html2canvas(receipt, {
             backgroundColor: '#ffffff',
             scale: 3,
             useCORS: true,
             logging: false,
-            width: 362
+            width: 380
         }).then(canvas => {
             receipt.style.width = origWi;
+            receipt.style.padding = origPi;
+            receipt.style.border = origBi;
             const dataUrl = canvas.toDataURL('image/png');
             // iOS Safari: open in new tab so user can save with long press
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -1714,17 +1720,23 @@
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
         btn.disabled = true;
 
-        // Set fixed width for consistent capture
+        // Remove padding and set full width for capture
         const origW = receipt.style.width;
-        receipt.style.width = '362px';
+        const origP = receipt.style.padding;
+        const origB = receipt.style.border;
+        receipt.style.padding = '4px 6px';
+        receipt.style.border = 'none';
+        receipt.style.width = '380px';
         html2canvas(receipt, {
             backgroundColor: '#ffffff',
             scale: 2,
             useCORS: true,
             logging: false,
-            width: 362
+            width: 380
         }).then(function(canvas) {
             receipt.style.width = origW;
+            receipt.style.padding = origP;
+            receipt.style.border = origB;
             const imgData = canvas.toDataURL('image/jpeg', 0.85);
             const { jsPDF } = window.jspdf;
             const imgW = 60; // mm
