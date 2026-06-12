@@ -889,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.78</b><br>
+            All Rights Reserved | Tool Version: <b>v42.79</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1055,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.78</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.79</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1720,35 +1720,50 @@
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
         btn.disabled = true;
 
-        html2canvas(receipt, {
-            backgroundColor: '#ffffff',
-            scale: 3,
-            useCORS: true,
-            logging: false
-        }).then(function(canvas) {
-            var imgData = canvas.toDataURL('image/jpeg', 0.88);
-            var jsPDFLib = window.jspdf.jsPDF;
-            var pageW = 60;
-            var textW = 51;
-            var marginX = (pageW - textW) / 2;
-            var imgH = canvas.height * textW / canvas.width;
-            var doc = new jsPDFLib({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: [pageW, imgH + 6]
+        // Save original styles
+        var origStyle = receipt.getAttribute('style') || '';
+
+        // Force exact width and remove padding for clean capture
+        receipt.style.cssText = 'font-family:"Azeret Mono",monospace; white-space:pre; font-size:0.9em; ' +
+            'text-align:left; display:inline-block; padding:0; border:none; ' +
+            'color:#000; background:#fff; width:400px; box-sizing:border-box;';
+
+        setTimeout(function() {
+            html2canvas(receipt, {
+                backgroundColor: '#ffffff',
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                width: 400
+            }).then(function(canvas) {
+                // Restore original style
+                receipt.setAttribute('style', origStyle);
+
+                var imgData = canvas.toDataURL('image/jpeg', 0.92);
+                var jsPDFLib = window.jspdf.jsPDF;
+                var pageW = 60;
+                var textW = 51;
+                var marginX = (pageW - textW) / 2; // 4.5mm each side
+                var imgH = canvas.height * textW / canvas.width;
+                var doc = new jsPDFLib({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: [pageW, imgH + 4]
+                });
+                doc.addImage(imgData, 'JPEG', marginX, 2, textW, imgH);
+                var customer = (document.getElementById('customerName').value || '').replace(/[\s]+/g, '_');
+                var date = new Date().toLocaleDateString('it-IT').replace(/[/]/g, '-');
+                var filename = customer ? 'blending_' + customer + '_' + date + '.pdf' : 'blending_' + date + '.pdf';
+                doc.save(filename);
+                btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> SCARICA PDF';
+                btn.disabled = false;
+            }).catch(function(err) {
+                receipt.setAttribute('style', origStyle);
+                alert('Errore: ' + err.message);
+                btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> SCARICA PDF';
+                btn.disabled = false;
             });
-            doc.addImage(imgData, 'JPEG', marginX, 3, textW, imgH);
-            var customer = (document.getElementById('customerName').value || '').replace(/[\s]+/g, '_');
-            var date = new Date().toLocaleDateString('it-IT').replace(/[/]/g, '-');
-            var filename = customer ? 'blending_' + customer + '_' + date + '.pdf' : 'blending_' + date + '.pdf';
-            doc.save(filename);
-            btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> SCARICA PDF';
-            btn.disabled = false;
-        }).catch(function(err) {
-            alert('Errore: ' + err.message);
-            btn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> SCARICA PDF';
-            btn.disabled = false;
-        });
+        }, 100);
     }
 
     function printReceipt() {
