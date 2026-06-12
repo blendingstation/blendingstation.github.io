@@ -889,7 +889,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.44</b><br>
+            All Rights Reserved | Tool Version: <b>v42.46</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1055,7 +1055,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.44</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.46</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1584,7 +1584,7 @@
                 const pad = Math.max(0, Math.floor((W - full.length) / 2));
                 return ' '.repeat(pad) + full;
             }).join('\n') + '\n';
-        })() : ``) + `------------------------------\n      GAS BLENDER REPORT\n------------------------------\n` + `DIVER: ${c}\nLISTINO: ${activeProfile}\n\nResiduo:\nO2: ${oS}% | HE: ${hS}% | N2: ${nS}%\nBAR: ${document.getElementById('pS').value} BAR\n\nTarget:\nO2: ${oE}% | HE: ${hE}% | N2: ${nE}%\nBAR: ${document.getElementById('pE').value} BAR\n\n------------------------------\nDATA: ${new Date().toLocaleDateString('it-IT')}\nBLENDER: ${b}\nFIRMA:\n\n\n──────────────────────────────\n------------------------------\nTOTALE: ${document.getElementById('resGrandTotal').innerText}\n------------------------------\n\n            ✦ ✦ ✦\n    Report di miscelazione\n        ad uso interno\n            ✦ ✦ ✦\n  Documento non valido\n       ai fini fiscali\n            ✦ ✦ ✦`;
+        })() : ``) + `------------------------------\n      GAS BLENDER REPORT\n------------------------------\n` + `DIVER: ${c}\nLISTINO: ${activeProfile}\n\nResiduo:\nO2: ${oS}% | HE: ${hS}% | N2: ${nS}%\nBAR: ${document.getElementById('pS').value} BAR\n\nTarget:\nO2: ${oE}% | HE: ${hE}% | N2: ${nE}%\nBAR: ${document.getElementById('pE').value} BAR\n\n------------------------------\nDATA: ${new Date().toLocaleDateString('it-IT')}\nBLENDER: ${b}\nFIRMA:\n\n\n──────────────────────────────\n------------------------------\nTOTALE: ${document.getElementById('resGrandTotal').innerText}\n------------------------------\n\n            ✦ ✦ ✦\n    Report di miscelazione\n        ad uso interno\n            ✦ ✦ ✦\n Documento non valido ai fini fiscali\n            ✦ ✦ ✦`;
         document.getElementById('receipt').innerText = text; 
         document.getElementById('asciiContainer').style.display = 'block';
         if (window.innerWidth <= 768) mobileNav('home');
@@ -1717,8 +1717,12 @@
         });
 
         cleanLines.forEach(line => {
-            doc.text(line, marginSide, y);
-            y += lineHeight;
+            // Use splitTextToSize to handle long lines without adding blank lines
+            const wrapped = doc.splitTextToSize(line, pageW - marginSide * 2);
+            wrapped.forEach(wline => {
+                doc.text(wline, marginSide, y);
+                y += lineHeight;
+            });
         });
 
         // Get blender name for filename
