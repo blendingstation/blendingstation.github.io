@@ -894,7 +894,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.85</b><br>
+            All Rights Reserved | Tool Version: <b>v42.86</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1060,7 +1060,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.85</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.86</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1660,27 +1660,32 @@
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
         btn.disabled = true;
 
-        const origWi = receipt.style.width;
-        const origPi = receipt.style.padding;
-        const origBi = receipt.style.border;
-        const origMa = receipt.style.margin;
-        receipt.style.padding = '4px 6px';
-        receipt.style.border = 'none';
-        receipt.style.width = '380px';
-        receipt.style.margin = '0 auto';
         html2canvas(receipt, {
             backgroundColor: '#ffffff',
             scale: 3,
             useCORS: true,
-            logging: false,
-            width: 380
+            logging: false
         }).then(canvas => {
-            receipt.style.width = origWi;
-            receipt.style.padding = origPi;
-            receipt.style.border = origBi;
-            receipt.style.margin = origMa;
-            const dataUrl = canvas.toDataURL('image/png');
-            // iOS Safari: open in new tab so user can save with long press
+            // Create a new canvas at 60mm ratio, center the receipt at 51mm
+            // At 96dpi: 60mm = 227px, 51mm = 193px, margin = 17px each side
+            const scale = 3;
+            const pageWpx = Math.round(227 * scale);   // 60mm at 96dpi * scale
+            const textWpx = Math.round(193 * scale);   // 51mm at 96dpi * scale
+            const marginPx = Math.round((pageWpx - textWpx) / 2); // centered
+
+            const srcH = canvas.height;
+            const srcW = canvas.width;
+            const dstH = Math.round(srcH * textWpx / srcW);
+
+            const out = document.createElement('canvas');
+            out.width = pageWpx;
+            out.height = dstH;
+            const ctx = out.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, out.width, out.height);
+            ctx.drawImage(canvas, marginPx, 0, textWpx, dstH);
+
+            const dataUrl = out.toDataURL('image/png');
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             if (isIOS) {
                 const w = window.open();
@@ -1692,20 +1697,20 @@
                     '.bar button{background:#ef4444;color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:14px;font-weight:800;cursor:pointer;}',
                     '.hint{margin-top:72px;padding:12px;color:#64748b;font-size:13px;}',
                     'img{max-width:100%;display:block;margin:0 auto;padding-bottom:20px;}',
-                    '</style></head>',
+                    '<\/style><\/head>',
                     '<body>',
                     '<div class="bar"><span>Report Blending</span><button onclick="window.close()">✕ Chiudi</button></div>',
                     '<p class="hint">Tieni premuta l immagine per salvarla nelle Foto</p>',
                     '<img src="' + dataUrl + '">',
-                    '</body></html>'
+                    '<\/body><\/html>'
                 ].join('');
                 w.document.write(html);
                 w.document.close();
             } else {
                 const link = document.createElement('a');
-                const blender = (document.getElementById('blenderName').value || 'report').replace(/\s+/g, '_');
+                const customer = (document.getElementById('customerName').value || '').replace(/\s+/g, '_');
                 const date = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
-                link.download = 'blending_' + blender + '_' + date + '.png';
+                link.download = customer ? 'blending_' + customer + '_' + date + '.png' : 'blending_' + date + '.png';
                 link.href = dataUrl;
                 link.click();
             }
