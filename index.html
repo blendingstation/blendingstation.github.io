@@ -46,6 +46,18 @@
         html, body { overflow-x: hidden; width: 100%; position: relative; touch-action: pan-y; }
         * { -webkit-tap-highlight-color: transparent; }
 
+        /* NAMES MODAL */
+        #namesModal { display:none; position:fixed; inset:0; z-index:9998; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; padding:20px; }
+        #namesModal.open { display:flex; }
+        #namesModalBox { background:var(--card-bg); border-radius:16px; padding:24px; width:100%; max-width:340px; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+        #namesModalBox h3 { margin:0 0 6px 0; font-size:1em; font-weight:800; color:var(--accent); }
+        #namesModalBox p { margin:0 0 16px 0; font-size:0.8em; color:#64748b; }
+        #namesModalBox .modal-field { margin-bottom:12px; }
+        #namesModalBox .modal-field label { display:block; font-size:0.75em; font-weight:700; margin-bottom:4px; color:var(--text); }
+        #namesModalBox .modal-field input { width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border-ui); background:var(--input-bg); color:var(--input-text); font-size:0.9em; box-sizing:border-box; }
+        #namesModalBox .modal-field input:focus { outline:2px solid var(--accent); border-color:var(--accent); }
+        #namesModalBtn { width:100%; padding:12px; border-radius:10px; background:var(--accent); color:#fff; border:none; font-weight:800; font-size:0.85em; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer; margin-top:4px; }
+
 
         :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
         :focus:not(:focus-visible) { outline: none; }
@@ -909,7 +921,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v43.01</b><br>
+            All Rights Reserved | Tool Version: <b>v43.02</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1075,7 +1087,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v43.01</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v43.02</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1596,7 +1608,21 @@
         const c = (document.getElementById('customerName').value || '').trim();
         const lang = (document.getElementById('langSelect') ? document.getElementById('langSelect').value : 'it') || 'it';
         const t = (translations && translations[lang]) ? translations[lang] : {alert_names: 'Inserire Blender e Diver!'};
-        if (!b || !c) { alert(t.alert_names); return; }
+        if (!b || !c) {
+            // Show modal with missing fields
+            var modal = document.getElementById('namesModal');
+            var bField = document.getElementById('modalBlenderField');
+            var dField = document.getElementById('modalDiverField');
+            var bInput = document.getElementById('modalBlenderInput');
+            var dInput = document.getElementById('modalDiverInput');
+            bField.style.display = !b ? 'block' : 'none';
+            dField.style.display = !c ? 'block' : 'none';
+            if (!b) bInput.value = '';
+            if (!c) dInput.value = '';
+            modal.classList.add('open');
+            setTimeout(function() { (!b ? bInput : dInput).focus(); }, 100);
+            return;
+        }
         const profileMap = { soci: "SOCIO", nonsoci: "NON SOCIO", reale: "COSTO REALE" };
         const activeProfile = profileMap[document.getElementById('priceProfile').value];
         
@@ -2164,6 +2190,35 @@
         calcBestMix();
     }
 
+    function confirmNamesModal() {
+        var bInput = document.getElementById('modalBlenderInput');
+        var dInput = document.getElementById('modalDiverInput');
+        var bField = document.getElementById('modalBlenderField');
+        var dField = document.getElementById('modalDiverField');
+
+        // Copy values back to main inputs
+        if (bField.style.display !== 'none' && bInput.value.trim()) {
+            document.getElementById('blenderName').value = bInput.value.trim();
+        }
+        if (dField.style.display !== 'none' && dInput.value.trim()) {
+            document.getElementById('customerName').value = dInput.value.trim();
+        }
+
+        // Check still missing
+        var b = document.getElementById('blenderName').value.trim();
+        var c = document.getElementById('customerName').value.trim();
+        if (!b || !c) {
+            if (bField.style.display !== 'none') bInput.style.borderColor = !b ? '#ef4444' : '';
+            if (dField.style.display !== 'none') dInput.style.borderColor = !c ? '#ef4444' : '';
+            return;
+        }
+
+        // Close modal and generate report
+        document.getElementById('namesModal').classList.remove('open');
+        saveAndCalc();
+        setTimeout(function() { generateReceipt(); }, 100);
+    }
+
     function calcBestMix() {
         const depth = parseFloat(document.getElementById('plannedDepth') ? document.getElementById('plannedDepth').value : 0) || 0;
         const ppo2 = parseFloat(document.getElementById('ppo2Limit') ? document.getElementById('ppo2Limit').value : 1.4) || 1.4;
@@ -2360,5 +2415,26 @@
       });
     }
   </script>
-</div></body>
+</div>
+
+<!-- NAMES MODAL -->
+<div id="namesModal" onclick="if(event.target===this)this.classList.remove('open')">
+    <div id="namesModalBox">
+        <h3><i class="fa-solid fa-user-pen"></i> Dati mancanti</h3>
+        <p>Inserisci i dati richiesti per generare il report.</p>
+        <div id="modalBlenderField" class="modal-field" style="display:none;">
+            <label>Nome Blender</label>
+            <input type="text" id="modalBlenderInput" placeholder="es. Mario Rossi" autocomplete="name">
+        </div>
+        <div id="modalDiverField" class="modal-field" style="display:none;">
+            <label>Nome Diver</label>
+            <input type="text" id="modalDiverInput" placeholder="es. Luigi Bianchi" autocomplete="name">
+        </div>
+        <button id="namesModalBtn" onclick="confirmNamesModal()">
+            <i class="fa-solid fa-check"></i> Conferma e genera report
+        </button>
+    </div>
+</div>
+
+</body>
 </html>
