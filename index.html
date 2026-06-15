@@ -655,13 +655,14 @@
             <div class="input-grid">
                 <div class="input-group"><label id="lbl_tank_sel">Bombola</label>
                     <select id="cylSelect" onchange="updateCylVol()">
-                        <optgroup label="Bombolini / Stage"><option value="3">3 Litri</option><option value="5">5 Litri</option><option value="5.7">S40 (5.7L)</option><option value="11.1">S80 (11.1L)</option></optgroup>
+                        <optgroup label="Bombolini / Stage"><option value="3">3 Litri</option><option value="5">5 Litri</option><option value="7">7 Litri</option><option value="5.7">S40 (5.7L)</option><option value="11.1">S80 (11.1L)</option></optgroup>
                         <optgroup label="Mono"><option value="10">10 Litri</option><option value="12">12 Litri</option><option value="15" selected>15 Litri</option></optgroup>
                         <optgroup label="Bibo"><option value="20">Bibo 10+10</option><option value="24">Bibo 12+12</option></optgroup>
+                        <optgroup label="Personalizzato"><option value="altro">Altro...</option></optgroup>
                     </select>
                 </div>
                 <div class="input-group"><label id="lbl_prio">Priorità</label><select id="fillOrder" onchange="calc()"><option value="HE_FIRST">Elio ➔ O2 ➔ Aria</option><option value="O2_FIRST">O2 ➔ Elio ➔ Aria</option></select></div>
-                <div class="input-group"><label id="lbl_vol">Volume (L)</label><input type="number" id="cylVol" value="15" readonly></div>
+                <div class="input-group"><label id="lbl_vol">Volume (L)</label><input type="number" id="cylVol" value="15" readonly style="transition:background 0.2s,color 0.2s;" oninput="saveAndCalc()" inputmode="decimal" onfocus="this.select()"></div>
                 <div class="input-group"><label id="lbl_maxp">Gas Totale (L)</label><input type="number" id="gasTot" value="3150" readonly></div>
                 
                 <div class="input-group"><label>Blender</label><input type="text" id="blenderName" placeholder="nome" autocomplete="name" aria-label="Nome Blender"></div>
@@ -929,7 +930,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v42.95</b><br>
+            All Rights Reserved | Tool Version: <b>v42.98</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1095,7 +1096,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.95</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v42.98</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1197,7 +1198,28 @@
         }
     }
 
-    function updateCylVol() { document.getElementById('cylVol').value = document.getElementById('cylSelect').value; calc(); }
+    function updateCylVol() {
+        const sel = document.getElementById('cylSelect');
+        const vol = document.getElementById('cylVol');
+        if (sel.value === 'altro') {
+            vol.removeAttribute('readonly');
+            vol.style.background = 'var(--input-bg)';
+            vol.style.color = 'var(--input-text)';
+            vol.style.opacity = '1';
+            vol.style.cursor = 'auto';
+            vol.focus();
+        } else {
+            vol.setAttribute('readonly', true);
+            vol.style.background = '';
+            vol.style.color = '';
+            vol.style.opacity = '';
+            vol.style.cursor = '';
+            vol.value = sel.value;
+        }
+        calc_orig_updateCylVol();
+    }
+    function calc_orig_updateCylVol() { document.getElementById('cylVol').value = document.getElementById('cylSelect').value; calc(); }
+
     function changeLang() {
         const lang = document.getElementById('langSelect').value;
         document.documentElement.lang = lang;
