@@ -921,7 +921,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v43.04</b><br>
+            All Rights Reserved | Tool Version: <b>v43.07</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1088,7 +1088,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v43.04</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v43.07</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2100,32 +2100,35 @@
         const btn = document.getElementById('fn-' + tab);
         if (btn) btn.classList.add('active');
 
+        // Release fixed positioning first if currently locked
+        if (document.body.style.position === 'fixed') {
+            document.body.style.position = '';
+            document.body.style.overflow = '';
+            document.body.style.width = '';
+        }
+
         // Toggle body classes for CSS-driven show/hide
         document.body.classList.toggle('mobile-safety', tab === 'safety');
         if (tab === 'safety') calc();
         document.body.classList.toggle('mobile-prezzi', tab === 'prezzi');
         document.body.classList.toggle('mobile-setup', tab === 'impostazioni');
         document.body.classList.toggle('mobile-info', tab === 'info');
-        // Block scroll on static tabs (works on iOS PWA too)
-        const staticTabs = ['impostazioni', 'info', 'prezzi'];
-        if (staticTabs.includes(tab)) {
-            document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
-        } else {
-            document.body.style.overflow = '';
-            document.body.style.position = '';
-            document.body.style.width = '';
-        }
+
         if (tab === 'prezzi') syncMobileFromDesktop();
         if (tab === 'impostazioni') syncSetupMobile();
 
+        window.scrollTo({top: 0, behavior: 'auto'});
 
+        // Apply fixed positioning for static tabs on next frame
+        const staticTabs = ['impostazioni', 'info', 'prezzi'];
+        requestAnimationFrame(function() {
+            if (staticTabs.includes(tab)) {
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+            }
+        });
 
-
-
-
-        window.scrollTo({top: 0, behavior: 'smooth'});
         localStorage.setItem('mobileTab', tab);
     }
 
@@ -2330,10 +2333,9 @@
         changeLang();
 
         calc();
-        // Restore mobile tab
+        // Always start on Home tab on mobile
         if (window.innerWidth <= 768) {
-            const lastTab = localStorage.getItem('mobileTab') || 'home';
-            mobileNav(lastTab);
+            mobileNav('home');
         }
         requestWakeLock();
     };
