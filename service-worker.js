@@ -25,6 +25,12 @@ self.addEventListener('activate', event => {
 
 // Fetch: network first for HTML, cache fallback for rest
 self.addEventListener('fetch', event => {
+  // Non intercettare richieste verso TankLabel: è un'app separata
+  const url = new URL(event.request.url);
+  if (url.pathname.includes('/tanklabel/')) {
+    return;
+  }
+
   if (event.request.mode === 'navigate') {
     // Always try network first for page navigation
     event.respondWith(
