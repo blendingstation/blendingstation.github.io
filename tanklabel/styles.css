@@ -9,7 +9,7 @@
   --color-primary: #3498db;
   --color-primary-dark: #1e293b;
   --color-accent: #3498db;
-  --color-bg: #f1f5f9;
+  --color-bg: #0f172a;
   --color-surface: #ffffff;
   --color-text-main: #1e293b;
   --color-text-muted: #64748b;
@@ -31,15 +31,6 @@
     0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --font-family: "Inter", sans-serif;
   --input-bg: #f8fafc;
-}
-
-[data-theme="dark"] {
-  --color-bg: #0f172a;
-  --color-surface: #1e293b;
-  --color-text-main: #f1f5f9;
-  --color-text-muted: #cbd5e1;
-  --color-border: #334155;
-  --input-bg: #0f172a;
 }
 
 /* --- Reset & Base --- */
@@ -80,8 +71,9 @@ body {
 
 .brand-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
+  gap: 12px 14px;
   margin-bottom: 24px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--color-border);
@@ -89,6 +81,11 @@ body {
 
 .brand-logo {
   flex-shrink: 0;
+}
+
+.brand-text {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .brand-header h1 {
@@ -107,8 +104,9 @@ body {
 }
 
 .back-link {
-  flex-shrink: 0;
-  display: flex;
+  flex: 0 0 auto;
+  width: fit-content;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 0.78rem;
