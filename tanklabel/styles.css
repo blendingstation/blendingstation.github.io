@@ -1,0 +1,543 @@
+/* =====================================================
+ * TankLabel - styles.css
+ * Estratto da index.html come parte del refactoring v4.0
+ * ===================================================== */
+
+/* --- Design Tokens --- */
+:root {
+  /* Palette - allineata a Blending Station */
+  --color-primary: #3498db;
+  --color-primary-dark: #1e293b;
+  --color-accent: #3498db;
+  --color-bg: #f1f5f9;
+  --color-surface: #ffffff;
+  --color-text-main: #1e293b;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-danger: #ef4444;
+  --color-success: #2ecc71;
+  --color-he: #795548;
+  --color-o2: #2ecc71;
+  --color-n2: #f1c40f;
+
+  /* Spacing & Layout */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --font-family: "Inter", sans-serif;
+  --input-bg: #f8fafc;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-text-main: #f1f5f9;
+  --color-text-muted: #cbd5e1;
+  --color-border: #334155;
+  --input-bg: #0f172a;
+}
+
+/* --- Reset & Base --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-bg);
+  color: var(--color-text-main);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Layout --- */
+header {
+  width: 100%;
+  height: 280px;
+  background: var(--color-text-main);
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.8;
+  transition: transform 0.5s ease;
+}
+
+header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  background: linear-gradient(to top, var(--color-bg) 0%, transparent 100%);
+}
+
+.main-container {
+  width: 100%;
+  max-width: 800px;
+  margin: -80px auto 40px;
+  padding: 0 20px;
+  z-index: 10;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: stretch;
+}
+
+/* --- Headings --- */
+.page-title {
+  position: absolute;
+  top: -160px;
+  left: 20px;
+  right: 20px;
+  text-align: center;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.page-title h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.page-title p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* --- Cards --- */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--color-text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title i {
+  color: var(--color-primary);
+}
+
+/* --- Forms & Inputs --- */
+.input-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-group label i {
+  color: var(--color-primary);
+  font-size: 0.9em;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--input-bg);
+  color: var(--color-text-main);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+  background: var(--color-surface);
+}
+
+.input-suffix {
+  position: absolute;
+  right: 16px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.dual-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dual-input input {
+  text-align: center;
+}
+
+.dual-input span {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.3);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px -1px rgba(2, 132, 199, 0.4);
+}
+
+.btn-secondary {
+  background: var(--color-surface);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+  background: var(--color-bg);
+  border-color: var(--color-text-muted);
+}
+
+.btn-accent {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-accent:hover {
+  background: #138496;
+}
+
+.btn-print {
+  background: #6d28d9;
+  color: white;
+}
+
+.btn-print:hover {
+  background: #5b21b6;
+  transform: translateY(-1px);
+}
+
+/* --- Preview --- */
+.preview-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.preview-card {
+  background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4=")
+    var(--color-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  border: 2px dashed var(--color-border);
+  position: relative;
+}
+
+.preview-card.printing {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* --- Label Styling (Print Target) --- */
+.label-content {
+  background: white;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform-origin: center;
+  transition:
+    width 0.3s,
+    height 0.3s;
+}
+
+.label-header {
+  background: var(--color-danger);
+  color: white;
+  height: 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  line-height: 1;
+  font-size: calc(var(--base-px-size) * 1.6);
+}
+
+.label-body {
+  flex: 1;
+  padding: 4% 8%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  color: black;
+}
+
+.row-mix {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4em;
+  font-size: calc(var(--base-px-size) * 1.25);
+}
+
+.box-value {
+  border: 2px solid black;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.text-label {
+  font-style: italic;
+  font-weight: 600;
+}
+
+.divider {
+  height: 2px;
+  background: black;
+  width: 100%;
+  margin: 2% 0;
+  border-radius: 1px;
+}
+
+.row-meta {
+  text-align: center;
+  font-size: var(--base-px-size);
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+}
+
+.row-info {
+  font-size: var(--base-px-size);
+  display: flex;
+  justify-content: space-between;
+}
+
+.row-info span:first-child {
+  font-style: italic;
+}
+.row-info span:last-child {
+  font-weight: 700;
+}
+
+/* --- OCR Modal --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.8);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-box {
+  background: var(--color-surface);
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.camera-viewport {
+  width: 100%;
+  height: 300px;
+  background: #000;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+  margin: 20px 0;
+}
+
+#videoElement,
+#captureCanvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: none;
+  margin: 10px auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Footer --- */
+footer {
+  margin-top: auto;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  header {
+    height: 220px;
+  }
+  .page-title {
+    top: -140px;
+  }
+  .page-title h1 {
+    font-size: 2rem;
+  }
+  .label-preview {
+    min-height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 20px;
+  }
+  .modal-actions button {
+    width: 100%;
+  }
+}
+
+/* --- Stampa @media print ---
+ * Nasconde TUTTO tranne la sola etichetta.
+ * Usa le dimensioni in mm impostate dall'utente per garantire
+ * che la stampa fisica corrisponda alle dimensioni reali dell'etichetta.
+ */
+@media print {
+  body > *:not(#print-area) {
+    display: none !important;
+  }
+
+  header,
+  footer,
+  .main-container,
+  .page-title {
+    display: none !important;
+  }
+
+  #print-area {
+    display: block !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  #print-area .label-content {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .label-header {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TankLabel - Editor Template Cifre</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #fbbf24;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        .editor-panel,
+        .sidebar-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sidebar-section h3 {
+            margin-bottom: 10px;
+            color: #60a5fa;
+            font-size: 0.9rem;
+        }
+
+        .grid-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(14, 24px);
+            grid-template-rows: repeat(24, 24px);
+            gap: 1px;
+            background: #333;
+            padding: 2px;
+            border-radius: 4px;
+        }
+
+        .cell {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            transition: all 0.1s;
+            border-radius: 2px;
+        }
+
+        .cell:hover {
+            transform: scale(1.1);
+            z-index: 1;
+        }
+
+        .cell.v0 {
+            background: #0a0a0a;
+        }
+
+        .cell.v1 {
+            background: #3d3d00;
+        }
+
+        .cell.v7 {
+            background: #a89000;
+        }
+
+        .cell.v8 {
+            background: #fbbf24;
+        }
+
+        .brush-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+
+        .brush-btn {
+            width: 50px;
+            height: 50px;
+            border: 3px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+
+        .brush-btn.active {
+            border-color: #fff;
+            transform: scale(1.1);
+        }
+
+        .brush-btn.b0 {
+            background: #0a0a0a;
+            color: #666;
+        }
+
+        .brush-btn.b1 {
+            background: #3d3d00;
+            color: #888;
+        }
+
+        .brush-btn.b7 {
+            background: #a89000;
+            color: #000;
+        }
+
+        .brush-btn.b8 {
+            background: #fbbf24;
+            color: #000;
+        }
+
+        .digit-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .digit-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .digit-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .digit-btn.active {
+            background: #3b82f6;
+            border-color: #60a5fa;
+        }
+
+        .variants-list {
+            max-height: 250px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .variant-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .variant-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .variant-preview {
+            width: 28px;
+            height: 48px;
+            display: grid;
+            grid-template-columns: repeat(14, 2px);
+            grid-template-rows: repeat(24, 2px);
+        }
+
+        .variant-name {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .variant-delete {
+            background: #ef4444;
+            border: none;
+            color: #fff;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #000;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow: auto;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 15px;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            height: 400px;
+            background: #0f172a;
+            color: #10b981;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .info-box {
+            background: rgba(59, 130, 246, 0.2);
+            border-left: 4px solid #3b82f6;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+        }
+
+        .tools {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .tools .btn {
+            width: auto;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔢 Editor Template Cifre</h1>
+    <div class="container">
+        <div class="editor-panel">
+            <div class="info-box">
+                📝 <strong>Come usare:</strong> Seleziona un pennello (0, 1, 7, 8) e clicca/trascina sulla griglia.
+                Salva più varianti per ogni cifra per migliorare il riconoscimento.
+            </div>
+            <div class="brush-selector">
+                <button class="brush-btn b0" data-value="0" title="Nero (sfondo)">0</button>
+                <button class="brush-btn b1" data-value="1" title="Alone tenue">1</button>
+                <button class="brush-btn b7 active" data-value="7" title="Giallo smorzato">7</button>
+                <button class="brush-btn b8" data-value="8" title="Giallo pieno">8</button>
+            </div>
+            <div class="grid-container">
+                <div class="grid" id="grid"></div>
+            </div>
+            <div class="tools">
+                <button class="btn btn-warning" onclick="clearGrid()">🗑️ Pulisci</button>
+                <button class="btn btn-primary" onclick="flipHorizontal()">↔️ Specchia H</button>
+                <button class="btn btn-primary" onclick="flipVertical()">↕️ Specchia V</button>
+            </div>
+        </div>
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h3>📌 Cifra Corrente</h3>
+                <div class="digit-selector">
+                    <button class="digit-btn active" data-digit="0">0</button>
+                    <button class="digit-btn" data-digit="1">1</button>
+                    <button class="digit-btn" data-digit="2">2</button>
+                    <button class="digit-btn" data-digit="3">3</button>
+                    <button class="digit-btn" data-digit="4">4</button>
+                    <button class="digit-btn" data-digit="5">5</button>
+                    <button class="digit-btn" data-digit="6">6</button>
+                    <button class="digit-btn" data-digit="7">7</button>
+                    <button class="digit-btn" data-digit="8">8</button>
+                    <button class="digit-btn" data-digit="9">9</button>
+                    <button class="digit-btn" data-digit=".">.</button>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <h3>💾 Varianti Salvate</h3>
+                <button class="btn btn-success" onclick="saveVariant()">+ Salva come Variante</button>
+                <div class="variants-list" id="variantsList"></div>
+            </div>
+            <div class="sidebar-section">
+                <h3>📤 Esporta</h3>
+                <button class="btn btn-primary" onclick="exportTemplates()">Esporta JavaScript</button>
+                <button class="btn btn-warning" onclick="exportJSON()">Esporta JSON</button>
+            </div>
+            <div class="sidebar-section">
+                <h3>📥 Importa</h3>
+                <button class="btn btn-primary" onclick="loadFromDigitTemplates()">🔄 Ricarica da file</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <h2>📤 Codice Esportato</h2>
+            <textarea id="exportCode" readonly></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-success" onclick="copyExport()">📋 Copia</button>
+                <button class="btn btn-primary" onclick="downloadExport()">⬇️ Scarica</button>
+                <button class="btn btn-danger" onclick="closeModal()">✖️ Chiudi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load templates FIRST -->
+    <script src="digit-templates.js"></script>
+    <script>
+        const GRID_W = 14, GRID_H = 24;
+        let currentBrush = 7, currentDigit = '0', isDrawing = false, grid = [];
+        let digitVariants = { '0': [], '1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [], '8': [], '9': [], '.': [] };
+
+        function initGrid() {
+            const gridEl = document.getElementById('grid');
+            gridEl.innerHTML = '';
+            grid = [];
+            for (let y = 0; y < GRID_H; y++) {
+                const row = [];
+                for (let x = 0; x < GRID_W; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell v0';
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    cell.addEventListener('mousedown', e => { isDrawing = true; paintCell(cell); e.preventDefault(); });
+                    cell.addEventListener('mouseenter', () => { if (isDrawing) paintCell(cell); });
+                    cell.addEventListener('touchstart', e => { paintCell(cell); e.preventDefault(); });
+                    cell.addEventListener('touchmove', e => {
+                        const t = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+                        if (t && t.classList.contains('cell')) paintCell(t);
+                        e.preventDefault();
+                    });
+                    gridEl.appendChild(cell);
+                    row.push(0);
+                }
+                grid.push(row);
+            }
+            document.addEventListener('mouseup', () => isDrawing = false);
+        }
+
+        function paintCell(cell) {
+            const x = +cell.dataset.x, y = +cell.dataset.y;
+            grid[y][x] = currentBrush;
+            cell.className = 'cell v' + currentBrush;
+        }
+
+        function clearGrid() {
+            document.querySelectorAll('.cell').forEach((c, i) => {
+                grid[Math.floor(i / GRID_W)][i % GRID_W] = 0;
+                c.className = 'cell v0';
+            });
+        }
+
+        function loadGridFromArray(arr) {
+            document.querySelectorAll('.cell').forEach((c, i) => {
+                const v = arr[Math.floor(i / GRID_W)][i % GRID_W];
+                grid[Math.floor(i / GRID_W)][i % GRID_W] = v;
+                c.className = 'cell v' + v;
+            });
+        }
+
+        function flipHorizontal() { grid.forEach(r => r.reverse()); loadGridFromArray(grid); }
+        function flipVertical() { grid.reverse(); loadGridFromArray(grid); }
+
+        document.querySelectorAll('.brush-btn').forEach(b => {
+            b.addEventListener('click', () => {
+                document.querySelectorAll('.brush-btn').forEach(x => x.classList.remove('active'));
+                b.classList.add('active');
+                currentBrush = +b.dataset.value;
+            });
+        });
+
+        document.querySelectorAll('.digit-btn').forEach(b => {
+            b.addEventListener('click', () => {
+                document.querySelectorAll('.digit-btn').forEach(x => x.classList.remove('active'));
+                b.classList.add('active');
+                currentDigit = b.dataset.digit;
+                updateVariantsList();
+                if (digitVariants[currentDigit].length > 0) loadGridFromArray(digitVariants[currentDigit][0].data);
+                else clearGrid();
+            });
+        });
+
+        function saveVariant() {
+            const name = prompt('Nome variante per "' + currentDigit + '":', 'Var' + (digitVariants[currentDigit].length + 1));
+            if (!name) return;
+            digitVariants[currentDigit].push({ name, data: grid.map(r => [...r]) });
+            updateVariantsList();
+            saveToLocalStorage();
+        }
+
+        function updateVariantsList() {
+            const list = document.getElementById('variantsList');
+            const vars = digitVariants[currentDigit];
+            if (!vars.length) { list.innerHTML = '<div style="color:#666;padding:10px">Nessuna variante</div>'; return; }
+            list.innerHTML = '';
+            vars.forEach((v, i) => {
+                const item = document.createElement('div');
+                item.className = 'variant-item';
+                const prev = document.createElement('div');
+                prev.className = 'variant-preview';
+                for (let y = 0; y < GRID_H; y++) for (let x = 0; x < GRID_W; x++) {
+                    const mc = document.createElement('div');
+                    const val = v.data[y][x];
+                    mc.style.background = val === 0 ? '#0a0a0a' : val === 1 ? '#3d3d00' : val === 7 ? '#a89000' : '#fbbf24';
+                    prev.appendChild(mc);
+                }
+                const nm = document.createElement('span');
+                nm.className = 'variant-name';
+                nm.textContent = v.name;
+                const del = document.createElement('button');
+                del.className = 'variant-delete';
+                del.textContent = '×';
+                del.onclick = e => { e.stopPropagation(); if (confirm('Eliminare?')) { vars.splice(i, 1); updateVariantsList(); saveToLocalStorage(); } };
+                item.appendChild(prev);
+                item.appendChild(nm);
+                item.appendChild(del);
+                item.onclick = () => loadGridFromArray(v.data);
+                list.appendChild(item);
+            });
+        }
+
+        function exportTemplates() {
+            let c = '/**\n * Digit Templates - TankLabel\n * Grid: ' + GRID_W + 'x' + GRID_H + '\n */\n\nconst DIGIT_TEMPLATES = {\n    GRID_WIDTH: ' + GRID_W + ',\n    GRID_HEIGHT: ' + GRID_H + ',\n';
+            for (const [d, vs] of Object.entries(digitVariants)) {
+                if (!vs.length) continue;
+                c += '\n    \'' + d + '\': [\n';
+                vs.forEach(v => {
+                    c += '        { name: "' + v.name + '", data: [\n';
+                    v.data.forEach(r => c += '            [' + r.join(',') + '],\n');
+                    c += '        ]},\n';
+                });
+                c += '    ],\n';
+            }
+            c += '};\n\n// Export for use in main app\nif (typeof module !== \'undefined\' && module.exports) {\n    module.exports = DIGIT_TEMPLATES;\n}\n';
+            document.getElementById('exportCode').value = c;
+            document.getElementById('exportModal').classList.add('active');
+        }
+
+        function exportJSON() {
+            document.getElementById('exportCode').value = JSON.stringify(digitVariants, null, 2);
+            document.getElementById('exportModal').classList.add('active');
+        }
+
+        function copyExport() { document.getElementById('exportCode').select(); document.execCommand('copy'); alert('Copiato!'); }
+        function downloadExport() {
+            const c = document.getElementById('exportCode').value;
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([c], { type: 'text/plain' }));
+            a.download = c.startsWith('{') ? 'templates.json' : 'digit-templates.js';
+            a.click();
+        }
+        function closeModal() { document.getElementById('exportModal').classList.remove('active'); }
+
+        function loadFromDigitTemplates() {
+            if (typeof DIGIT_TEMPLATES === 'undefined') { alert('File non trovato'); return; }
+            let cnt = 0;
+            for (const [d, vs] of Object.entries(DIGIT_TEMPLATES)) {
+                if (d === 'GRID_WIDTH' || d === 'GRID_HEIGHT' || !Array.isArray(vs)) continue;
+                digitVariants[d] = vs.map((v, i) => ({ name: v.name || ('Var' + (i + 1)), data: v.data }));
+                cnt += vs.length;
+            }
+            updateVariantsList();
+            if (digitVariants[currentDigit].length > 0) loadGridFromArray(digitVariants[currentDigit][0].data);
+            alert('✅ Caricate ' + cnt + ' varianti!');
+        }
+
+        function saveToLocalStorage() { localStorage.setItem('kiko_vars', JSON.stringify(digitVariants)); }
+        function loadFromLocalStorage() {
+            const s = localStorage.getItem('kiko_vars');
+            if (s) { try { digitVariants = JSON.parse(s); return true; } catch (e) { } }
+            return false;
+        }
+
+        // INIT
+        initGrid();
+        if (!loadFromLocalStorage() && typeof DIGIT_TEMPLATES !== 'undefined') loadFromDigitTemplates();
+        else updateVariantsList();
+        if (digitVariants[currentDigit].length > 0) loadGridFromArray(digitVariants[currentDigit][0].data);
+    </script>
+</body>
+
+</html>
