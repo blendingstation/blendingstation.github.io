@@ -18,9 +18,30 @@
 
   <!-- Stili: estratti in styles.css (refactoring v4.0) -->
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Splash screen critical CSS - renders before JS, prevents white flash -->
+  <style>html,body{background:#0f172a !important;margin:0;padding:0}#splashScreen{position:fixed;inset:0;z-index:99999;background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px}#splashScreen svg{width:90px;height:90px;animation:sp 1.5s ease-in-out infinite}#splashScreen .st{color:#fff;font-size:1.4em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-align:center}#splashScreen .ss{color:#06b6d4;font-size:.75em;font-weight:600;letter-spacing:.15em;text-transform:uppercase}#splashScreen .sd{display:flex;gap:8px}#splashScreen .sd span{width:8px;height:8px;border-radius:50%;background:#06b6d4;animation:sd 1.2s ease-in-out infinite}#splashScreen .sd span:nth-child(2){animation-delay:.2s}#splashScreen .sd span:nth-child(3){animation-delay:.4s}#splashScreen.hidden{opacity:0;transition:opacity .5s ease;pointer-events:none}@keyframes sp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.85}}@keyframes sd{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}.main-container{visibility:hidden}</style>
 </head>
 
-<body>
+<body style="background-color:#0f172a;">
+
+  <!-- SPLASH SCREEN -->
+  <div id="splashScreen">
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <rect x="22" y="6" width="20" height="48" rx="9" fill="#cbd5e1" stroke="#475569" stroke-width="1.5"/>
+      <rect x="28" y="0" width="8" height="8" rx="2" fill="#475569"/>
+      <rect x="25" y="16" width="14" height="9" rx="2" fill="#2ecc71"/>
+      <rect x="25" y="27" width="14" height="6" rx="2" fill="#f1c40f"/>
+      <rect x="25" y="35" width="14" height="5" rx="2" fill="#795548"/>
+      <rect x="8" y="42" width="22" height="16" rx="3" fill="#ffffff" stroke="#3498db" stroke-width="1.5" transform="rotate(-8 19 50)"/>
+    </svg>
+    <div>
+      <div class="st">TankLabel</div>
+      <div class="ss">Etichette Mix &amp; Trimix</div>
+    </div>
+    <div class="sd"><span></span><span></span><span></span></div>
+  </div>
+
   <main class="main-container">
     <!-- SECTION: INPUTS -->
     <section class="card input-section">
@@ -33,7 +54,7 @@
           <rect x="25" y="35" width="14" height="5" rx="2" fill="#795548"/>
           <rect x="8" y="42" width="22" height="16" rx="3" fill="#ffffff" stroke="#3498db" stroke-width="1.5" transform="rotate(-8 19 50)"/>
         </svg>
-        <div style="flex:1;">
+        <div class="brand-text">
           <h1>TankLabel</h1>
           <p>Generatore Etichette Mix &amp; Trimix</p>
         </div>
@@ -494,35 +515,21 @@
       });
     }
 
-    // --- Dark Mode (auto, allineato a Blending Station) ---
-    function initTheme() {
-      const savedTheme = localStorage.getItem("theme");
-      const prefersDark =
-        window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const isDark = savedTheme ? savedTheme === "dark" : prefersDark;
-      document.documentElement.setAttribute(
-        "data-theme",
-        isDark ? "dark" : "light",
-      );
-      if (window.matchMedia) {
-        window
-          .matchMedia("(prefers-color-scheme: dark)")
-          .addEventListener("change", (e) => {
-            if (!localStorage.getItem("theme")) {
-              document.documentElement.setAttribute(
-                "data-theme",
-                e.matches ? "dark" : "light",
-              );
-            }
-          });
-      }
-    }
-
     // --- Avvio ---
     document.addEventListener("DOMContentLoaded", () => {
-      initTheme();
       init();
+      // Mostra contenuto app (splash già visibile)
+      document.querySelector(".main-container").style.visibility = "visible";
+      // Nascondi splash dopo 2.8s
+      setTimeout(function () {
+        var splash = document.getElementById("splashScreen");
+        if (splash) {
+          splash.classList.add("hidden");
+          setTimeout(function () {
+            splash.style.display = "none";
+          }, 500);
+        }
+      }, 2800);
     });
   </script>
 </body>
