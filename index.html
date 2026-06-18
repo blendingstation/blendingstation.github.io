@@ -151,8 +151,8 @@
         .price-date-display { display: block; text-align: right; font-size: 0.65em; color: #64748b; text-transform: uppercase; font-weight: 700; margin-top: 8px; }
         
         .btn-ascii { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 15px; width: 100%; text-transform: uppercase; }
-        #asciiContainer { display: none; margin: 20px auto; padding: 20px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-ui); text-align: center; max-width: 1100px; }
-        .ascii-receipt { font-family: 'Azeret Mono', monospace; white-space: pre; font-size: 0.9em; text-align: left; display: inline-block; padding: 20px; border: 1px solid var(--border-ui); color: var(--primary); background: var(--input-bg); width: 100%; }
+        #asciiContainer { display: none; margin: 20px auto; padding: 20px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-ui); text-align: center; max-width: 420px; position: relative; }
+        .ascii-receipt { font-family: 'Azeret Mono', monospace; white-space: pre; font-size: 0.82em; text-align: left; display: inline-block; padding: 20px; border: 1px solid var(--border-ui); color: var(--primary); background: var(--input-bg); width: auto; max-width: 100%; }
 
         .site-footer { margin-top: 40px; padding: 40px 20px; background: var(--card-bg); border-top: 1px solid var(--border-ui); color: #64748b; text-align: center; }
         .footer-content { max-width: 1100px; margin: 0 auto; }
@@ -922,7 +922,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v43.19</b><br>
+            All Rights Reserved | Tool Version: <b>v43.21</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1074,6 +1074,9 @@
 </div>
 
 <div id="asciiContainer">
+    <button onclick="closeReceiptView()" aria-label="Chiudi report" style="position:absolute; top:12px; right:12px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,0.06); border:none; color:var(--text); font-size:1em; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:10;">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
     <div id="receipt" class="ascii-receipt"></div><br>
     <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px; max-width:320px; margin-left:auto; margin-right:auto;">
         <button onclick="printReceipt()" id="btn_print" style="padding:12px 25px; background:#1e293b; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:800; text-transform:uppercase; width:100%;"><i class="fa-solid fa-print"></i> STAMPA</button>
@@ -1095,7 +1098,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v43.19</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v43.21</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1679,6 +1682,10 @@
         } catch(err) { alert('Errore: ' + err.message); }
     }
 
+    function closeReceiptView() {
+        document.getElementById('asciiContainer').style.display = 'none';
+    }
+
     function saveToHistory(entry) {
         try {
             var history = JSON.parse(localStorage.getItem('blendHistory') || '[]');
@@ -1695,21 +1702,24 @@
             alert('Nessuna ricarica in cronologia.');
             return;
         }
-        var rows = [['Data', 'Diver', 'Blender', 'Listino', 'Miscela Residua (O2/HE/N2)', 'BAR Residuo', 'Miscela Target (O2/HE/N2)', 'BAR Target', 'Totale']];
+        var SEP = ';';
+        var rows = [['Data', 'Ora', 'Diver', 'Blender', 'Listino', 'Miscela Residua (O2/HE/N2)', 'BAR Residuo', 'Miscela Target (O2/HE/N2)', 'BAR Target', 'Totale']];
         history.forEach(function(e) {
-            var dateStr = new Date(e.date).toLocaleString('it-IT');
+            var d = new Date(e.date);
+            var dateOnly = d.toLocaleDateString('it-IT');
+            var timeOnly = d.toLocaleTimeString('it-IT');
             var mixS = e.o2S + '/' + e.heS + '/' + (e.nS || (100 - parseFloat(e.o2S) - parseFloat(e.heS)).toFixed(1));
             var mixE = e.o2E + '/' + e.heE + '/' + (e.nE || (100 - parseFloat(e.o2E) - parseFloat(e.heE)).toFixed(1));
-            rows.push([dateStr, e.diver, e.blender, e.listino || '', mixS, e.pS, mixE, e.pE, e.total]);
+            rows.push([dateOnly, timeOnly, e.diver, e.blender, e.listino || '', mixS, e.pS, mixE, e.pE, e.total]);
         });
         var csv = rows.map(function(r) {
             return r.map(function(cell) {
                 var s = String(cell == null ? '' : cell);
-                if (s.indexOf(',') >= 0 || s.indexOf('"') >= 0 || s.indexOf('\n') >= 0) {
+                if (s.indexOf(SEP) >= 0 || s.indexOf('"') >= 0 || s.indexOf('\n') >= 0) {
                     s = '"' + s.replace(/"/g, '""') + '"';
                 }
                 return s;
-            }).join(',');
+            }).join(SEP);
         }).join('\r\n');
 
         var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
