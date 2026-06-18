@@ -596,7 +596,14 @@
 
                     <div class="setting-item"><label class="setting-label" id="lbl_font">Dimensione Font</label><input type="range" id="fontSlider" min="12" max="22" value="16" oninput="updateFontSize(this.value)"></div>
                     <div class="setting-item"><label class="setting-label">Nome Centro / Negozio</label><input type="text" id="shopName" placeholder="es. Dive Center Roma" oninput="saveAndCalc();" style="width:100%; padding:7px 10px; border-radius:8px; border:1px solid var(--border-ui); background:var(--input-bg); color:var(--input-text); font-size:0.82em; margin-top:4px; box-sizing:border-box;"></div>
-                    
+
+                    <div class="setting-item">
+                        <a href="https://blendingstation.github.io/tanklabel/" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:space-between; text-decoration:none; color:var(--text);">
+                            <span style="font-size:0.82em; font-weight:700; color:#64748b;"><i class="fa-solid fa-tag" style="color:var(--accent); margin-right:6px;"></i>Crea Etichetta (TankLabel)</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75em; color:#64748b;"></i>
+                        </a>
+                    </div>
+
                     <div class="setting-item" id="priceConfigInSettings" style="border-bottom:none; padding-bottom:0;">
                         <label class="setting-label">Configurazione Listini (€/L)</label>
                         
@@ -1004,6 +1011,16 @@
             <input type="text" id="shopNameMobile" placeholder="es. Dive Center Roma"
                 oninput="document.getElementById('shopName').value=this.value; saveAndCalc();"
                 style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--border-ui); background:var(--input-bg); color:var(--input-text); font-size:0.85em; margin-top:4px; box-sizing:border-box;">
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border-ui); margin:12px 0;">
+
+        <!-- 7. Link TankLabel -->
+        <div class="setting-item" style="border-bottom:none;">
+            <a href="https://blendingstation.github.io/tanklabel/" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:space-between; text-decoration:none; color:var(--text);">
+                <span style="font-size:0.78em; font-weight:700; color:#64748b;"><i class="fa-solid fa-tag" style="color:var(--accent); margin-right:6px;"></i>Crea Etichetta (TankLabel)</span>
+                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.7em; color:#64748b;"></i>
+            </a>
         </div>
     </div>
 
