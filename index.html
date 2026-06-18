@@ -2124,11 +2124,11 @@ function confirmResetApp() {
     }
 }
 function resetAppFields() {
-    ['oS','hS','pS','o2E','heE','pE'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) el.value = (id === 'oS') ? 21 : 0;
-    });
+    document.getElementById('o2S').value = 21;
+    document.getElementById('heS').value = 0;
     document.getElementById('pS').value = 0;
+    document.getElementById('o2E').value = 21;
+    document.getElementById('heE').value = 0;
     document.getElementById('pE').value = 0;
     var cylSelect = document.getElementById('cylSelect');
     if (cylSelect) cylSelect.selectedIndex = 0;
