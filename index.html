@@ -536,6 +536,9 @@
             <h1 id="main_title" style="display:none;">Blending Station</h1>
         </div>
         <div class="header-tools">
+            <button id="resetAppBtn" onclick="confirmResetApp()" aria-label="Reset campi" title="Azzera tutti i campi" style="background:transparent; border:1px solid var(--border-ui); color:var(--text); width:34px; height:34px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.95em;">
+                <i class="fa-solid fa-rotate-left"></i>
+            </button>
             <div id="wakeLockBadge" class="wakelock-status" onclick="toggleWakeLockManual()">
                 <i class="fa-solid fa-lightbulb"></i> <span id="wakeLockText">Schermo Standard</span>
             </div>
@@ -671,7 +674,7 @@
 
     <div class="top-row">
         <div class="card" id="residueCard">
-            <div class="card-title"><i class="fa-solid fa-pen-nib"></i> <span id="lbl_residue_title">1. RESIDUO</span></div>
+            <div class="card-title"><i class="fa-solid fa-pen-nib"></i> <span id="lbl_residue_title">1. RESIDUO</span></div><div style="font-size:0.68em; color:#64748b; font-weight:600; margin-top:-6px; margin-bottom:8px;" id="lbl_residue_sub">Gas rimasto in bombola</div>
             <div class="tank-visual">
                 <div class="valve-wrap">
                     <div class="v-handwheel"></div><div class="v-stem"></div>
@@ -681,8 +684,8 @@
                 <div class="tank-body"><div id="rO2" class="seg" style="background:var(--color-o2);">O2</div><div id="rHe" class="seg" style="background:var(--color-he);">He</div><div id="rN2" class="seg" style="background:var(--color-n2);">N2</div></div>
             </div>
             <div class="input-grid">
-                <div class="input-group"><label>O2%</label><input type="number" inputmode="decimal" pattern="[0-9]*" onfocus="this.select()" id="o2S" value="21" oninput="calc()"></div>
-                <div class="input-group"><label>He%</label><input type="number" inputmode="decimal" pattern="[0-9]*" onfocus="this.select()" id="heS" value="0" oninput="calc()"></div>
+                <div class="input-group"><label>O2%</label><input type="number" inputmode="decimal" pattern="[0-9]*" onfocus="this.select()" id="o2S" value="21" oninput="calc(); validateGasInput(this)"></div>
+                <div class="input-group"><label>He%</label><input type="number" inputmode="decimal" pattern="[0-9]*" onfocus="this.select()" id="heS" value="0" oninput="calc(); validateGasInput(this)"></div>
                 <div class="input-grid" style="grid-template-columns: 1fr 1fr; grid-column: span 2; gap: 10px; width: 100%;">
                     <div class="input-group"><label>Bar</label><input type="number" inputmode="decimal" pattern="[0-9]*" onfocus="this.select()" id="pS" value="50" oninput="calc()"></div>
                     <div class="input-group"><label>N2%</label><input type="text" id="n2S" readonly></div>
@@ -690,7 +693,7 @@
             </div>
         </div>
         <div class="card" id="targetCard">
-            <div class="card-title"><i class="fa-solid fa-bullseye"></i> <span id="lbl_target_title">2. TARGET</span></div>
+            <div class="card-title"><i class="fa-solid fa-bullseye"></i> <span id="lbl_target_title">2. TARGET</span></div><div style="font-size:0.68em; color:#64748b; font-weight:600; margin-top:-6px; margin-bottom:8px;" id="lbl_target_sub">Miscela che vuoi ottenere</div>
             <div class="tank-visual">
                 <div class="valve-wrap">
                     <div class="v-handwheel"></div><div class="v-stem"></div>
@@ -700,8 +703,8 @@
                 <div class="tank-body"><div id="tO2" class="seg" style="background:var(--color-o2);">O2</div><div id="tHe" class="seg" style="background:var(--color-he);">He</div><div id="tN2" class="seg" style="background:var(--color-n2);">N2</div></div>
             </div>
             <div class="input-grid">
-                <div class="input-group"><label>O2%</label><input type="number" inputmode="decimal" pattern="[0-9]*" onfocus="this.select()" id="o2E" value="50" oninput="calc()"></div>
-                <div class="input-group"><label>He%</label><input type="number" inputmode="decimal" pattern="[0-9]*" onfocus="this.select()" id="heE" value="0" oninput="calc()"></div>
+                <div class="input-group"><label>O2%</label><input type="number" inputmode="decimal" pattern="[0-9]*" onfocus="this.select()" id="o2E" value="50" oninput="calc(); validateGasInput(this)"></div>
+                <div class="input-group"><label>He%</label><input type="number" inputmode="decimal" pattern="[0-9]*" onfocus="this.select()" id="heE" value="0" oninput="calc(); validateGasInput(this)"></div>
                 <div class="input-grid" style="grid-template-columns: 1fr 1fr; grid-column: span 2; gap: 10px; width: 100%;">
                     <div class="input-group"><label>Bar</label><input type="number" inputmode="decimal" pattern="[0-9]*" onfocus="this.select()" id="pE" value="210" oninput="calc()"></div>
                     <div class="input-group"><label>N2%</label><input type="text" id="n2E" readonly></div>
@@ -888,7 +891,7 @@
     </div>
 
     <div id="infoMobile" class="card" style="display:none; margin-bottom:16px;">
-        <div class="card-title"><i class="fa-solid fa-circle-info"></i> INFO</div>
+        <div class="card-title"><i class="fa-solid fa-circle-info"></i> <span onclick="handleTitleTap()" style="cursor:pointer;">INFO</span></div>
 
         <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:20px;">
             <div style="display:flex; align-items:center; gap:12px; padding:12px; border-radius:10px; background:rgba(6,182,212,0.07); border:1px solid rgba(6,182,212,0.15);">
@@ -921,7 +924,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b>v43.07</b><br>
+            All Rights Reserved | Tool Version: <b>v43.14</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1088,7 +1091,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v43.07</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b>v43.14</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1658,7 +1661,26 @@
         document.getElementById('asciiContainer').style.display = 'block';
         if (window.innerWidth <= 768) mobileNav('home');
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
+        // Save to history ONLY when a real report is generated
+        saveToHistory({
+            date: new Date().toISOString(),
+            diver: c,
+            blender: b,
+            o2S: oS, heS: hS, pS: document.getElementById('pS').value,
+            o2E: oE, heE: hE, pE: document.getElementById('pE').value,
+            total: document.getElementById('resGrandTotal').innerText
+        });
         } catch(err) { alert('Errore: ' + err.message); }
+    }
+
+    function saveToHistory(entry) {
+        try {
+            var history = JSON.parse(localStorage.getItem('blendHistory') || '[]');
+            history.push(entry);
+            if (history.length > 200) history = history.slice(-200);
+            localStorage.setItem('blendHistory', JSON.stringify(history));
+        } catch(e) {}
     }
 
     let wakeLock = null; let isManualDisabling = false;
@@ -2095,7 +2117,70 @@
     }
     // ──────────────────────────────────────────────────────────
 
-    function mobileNav(tab) {
+    // RESET APP
+function confirmResetApp() {
+    if (confirm('Sei sicuro? Verranno azzerati tutti i campi inseriti (residuo, target, bombola).')) {
+        resetAppFields();
+    }
+}
+function resetAppFields() {
+    ['oS','hS','pS','o2E','heE','pE'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.value = (id === 'oS') ? 21 : 0;
+    });
+    document.getElementById('pS').value = 0;
+    document.getElementById('pE').value = 0;
+    var cylSelect = document.getElementById('cylSelect');
+    if (cylSelect) cylSelect.selectedIndex = 0;
+    updateCylVol();
+    saveAndCalc();
+    var btn = document.getElementById('resetAppBtn');
+    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+    setTimeout(function() { btn.innerHTML = '<i class="fa-solid fa-rotate-left"></i>'; }, 1000);
+}
+
+// INPUT VALIDATION - inline visual feedback
+function validateGasInput(el) {
+    var val = parseFloat(el.value);
+    var isPercent = el.id.match(/^(o2S|heS|o2E|heE)$/);
+    var invalid = isNaN(val) || val < 0 || (isPercent && val > 100);
+    if (invalid && el.value !== '') {
+        el.style.borderColor = '#ef4444';
+        el.style.background = 'rgba(239,68,68,0.08)';
+    } else {
+        el.style.borderColor = '';
+        el.style.background = '';
+    }
+}
+
+// SILENT ERROR LOG
+window._errorLog = [];
+window.onerror = function(msg, url, line, col, error) {
+    try {
+        var log = JSON.parse(localStorage.getItem('errorLog') || '[]');
+        log.push({ t: new Date().toISOString(), msg: String(msg), line: line });
+        if (log.length > 20) log = log.slice(-20);
+        localStorage.setItem('errorLog', JSON.stringify(log));
+    } catch(e) {}
+    return false;
+};
+var _titleTapCount = 0;
+function handleTitleTap() {
+    _titleTapCount++;
+    setTimeout(function() { _titleTapCount = 0; }, 2000);
+    if (_titleTapCount >= 5) {
+        _titleTapCount = 0;
+        showErrorLog();
+    }
+}
+function showErrorLog() {
+    var log = JSON.parse(localStorage.getItem('errorLog') || '[]');
+    if (log.length === 0) { alert('Nessun errore registrato.'); return; }
+    var text = log.map(function(e) { return e.t + ' - ' + e.msg + ' (riga ' + e.line + ')'; }).join('\n\n');
+    alert('Ultimi errori:\n\n' + text);
+}
+
+function mobileNav(tab) {
         document.querySelectorAll('.fn-item').forEach(el => el.classList.remove('active'));
         const btn = document.getElementById('fn-' + tab);
         if (btn) btn.classList.add('active');
