@@ -63,36 +63,44 @@ body {
 }
 
 /* --- Layout --- */
-header {
+.main-container {
   width: 100%;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: 18px 20px;
-  padding-top: calc(18px + env(safe-area-inset-top));
+  max-width: 800px;
+  margin: 0 auto 40px;
+  padding-top: calc(30px + env(safe-area-inset-top));
+  padding-left: 20px;
+  padding-right: 20px;
+  z-index: 10;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: stretch;
 }
 
-.header-inner {
-  max-width: 800px;
-  margin: 0 auto;
+.brand-header {
   display: flex;
   align-items: center;
   gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .brand-logo {
   flex-shrink: 0;
 }
 
-.header-inner h1 {
-  font-size: 1.4rem;
+.brand-header h1 {
+  font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--color-text-main);
   margin: 0;
 }
 
-.header-inner p {
-  font-size: 0.85rem;
+.brand-header p {
+  font-size: 0.82rem;
   color: var(--color-text-muted);
   font-weight: 400;
   margin: 2px 0 0 0;
@@ -116,19 +124,6 @@ header {
 
 .back-link:hover {
   background: var(--color-bg);
-}
-
-.main-container {
-  width: 100%;
-  max-width: 800px;
-  margin: 30px auto 40px;
-  padding: 0 20px;
-  z-index: 10;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  align-items: stretch;
 }
 
 /* --- Cards --- */
@@ -485,8 +480,8 @@ footer {
 
 /* --- Responsive --- */
 @media (max-width: 900px) {
-  .header-inner h1 {
-    font-size: 1.2rem;
+  .brand-header h1 {
+    font-size: 1.15rem;
   }
   .label-preview {
     min-height: 250px;
