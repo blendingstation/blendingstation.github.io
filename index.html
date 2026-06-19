@@ -937,7 +937,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v43.23</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v43.24</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1123,7 +1123,7 @@
             Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v43.23</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v43.24</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;">Creato e pensato da <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1539,7 +1539,10 @@
         const tfHe = topOff ? topOff.he : 0.00;
         const tfN2 = topOff ? topOff.n2 : 0.79;
 
-        dO2 = (oE * pE - oS * pStartreale - tfO2 * (pE - pStartreale - dHe)) / tfN2;
+        dO2 = 0;
+        let sol = solveTopOffBlend(oS, hS, pStartreale, oE, hE, pE, tfO2, tfHe, tfN2);
+        dHe = Math.max(0, sol.dHe);
+        dO2 = sol.dO2;
 
         if (dO2 < 0) {
             let pMaxStartO2 = (oE * pE - tfO2 * (pE - dHe)) / (oS - tfO2);
@@ -1547,8 +1550,9 @@
                 let extraScarica = pStartreale - Math.max(0, pMaxStartO2);
                 dScarica += extraScarica;
                 pStartreale = pS - dScarica;
-                dHe = Math.max(0, pE * hE - pStartreale * hS);
-                dO2 = (oE * pE - oS * pStartreale - tfO2 * (pE - pStartreale - dHe)) / tfN2;
+                sol = solveTopOffBlend(oS, hS, pStartreale, oE, hE, pE, tfO2, tfHe, tfN2);
+                dHe = Math.max(0, sol.dHe);
+                dO2 = sol.dO2;
             }
         }
 
@@ -1573,7 +1577,7 @@
         let _realSol = null;
         if (gasModel === 'real') {
             // Van der Waals solver: guarantees exact pressure AND composition
-            _realSol = solveRealGas(oS, hS, pStartreale, oE, hE, pE, tfO2, tfN2, gasTemp);
+            _realSol = solveRealGas(oS, hS, pStartreale, oE, hE, pE, tfO2, tfHe, tfN2, gasTemp);
             dHe = _realSol.dHe; dAir = _realSol.dAir; dO2 = _realSol.dO2;
         }
 
@@ -2077,7 +2081,7 @@
         return dbar;
     }
 
-    function solveRealGas(oS, hS, pS, oE, hE, pE, tfO2, tfN2, T_C) {
+    function solveRealGas(oS, hS, pS, oE, hE, pE, tfO2, tfHe, tfN2, T_C) {
         const nS = Math.max(0, 1 - oS - hS);
         const nE = Math.max(0, 1 - oE - hE);
         const zmS = zMix(oS, hS, nS, pS, T_C);
@@ -2091,10 +2095,13 @@
             const zmE = zMix(oE, hE, nE, pE_eff, T_C);
             const nTotE = pE_eff / zmE;
 
-            dn_he  = Math.max(0, hE * nTotE - hS * nTotS);
-            dn_o2  = Math.max(0, oE * nTotE - oS * nTotS);
+            // L'N2 (quindi l'aria/top-off) si determina per primo: arriva SOLO dal
+            // gas di top-off, quindi non dipende da tfHe.
             dn_n2  = Math.max(0, nE * nTotE - nS * nTotS);
             dn_air = tfN2 > 0 ? dn_n2 / tfN2 : 0;
+            // He e O2 dedicati = fabbisogno totale meno quanto arriverà già dal top-off
+            dn_he  = Math.max(0, hE * nTotE - hS * nTotS - tfHe * dn_air);
+            dn_o2  = Math.max(0, oE * nTotE - oS * nTotS - tfO2 * dn_air);
 
             dHe_b  = molesToBars(dn_he,  'HE', pS, T_C);
             dAir_b = molesToBars(dn_air, 'N2', pS + dHe_b, T_C);
@@ -2179,6 +2186,20 @@
         return { o2, he, n2 };
     }
 
+    // Risolve dHe e dO2 contemporaneamente (sistema 2x2), così se il gas di
+    // top-off contiene elio (tfHe > 0) il fabbisogno di elio nello step dedicato
+    // si riduce di conseguenza, invece di assumere sempre un top-off senza elio.
+    // Con tfHe = 0 (caso standard: aria o nitrox) il risultato è identico a prima.
+    function solveTopOffBlend(oS, hS, pStart, oE, hE, pE, tfO2, tfHe, tfN2) {
+        if (tfN2 <= 0) return { dO2: 0, dHe: 0 };
+        const rhsA = oE * pE - oS * pStart - tfO2 * (pE - pStart);
+        const rhsB = hE * pE - hS * pStart - tfHe * (pE - pStart);
+        const dO2 = (rhsA * (1 - tfHe) + tfO2 * rhsB) / tfN2;
+        const dHe = (rhsB * (1 - tfO2) + tfHe * rhsA) / tfN2;
+        return { dO2, dHe };
+    }
+
+
     function initTopOff() {
         const enabled = localStorage.getItem('topOffEnabled') === '1';
         const savedO2 = localStorage.getItem('topOffO2saved') || '21';
@@ -2220,13 +2241,34 @@ function validateGasInput(el) {
     var val = parseFloat(el.value);
     var isPercent = el.id.match(/^(o2S|heS|o2E|heE)$/);
     var invalid = isNaN(val) || val < 0 || (isPercent && val > 100);
-    if (invalid && el.value !== '') {
-        el.style.borderColor = '#ef4444';
-        el.style.background = 'rgba(239,68,68,0.08)';
-    } else {
-        el.style.borderColor = '';
-        el.style.background = '';
+
+    // Controlla anche che O2%+He% della stessa coppia (residuo o target) non superi
+    // il 100% — altrimenti l'N2 risultante sarebbe negativo, miscela impossibile.
+    var pairs = { o2S: 'heS', heS: 'o2S', o2E: 'heE', heE: 'o2E' };
+    var other = isPercent ? document.getElementById(pairs[el.id]) : null;
+    var sumInvalid = false;
+    if (other) {
+        var thisVal = isNaN(val) ? 0 : val;
+        var otherVal = parseFloat(other.value) || 0;
+        sumInvalid = (thisVal + otherVal) > 100;
     }
+
+    function setState(input, bad, msg) {
+        if (!input) return;
+        if (bad) {
+            input.style.borderColor = '#ef4444';
+            input.style.background = 'rgba(239,68,68,0.08)';
+            input.title = msg || '';
+        } else {
+            input.style.borderColor = '';
+            input.style.background = '';
+            input.title = '';
+        }
+    }
+
+    var sumMsg = 'O2% + He% non può superare 100%';
+    setState(el, (invalid || sumInvalid) && el.value !== '', sumInvalid ? sumMsg : '');
+    if (other) setState(other, sumInvalid && other.value !== '', sumMsg);
 }
 
 // SILENT ERROR LOG
@@ -2398,7 +2440,7 @@ function mobileNav(tab) {
 
         const ata = depth / 10 + 1;
 
-        // Best O2% — floor to never exceed PPO2 limit
+        // Best O2% — il massimo che non supera il limite di ppO2 alla quota pianificata
         let o2 = Math.floor((ppo2 / ata) * 100);
         o2 = Math.max(10, Math.min(o2, 40));
         let he = 0;
@@ -2411,10 +2453,13 @@ function mobileNav(tab) {
                 return;
             }
             const endAta = end / 10 + 1;
-            he = Math.round((1 - (endAta / ata)) * (100 - o2));
+            // He% calcolato sul TOTALE della miscela (100), non sulla quota residua dopo l'O2.
+            // END = (depth+10)*(1-fHe)-10  →  fHe = 1 - endAta/ata  →  He% = fHe * 100
+            he = Math.round((1 - (endAta / ata)) * 100);
             he = Math.max(0, Math.min(he, 90 - o2));
         }
 
+        // N2 = il rimanente della miscela dopo O2 ed Elio
         const n2 = 100 - o2 - he;
         window._bestMix = { o2, he };
 
