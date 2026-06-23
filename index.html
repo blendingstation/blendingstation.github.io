@@ -598,7 +598,7 @@
 
                     <div class="setting-item" id="priceConfigInSettings">
                         <div onclick="togglePriceSettings()" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
-                            <label class="setting-label" style="margin-bottom:0; cursor:pointer;" data-i18n="ui_pricecfg_title">Configurazione Listini (€/L)</label>
+                            <label class="setting-label" style="margin-bottom:0; cursor:pointer;"><i class="fa-solid fa-euro-sign" style="color:var(--accent); margin-right:6px;"></i><span data-i18n="ui_pricecfg_title">Configurazione Listini (€/L)</span></label>
                             <i class="fa-solid fa-chevron-down" id="priceSettingsChevron" style="color:#64748b; font-size:0.8em; transition:transform 0.2s;"></i>
                         </div>
 
@@ -642,7 +642,7 @@
 
                     <div class="setting-item" onclick="toggleAdvancedSettings()" style="cursor:pointer;">
                         <div style="display:flex; align-items:center; justify-content:space-between;">
-                            <label class="setting-label" style="margin-bottom:0; cursor:pointer;" data-i18n="ui_advanced_settings">Impostazioni Avanzate</label>
+                            <label class="setting-label" style="margin-bottom:0; cursor:pointer;"><i class="fa-solid fa-sliders" style="color:var(--accent); margin-right:6px;"></i><span data-i18n="ui_advanced_settings">Impostazioni Avanzate</span></label>
                             <i class="fa-solid fa-chevron-down" id="advancedChevron" style="color:#64748b; font-size:0.8em; transition:transform 0.2s;"></i>
                         </div>
                     </div>
@@ -697,7 +697,7 @@
 
                     <div class="setting-item">
                         <div onclick="toggleFontSettings()" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
-                            <label class="setting-label" id="lbl_font" style="margin-bottom:0; cursor:pointer;" data-i18n="lbl_font">Dimensione Font</label>
+                            <label class="setting-label" style="margin-bottom:0; cursor:pointer;"><i class="fa-solid fa-text-height" style="color:var(--accent); margin-right:6px;"></i><span id="lbl_font" data-i18n="lbl_font">Dimensione Font</span></label>
                             <i class="fa-solid fa-chevron-down" id="fontSettingsChevron" style="color:#64748b; font-size:0.8em; transition:transform 0.2s;"></i>
                         </div>
                         <div id="fontSettingsContent" style="display:none; margin-top:8px;">
@@ -999,7 +999,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.18</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.20</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1204,7 +1204,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.18</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.20</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1857,11 +1857,17 @@
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
         // Save to history ONLY when a real report is generated
+        const cylSel = document.getElementById('cylSelect');
+        const cylVolVal = document.getElementById('cylVol').value;
+        let cylLabel = cylSel.options[cylSel.selectedIndex] ? cylSel.options[cylSel.selectedIndex].text.trim() : '';
+        if (cylSel.value === 'altro' && cylVolVal) cylLabel += ' (' + cylVolVal + 'L)';
         saveToHistory({
             date: new Date().toISOString(),
             diver: c,
             blender: b,
             listino: activeProfile,
+            cylinder: cylLabel,
+            cylVol: cylVolVal,
             o2S: oS, heS: hS, nS: nS, pS: document.getElementById('pS').value,
             o2E: oE, heE: hE, nE: nE, pE: document.getElementById('pE').value,
             total: document.getElementById('resGrandTotal').innerText
@@ -1890,14 +1896,14 @@
             return;
         }
         var SEP = ';';
-        var rows = [['Data', 'Ora', 'Diver', 'Blender', 'Listino', 'Miscela Residua (O2/HE/N2)', 'BAR Residuo', 'Miscela Target (O2/HE/N2)', 'BAR Target', 'Totale']];
+        var rows = [['Data', 'Ora', 'Diver', 'Blender', 'Listino', 'Bombola', 'Miscela Residua (O2/HE/N2)', 'BAR Residuo', 'Miscela Target (O2/HE/N2)', 'BAR Target', 'Totale']];
         history.forEach(function(e) {
             var d = new Date(e.date);
             var dateOnly = d.toLocaleDateString('it-IT');
             var timeOnly = d.toLocaleTimeString('it-IT');
             var mixS = e.o2S + '/' + e.heS + '/' + (e.nS || (100 - parseFloat(e.o2S) - parseFloat(e.heS)).toFixed(1));
             var mixE = e.o2E + '/' + e.heE + '/' + (e.nE || (100 - parseFloat(e.o2E) - parseFloat(e.heE)).toFixed(1));
-            rows.push([dateOnly, timeOnly, e.diver, e.blender, e.listino || '', mixS, e.pS, mixE, e.pE, e.total]);
+            rows.push([dateOnly, timeOnly, e.diver, e.blender, e.listino || '', e.cylinder || '', mixS, e.pS, mixE, e.pE, e.total]);
         });
         var csv = rows.map(function(r) {
             return r.map(function(cell) {
@@ -1974,7 +1980,7 @@
                 '<input type="checkbox" class="history-row-check" data-idx="' + idx + '">' +
                 '<div class="history-row-info">' +
                     '<div class="history-row-date">' + dateStr + ' — ' + (e.diver || '') + '</div>' +
-                    '<div class="history-row-details">O2 ' + e.o2S + '→' + e.o2E + '% · He ' + e.heS + '→' + e.heE + '% · ' + e.pS + '→' + e.pE + ' bar</div>' +
+                    '<div class="history-row-details">' + (e.cylinder ? e.cylinder + ' · ' : '') + 'O2 ' + e.o2S + '→' + e.o2E + '% · He ' + e.heS + '→' + e.heE + '% · ' + e.pS + '→' + e.pE + ' bar</div>' +
                 '</div>' +
                 '<div class="history-row-total">' + (e.total || '') + '</div>' +
             '</label>';
