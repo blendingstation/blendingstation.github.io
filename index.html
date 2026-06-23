@@ -678,7 +678,15 @@
 
                     </div>
 
-                    <div class="setting-item"><label class="setting-label" id="lbl_font" data-i18n="lbl_font">Dimensione Font</label><input type="range" id="fontSlider" min="12" max="22" value="16" oninput="updateFontSize(this.value)"></div>
+                    <div class="setting-item">
+                        <div onclick="toggleFontSettings()" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
+                            <label class="setting-label" id="lbl_font" style="margin-bottom:0; cursor:pointer;" data-i18n="lbl_font">Dimensione Font</label>
+                            <i class="fa-solid fa-chevron-down" id="fontSettingsChevron" style="color:#64748b; font-size:0.8em; transition:transform 0.2s;"></i>
+                        </div>
+                        <div id="fontSettingsContent" style="display:none; margin-top:8px;">
+                            <input type="range" id="fontSlider" min="12" max="22" value="16" oninput="updateFontSize(this.value)" style="width:100%;">
+                        </div>
+                    </div>
                     <div class="setting-item"><label class="setting-label" data-i18n="ui_shopname_label">Nome Centro / Negozio</label><input type="text" id="shopName" placeholder="es. Dive Center Roma" data-i18n-placeholder="ui_shopname_ph" oninput="saveAndCalc();" style="width:100%; padding:7px 10px; border-radius:8px; border:1px solid var(--border-ui); background:var(--input-bg); color:var(--input-text); font-size:0.82em; margin-top:4px; box-sizing:border-box;"></div>
 
                     <div class="setting-item">
@@ -980,7 +988,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.16</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.17</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1192,7 +1200,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.16</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.17</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2390,6 +2398,23 @@
     }
     // ──────────────────────────────────────────────────────────
 
+    // ── ACCORDION DIMENSIONE FONT ────────────────────────────────
+    function toggleFontSettings() {
+        const content = document.getElementById('fontSettingsContent');
+        const chevron = document.getElementById('fontSettingsChevron');
+        const isOpen = content.style.display === 'block';
+        content.style.display = isOpen ? 'none' : 'block';
+        chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        localStorage.setItem('fontSettingsOpen', isOpen ? '0' : '1');
+    }
+
+    function initFontSettings() {
+        const open = localStorage.getItem('fontSettingsOpen') === '1'; // chiuso di default
+        document.getElementById('fontSettingsContent').style.display = open ? 'block' : 'none';
+        document.getElementById('fontSettingsChevron').style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+    // ──────────────────────────────────────────────────────────
+
     // ── ACCORDION LISTINI PREZZI ─────────────────────────────────
     function togglePriceSettings() {
         const content = document.getElementById('priceSettingsContent');
@@ -2402,7 +2427,7 @@
 
     function initPriceSettings() {
         const saved = localStorage.getItem('priceSettingsOpen');
-        const open = saved === null ? true : saved === '1'; // aperto di default
+        const open = saved === '1'; // chiuso di default
         document.getElementById('priceSettingsContent').style.display = open ? 'block' : 'none';
         document.getElementById('priceSettingsChevron').style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
     }
@@ -2798,6 +2823,7 @@ function mobileNav(tab) {
         initPurity();
         initAdvancedSettings();
         initPriceSettings();
+        initFontSettings();
         initLang();
         changeLang();
 
