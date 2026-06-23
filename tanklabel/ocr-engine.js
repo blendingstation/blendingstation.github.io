@@ -66,6 +66,9 @@ async function openOcrModal() {
   }
 
   OCR.modal.classList.add("active");
+  document.body.style.overflow = "hidden";
+  document.body.style.position = "fixed";
+  document.body.style.width = "100%";
   OCR.detectedO2 = null;
   OCR.detectedHe = null;
 
@@ -108,6 +111,9 @@ function closeOcrModal() {
     OCR.video.srcObject = null;
   }
   OCR.modal.classList.remove("active");
+  document.body.style.overflow = "";
+  document.body.style.position = "";
+  document.body.style.width = "";
 }
 
 /* =========================================================
