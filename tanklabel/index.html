@@ -68,21 +68,34 @@
       </h2>
 
       <div class="input-grid">
-        <!-- O2 & He Row -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px">
-          <div class="form-group">
-            <label for="o2Input"><i class="fas fa-lungs"></i> Ossigeno (O₂)</label>
-            <div class="input-wrapper">
-              <input type="number" id="o2Input" value="20" min="0" max="100" step="0.1" inputmode="decimal" />
-              <span class="input-suffix">%</span>
-            </div>
+        <!-- O2 Row (sempre visibile) -->
+        <div class="form-group">
+          <label for="o2Input"><i class="fas fa-lungs"></i> Ossigeno (O₂)</label>
+          <div class="input-wrapper">
+            <input type="number" id="o2Input" value="20" min="0" max="100" step="0.1" inputmode="decimal" />
+            <span class="input-suffix">%</span>
           </div>
-          <div class="form-group">
-            <label for="heInput"><i class="fas fa-wind"></i> Elio (He)</label>
-            <div class="input-wrapper">
-              <input type="number" id="heInput" value="0.4" min="0" max="100" step="0.1" inputmode="decimal" />
-              <span class="input-suffix">%</span>
-            </div>
+        </div>
+
+        <!-- Toggle Elio: bottone per aggiungerlo (Trimix) -->
+        <div id="heliumToggleRow" style="margin-top: -8px">
+          <button type="button" id="addHeliumBtn" class="back-link" onclick="toggleHelium(true)" style="cursor: pointer">
+            <i class="fas fa-plus"></i> <span>Aggiungi Elio (Trimix)</span>
+          </button>
+        </div>
+
+        <!-- He Row (nascosta finché non attivata) -->
+        <div class="form-group" id="heGroup" style="display: none">
+          <label for="heInput" style="justify-content: space-between; width: 100%">
+            <span><i class="fas fa-wind"></i> Elio (He)</span>
+            <button type="button" onclick="toggleHelium(false)" aria-label="Rimuovi Elio"
+              style="background: none; border: none; cursor: pointer; color: var(--color-text-muted); padding: 0;">
+              <i class="fas fa-xmark"></i>
+            </button>
+          </label>
+          <div class="input-wrapper">
+            <input type="number" id="heInput" value="0.4" min="0" max="100" step="0.1" inputmode="decimal" />
+            <span class="input-suffix">%</span>
           </div>
         </div>
 
@@ -153,7 +166,7 @@
             <div class="row-mix">
               <span class="text-label">O₂:</span>
               <span class="box-value" id="o2Display">--%</span>
-              <span class="text-label">He:</span>
+              <span class="text-label" id="heLabelText">He:</span>
               <span class="box-value" id="heDisplay">--%</span>
             </div>
 
@@ -208,7 +221,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 4.2
+      2026 TankLabel - Version 4.3
     </p>
   </footer>
 
@@ -444,8 +457,28 @@
     // --- Init ---
     function init() {
       loadSettings();
+      initHeliumToggle();
       setupEventListeners();
       updatePreview();
+    }
+
+    // --- Toggle Elio (Trimix) ---
+    function toggleHelium(show) {
+      const heGroup = document.getElementById("heGroup");
+      const toggleRow = document.getElementById("heliumToggleRow");
+      heGroup.style.display = show ? "flex" : "none";
+      toggleRow.style.display = show ? "none" : "block";
+      if (!show) DOM.inputs.heInput.value = 0;
+      localStorage.setItem("heliumEnabled", show ? "1" : "0");
+      updatePreview();
+      saveSettings();
+    }
+
+    function initHeliumToggle() {
+      const enabled = localStorage.getItem("heliumEnabled") === "1";
+      document.getElementById("heGroup").style.display = enabled ? "flex" : "none";
+      document.getElementById("heliumToggleRow").style.display = enabled ? "none" : "block";
+      if (!enabled) DOM.inputs.heInput.value = 0;
     }
 
     function setupEventListeners() {
@@ -481,6 +514,12 @@
       DOM.displays.temperatureDisplay.textContent = `${temp.toFixed(1)}°C`;
       DOM.displays.operatorDisplay.textContent = val("operatorName");
       DOM.displays.diverDisplay.textContent = val("diverName");
+
+      // Mostra "He:" sull'etichetta solo se l'elio è attivo
+      const heActive = document.getElementById("heGroup").style.display !== "none";
+      const heDisplayStyle = heActive ? "" : "none";
+      document.getElementById("heLabelText").style.display = heDisplayStyle;
+      DOM.displays.heDisplay.style.display = heDisplayStyle;
 
       const now = new Date();
       DOM.displays.dateTimeDisplay.textContent = `${now.toLocaleDateString("it-IT")}, ${now.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}`;
