@@ -358,6 +358,10 @@ input[type="number"]:focus {
   font-weight: 700;
 }
 
+#o2Display {
+  font-size: 1.2em;
+}
+
 .text-label {
   font-style: italic;
   font-weight: 600;
@@ -424,6 +428,7 @@ input[type="number"]:focus {
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   text-align: center;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
