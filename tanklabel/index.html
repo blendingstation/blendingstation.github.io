@@ -133,7 +133,7 @@
         <!-- Personnel -->
         <div class="form-group">
           <label for="diverName"><i class="fas fa-user-pen"></i> Analizzato da:</label>
-          <input type="text" id="diverName" value="Stefano Paterlini" placeholder="Chi ha analizzato?" />
+          <input type="text" id="diverName" value="Stefano Paterlini" placeholder="Chi ha analizzato?" onfocus="this.select()" />
         </div>
 
         <!-- Dimensions -->
@@ -179,7 +179,7 @@
         <!-- THE LABEL -->
         <div class="label-content">
           <div class="label-header">
-            <span id="modDisplay">MOD --m</span>
+            <span class="mod-label">MOD</span><span id="modDisplay">-- m</span>
           </div>
           <div class="label-body">
             <!-- Gas Mix -->
@@ -555,7 +555,7 @@
       const he = num("heInput");
       const mod = calculateMOD(o2);
 
-      DOM.displays.modDisplay.textContent = `MOD ${mod} m`;
+      DOM.displays.modDisplay.textContent = `${mod} m`;
       DOM.displays.o2Display.textContent = `${o2.toFixed(1)}%`;
       DOM.displays.heDisplay.textContent = `${he.toFixed(1)}%`;
       DOM.displays.diverDisplay.textContent = val("diverName");
@@ -604,14 +604,13 @@
     }
 
     function fitModText() {
-      const el = DOM.displays.modDisplay;
-      const header = el.parentElement;
-      el.style.fontSize = "";
+      const header = document.querySelector(".label-header");
+      header.style.setProperty("--mod-scale", 1);
       let scale = 1;
-      const fits = () => el.scrollWidth <= header.clientWidth && el.scrollHeight <= header.clientHeight;
+      const fits = () => header.scrollWidth <= header.clientWidth && header.scrollHeight <= header.clientHeight;
       while (!fits() && scale > 0.3) {
         scale -= 0.05;
-        el.style.fontSize = `calc(var(--base-px-size) * 2.2 * ${scale})`;
+        header.style.setProperty("--mod-scale", scale);
       }
     }
 
