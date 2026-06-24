@@ -285,6 +285,26 @@ input[type="number"]:focus {
   text-decoration: none;
 }
 
+.ppo2-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ppo2-btn.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
 .btn-primary {
   background: var(--color-primary);
   color: white;
