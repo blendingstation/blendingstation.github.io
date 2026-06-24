@@ -390,7 +390,7 @@ input[type="number"]:focus {
   color: white;
   height: 25%;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
   gap: 0.25em;
   font-weight: 800;
