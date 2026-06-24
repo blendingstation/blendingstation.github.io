@@ -214,7 +214,7 @@ input[type="number"]:focus {
 .dual-input {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 
 .dual-input span {
@@ -229,11 +229,16 @@ input[type="number"]:focus {
 
 .dual-input .number-stepper {
   flex: 1;
+  min-width: 0;
 }
 
 .number-stepper input[type="number"] {
   padding-right: 38px;
   text-align: center;
+}
+
+.dual-input .number-stepper input[type="number"] {
+  padding: 12px 22px 12px 6px;
 }
 
 .stepper-buttons {
@@ -245,6 +250,11 @@ input[type="number"]:focus {
   display: flex;
   flex-direction: column;
   gap: 3px;
+}
+
+.dual-input .stepper-buttons {
+  width: 18px;
+  right: 2px;
 }
 
 .stepper-btn {
@@ -260,6 +270,10 @@ input[type="number"]:focus {
   padding: 0;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+}
+
+.dual-input .stepper-btn {
+  font-size: 0.55rem;
 }
 
 .stepper-btn:active {
