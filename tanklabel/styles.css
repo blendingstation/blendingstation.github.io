@@ -390,13 +390,22 @@ input[type="number"]:focus {
   color: white;
   height: 25%;
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: center;
+  gap: 0.25em;
   font-weight: 800;
   line-height: 1;
-  font-size: calc(var(--base-px-size) * 2.2);
   overflow: hidden;
   white-space: nowrap;
+  --mod-scale: 1;
+}
+
+.mod-label {
+  font-size: calc(var(--base-px-size) * 1.1 * var(--mod-scale));
+}
+
+#modDisplay {
+  font-size: calc(var(--base-px-size) * 2.2 * var(--mod-scale));
 }
 
 .label-body {
