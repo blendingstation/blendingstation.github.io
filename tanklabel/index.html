@@ -75,6 +75,15 @@
       </h2>
 
       <div class="input-grid">
+        <!-- Tipo di Gas: determina il PPO2 max usato per il calcolo del MOD -->
+        <div class="form-group">
+          <label><i class="fas fa-gauge-high"></i> Tipo di Gas</label>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" id="btnGasFondo" class="ppo2-btn active" onclick="setPpo2Mode(1.4)">Gas di Fondo (1.4)</button>
+            <button type="button" id="btnGasDeco" class="ppo2-btn" onclick="setPpo2Mode(1.6)">Decompressivo (1.6)</button>
+          </div>
+        </div>
+
         <!-- O2 Row (sempre visibile) -->
         <div class="form-group">
           <label for="o2Input"><i class="fas fa-lungs"></i> Ossigeno (O₂)</label>
@@ -106,15 +115,6 @@
           </div>
         </div>
 
-        <!-- Temperature -->
-        <div class="form-group">
-          <label for="temperatureInput"><i class="fas fa-thermometer-half"></i> Temperatura</label>
-          <div class="input-wrapper">
-            <input type="number" id="temperatureInput" value="20" step="0.1" inputmode="decimal" />
-            <span class="input-suffix">°C</span>
-          </div>
-        </div>
-
         <!-- OCR Action -->
         <button type="button" class="btn btn-accent" onclick="openOcrModal()">
           <i class="fas fa-camera"></i> Scan O₂/He da Analizzatore
@@ -132,13 +132,8 @@
 
         <!-- Personnel -->
         <div class="form-group">
-          <label for="operatorName"><i class="fas fa-user-tie"></i> Analista / Operatore</label>
-          <input type="text" id="operatorName" value="Federico Boni" placeholder="Chi ha analizzato?" />
-        </div>
-
-        <div class="form-group">
-          <label for="diverName"><i class="fas fa-user-circle"></i> Diver</label>
-          <input type="text" id="diverName" value="Stefano Paterlini" placeholder="Chi userà la bombola?" />
+          <label for="diverName"><i class="fas fa-user-pen"></i> Analizzato da:</label>
+          <input type="text" id="diverName" value="Stefano Paterlini" placeholder="Chi ha analizzato?" />
         </div>
 
         <!-- Dimensions -->
@@ -199,8 +194,7 @@
 
             <!-- Meta Data -->
             <div class="row-meta">
-              <span id="dateTimeDisplay">--/--/--, --:--</span>
-              <span id="temperatureDisplay">--°C</span>
+              <span id="dateTimeDisplay">--/--/--</span>
             </div>
 
             <!-- People -->
@@ -211,11 +205,7 @@
                   gap: 4px;
                 ">
               <div class="row-info">
-                <span>Operatore:</span>
-                <span id="operatorDisplay">--</span>
-              </div>
-              <div class="row-info">
-                <span>Diver:</span>
+                <span>Analizzato da:</span>
                 <span id="diverDisplay">--</span>
               </div>
             </div>
@@ -246,7 +236,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 4.8
+      2026 TankLabel - Version 4.9
     </p>
   </footer>
 
@@ -437,8 +427,6 @@
       storageKeys: [
         "o2Input",
         "heInput",
-        "temperatureInput",
-        "operatorName",
         "diverName",
         "labelWidth",
         "labelHeight",
@@ -447,8 +435,6 @@
       defaults: {
         o2Input: 20,
         heInput: 0.4,
-        temperatureInput: 20,
-        operatorName: "Federico Boni",
         diverName: "Stefano Paterlini",
         labelWidth: 50,
         labelHeight: 50,
@@ -472,19 +458,34 @@
       "o2Display",
       "heDisplay",
       "dateTimeDisplay",
-      "temperatureDisplay",
-      "operatorDisplay",
       "diverDisplay",
     ].forEach((id) => {
       DOM.displays[id] = document.getElementById(id);
     });
 
     // --- Init ---
+    let currentPpo2Max = 1.4;
+
     function init() {
       loadSettings();
       initHeliumToggle();
+      initPpo2Mode();
       setupEventListeners();
       updatePreview();
+    }
+
+    // --- Tipo di Gas: Fondo (1.4) / Decompressivo (1.6) ---
+    function setPpo2Mode(value) {
+      currentPpo2Max = value;
+      document.getElementById("btnGasFondo").classList.toggle("active", value === 1.4);
+      document.getElementById("btnGasDeco").classList.toggle("active", value === 1.6);
+      localStorage.setItem("ppo2Max", value);
+      updatePreview();
+    }
+
+    function initPpo2Mode() {
+      const saved = parseFloat(localStorage.getItem("ppo2Max"));
+      setPpo2Mode(saved === 1.6 ? 1.6 : 1.4);
     }
 
     // --- Toggle Elio (Trimix) ---
@@ -530,7 +531,7 @@
     function calculateMOD(o2) {
       if (o2 <= 0) return 0;
       // Legge di Dalton: MOD = ((PO2max / fO2) - 1) * 10
-      return Math.max(0, Math.round((1.6 / (o2 / 100) - 1) * 10));
+      return Math.max(0, Math.round((currentPpo2Max / (o2 / 100) - 1) * 10));
     }
 
     // --- Preview ---
@@ -540,14 +541,11 @@
 
       const o2 = num("o2Input");
       const he = num("heInput");
-      const temp = num("temperatureInput");
       const mod = calculateMOD(o2);
 
       DOM.displays.modDisplay.textContent = `MOD ${mod} m`;
       DOM.displays.o2Display.textContent = `${o2.toFixed(1)}%`;
       DOM.displays.heDisplay.textContent = `${he.toFixed(1)}%`;
-      DOM.displays.temperatureDisplay.textContent = `${temp.toFixed(1)}°C`;
-      DOM.displays.operatorDisplay.textContent = val("operatorName");
       DOM.displays.diverDisplay.textContent = val("diverName");
 
       // Mostra "He:" sull'etichetta solo se l'elio è attivo
@@ -557,7 +555,7 @@
       DOM.displays.heDisplay.style.display = heDisplayStyle;
 
       const now = new Date();
-      DOM.displays.dateTimeDisplay.textContent = `${now.toLocaleDateString("it-IT")}, ${now.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}`;
+      DOM.displays.dateTimeDisplay.textContent = now.toLocaleDateString("it-IT");
 
       // Scala responsive: adatta al contenitore con max 150%
       const widthMm = num("labelWidth");
