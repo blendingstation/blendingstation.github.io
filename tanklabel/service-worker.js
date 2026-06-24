@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tanklabel-v3';
+const CACHE_NAME = 'tanklabel-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -14,10 +14,18 @@ const ASSETS = [
   './favicon-32.png'
 ];
 
-// Install: cache all assets
+// Install: cache all assets, bypassando la cache HTTP del browser
+// (altrimenti potremmo ottenere comunque una risposta vecchia anche se
+// stiamo creando una cache nuova)
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => {
+      return Promise.all(
+        ASSETS.map(url =>
+          fetch(url, { cache: 'no-cache' }).then(response => cache.put(url, response))
+        )
+      );
+    })
   );
   self.skipWaiting();
 });
@@ -49,7 +57,7 @@ self.addEventListener('fetch', event => {
   } else {
     event.respondWith(
       caches.match(event.request).then(cached => {
-        return cached || fetch(event.request).catch(() => caches.match('./index.html'));
+        return cached || fetch(event.request, { cache: 'no-cache' }).catch(() => caches.match('./index.html'));
       })
     );
   }
