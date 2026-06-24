@@ -183,11 +183,15 @@
           </div>
           <div class="label-body">
             <!-- Gas Mix -->
-            <div class="row-mix">
-              <span class="text-label">O₂:</span>
-              <span class="box-value" id="o2Display">--%</span>
-              <span class="text-label" id="heLabelText">He:</span>
-              <span class="box-value" id="heDisplay">--%</span>
+            <div class="row-mix" id="rowMix">
+              <div class="mix-pair">
+                <span class="text-label">O₂:</span>
+                <span class="box-value" id="o2Display">--%</span>
+              </div>
+              <div class="mix-pair" id="heMixPair">
+                <span class="text-label" id="heLabelText">He:</span>
+                <span class="box-value" id="heDisplay">--%</span>
+              </div>
             </div>
 
             <div class="divider"></div>
@@ -560,11 +564,12 @@
       DOM.displays.heDisplay.textContent = `${he.toFixed(1)}%`;
       DOM.displays.diverDisplay.textContent = val("diverName");
 
-      // Mostra "He:" sull'etichetta solo se l'elio è attivo
+      // Mostra la coppia "He:" sull'etichetta solo se l'elio è attivo, e in
+      // quel caso passa al layout a colonne (etichetta sopra il box) per
+      // risparmiare spazio orizzontale, utile soprattutto su etichette strette/verticali
       const heActive = document.getElementById("heGroup").style.display !== "none";
-      const heDisplayStyle = heActive ? "" : "none";
-      document.getElementById("heLabelText").style.display = heDisplayStyle;
-      DOM.displays.heDisplay.style.display = heDisplayStyle;
+      document.getElementById("heMixPair").style.display = heActive ? "" : "none";
+      document.getElementById("rowMix").classList.toggle("stacked", heActive);
 
       const now = new Date();
       DOM.displays.dateTimeDisplay.textContent = now.toLocaleDateString("it-IT");
