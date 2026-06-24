@@ -225,7 +225,7 @@
           <i class="fas fa-print"></i> Stampa
         </button>
         <button class="btn btn-accent" style="flex: 1; min-width: 80px" onclick="printViaBluetooth()" id="btPrintBtn">
-          <i class="fas fa-bluetooth-b"></i> Stampa BT
+          <i class="fab fa-bluetooth-b"></i> Stampa BT
         </button>
       </div>
     </div>
@@ -515,6 +515,18 @@
         });
       });
       window.addEventListener("resize", updatePreview);
+
+      // Capitalizza automaticamente la prima lettera di ogni parola (nome e cognome)
+      document.getElementById("diverName").addEventListener("input", (e) => {
+        const input = e.target;
+        const pos = input.selectionStart;
+        const before = input.value;
+        const after = before.replace(/(^|\s)([a-zà-ü])/g, (m, sep, letter) => sep + letter.toUpperCase());
+        if (after !== before) {
+          input.value = after;
+          input.setSelectionRange(pos, pos);
+        }
+      });
     }
 
     // --- Freccette +/- personalizzate (i browser mobile nascondono quelle native) ---
@@ -571,6 +583,36 @@
         "--base-px-size",
         `${basePx * scaleFactor}px`,
       );
+
+      // Restringe automaticamente la riga O2/He se non entra nella larghezza
+      // dell'etichetta (capita soprattutto con l'Elio attivo)
+      fitMixRow();
+      // Restringe il MOD se non entra nella banda rossa (etichette piccole)
+      fitModText();
+    }
+
+    function fitMixRow() {
+      const row = document.querySelector(".row-mix");
+      if (!row) return;
+      row.style.fontSize = ""; // reset alla dimensione predefinita
+      const available = row.parentElement.clientWidth;
+      let scale = 1;
+      while (row.scrollWidth > available && scale > 0.5) {
+        scale -= 0.05;
+        row.style.fontSize = `calc(var(--base-px-size) * 1.25 * ${scale})`;
+      }
+    }
+
+    function fitModText() {
+      const el = DOM.displays.modDisplay;
+      const header = el.parentElement;
+      el.style.fontSize = "";
+      let scale = 1;
+      const fits = () => el.scrollWidth <= header.clientWidth && el.scrollHeight <= header.clientHeight;
+      while (!fits() && scale > 0.3) {
+        scale -= 0.05;
+        el.style.fontSize = `calc(var(--base-px-size) * 2.2 * ${scale})`;
+      }
     }
 
     // --- Storage ---
