@@ -413,7 +413,8 @@ input[type="number"]:focus {
   padding: 4% 8%;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
+  gap: calc(var(--base-px-size) * 0.6);
   color: black;
 }
 
@@ -423,6 +424,22 @@ input[type="number"]:focus {
   align-items: center;
   gap: 0.4em;
   font-size: calc(var(--base-px-size) * 1.25);
+}
+
+.mix-pair {
+  display: flex;
+  align-items: center;
+  gap: 0.2em;
+}
+
+.row-mix.stacked {
+  align-items: flex-end;
+  gap: 0.6em;
+}
+
+.row-mix.stacked .mix-pair {
+  flex-direction: column;
+  gap: 0.15em;
 }
 
 .box-value {
