@@ -414,7 +414,7 @@ input[type="number"]:focus {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: calc(var(--base-px-size) * 0.6);
+  gap: calc(var(--base-px-size) * 0.4);
   color: black;
 }
 
@@ -449,7 +449,8 @@ input[type="number"]:focus {
   font-weight: 700;
 }
 
-#o2Display {
+#o2Display,
+#heDisplay {
   font-size: 1.2em;
 }
 
@@ -488,6 +489,7 @@ input[type="number"]:focus {
 .row-info span:last-child {
   font-weight: 700;
   margin-top: 0.15em;
+  font-size: 1.15em;
 }
 
 /* --- OCR Modal --- */
