@@ -394,7 +394,7 @@ input[type="number"]:focus {
   justify-content: center;
   font-weight: 800;
   line-height: 1;
-  font-size: calc(var(--base-px-size) * 1.6);
+  font-size: calc(var(--base-px-size) * 2.2);
 }
 
 .label-body {
@@ -450,6 +450,7 @@ input[type="number"]:focus {
   font-size: var(--base-px-size);
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .row-info span:first-child {
@@ -457,6 +458,7 @@ input[type="number"]:focus {
 }
 .row-info span:last-child {
   font-weight: 700;
+  text-align: right;
 }
 
 /* --- OCR Modal --- */
