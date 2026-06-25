@@ -999,7 +999,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.27</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.28</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1204,7 +1204,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.27</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.28</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2103,6 +2103,18 @@
         if (!isManualDisabling) requestWakeLock();
         document.removeEventListener('click', firstClickWakeLock);
     }, { once: true });
+
+    // Intercetta la virgola come separatore decimale su QUALSIASI campo numerico
+    // dell'app (i campi type="number" capiscono solo il punto e scartano la
+    // virgola silenziosamente, producendo numeri sbagliati senza nessun errore)
+    document.addEventListener('beforeinput', function(e) {
+        const el = e.target;
+        if (!el || el.tagName !== 'INPUT' || el.type !== 'number') return;
+        if (e.data !== ',') return;
+        e.preventDefault();
+        if (el.value.includes('.')) return; // già presente un punto, ignora
+        document.execCommand('insertText', false, '.');
+    });
 
     // Auto-format price inputs to 3 decimal places on blur
     document.addEventListener('blur', function(e) {
