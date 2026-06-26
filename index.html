@@ -943,30 +943,30 @@
                 </div>
 
                 <!-- BEST MIX CALCULATOR -->
-                <div id="bestMixBox" class="ux-blend-badge" style="background:rgba(6,182,212,0.07); border:1px solid rgba(6,182,212,0.2); margin-top:10px; text-align:center; display:flex; flex-direction:column; align-items:center;">
+                <div id="bestMixBox" class="ux-blend-badge" style="font-size:1em; background:rgba(6,182,212,0.07); border:1px solid rgba(6,182,212,0.2); margin-top:10px; text-align:center; display:flex; flex-direction:column; align-items:center;">
                     <div style="font-size:0.85em; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;">
                         <i class="fa-solid fa-flask-vial"></i> <span data-i18n="ui_bestmix_title">Best Mix Calculator</span>
                     </div>
                     <!-- Mode selector -->
                     <div style="display:flex; gap:8px; margin-bottom:14px; width:100%;">
                         <button id="btnModeNitrox" onclick="setBestMixMode('nitrox')"
-                            style="flex:1; padding:8px; border-radius:8px; font-size:0.78em; font-weight:800; cursor:pointer; border:2px solid var(--accent); background:var(--accent); color:#fff; text-transform:uppercase; letter-spacing:0.04em;">
+                            style="flex:1; padding:8px; border-radius:8px; font-size:0.8em; font-weight:800; cursor:pointer; border:2px solid var(--accent); background:var(--accent); color:#fff; text-transform:uppercase; letter-spacing:0.04em;">
                             <span style="color:#facc15;">■</span> <span data-i18n="ui_nitrox_label">Nitrox</span>
                         </button>
                         <button id="btnModeTrimix" onclick="setBestMixMode('trimix')"
-                            style="flex:1; padding:8px; border-radius:8px; font-size:0.78em; font-weight:800; cursor:pointer; border:2px solid var(--border-ui); background:transparent; color:var(--text); text-transform:uppercase; letter-spacing:0.04em;">
+                            style="flex:1; padding:8px; border-radius:8px; font-size:0.8em; font-weight:800; cursor:pointer; border:2px solid var(--border-ui); background:transparent; color:var(--text); text-transform:uppercase; letter-spacing:0.04em;">
                             <span style="color:#cd7f32;">■</span> <span data-i18n="ui_trimix_label">Trimix</span>
                         </button>
                     </div>
                     <!-- END field (trimix only) -->
                     <div id="bestMixENDWrap" style="display:none; flex-direction:column; align-items:center; gap:8px; margin-bottom:12px;">
-                        <label style="font-size:0.82em; font-weight:700;" data-i18n="ui_end_desired_label">END desiderata (m)</label>
+                        <label style="font-size:0.8em; font-weight:700;" data-i18n="ui_end_desired_label">END desiderata (m)</label>
                         <input type="number" id="bestMixEND" value="30" min="5" max="60" step="1"
                             inputmode="decimal" onfocus="this.select()" oninput="calcBestMix()"
-                            style="width:80px; padding:6px 8px; font-size:0.88em; text-align:center; border-radius:8px; border:1px solid var(--border-ui); background:var(--card-bg); color:var(--text);">
+                            style="width:80px; padding:6px 8px; font-size:0.85em; text-align:center; border-radius:8px; border:1px solid var(--border-ui); background:var(--card-bg); color:var(--text);">
                     </div>
-                    <div id="bestMixResult" style="font-size:0.95em; font-weight:700; margin-bottom:12px; min-height:22px;"></div>
-                    <button id="bestMixBtn" onclick="applyBestMix()" style="display:none; width:100%; padding:11px; border-radius:10px; background:var(--accent); color:#fff; border:none; font-weight:800; font-size:0.82em; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;">
+                    <div id="bestMixResult" style="font-size:0.9em; font-weight:700; margin-bottom:12px; min-height:22px;"></div>
+                    <button id="bestMixBtn" onclick="applyBestMix()" style="display:none; width:100%; padding:11px; border-radius:10px; background:var(--accent); color:#fff; border:none; font-weight:800; font-size:0.85em; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;">
                         <i class="fa-solid fa-arrow-up-from-bracket"></i> <span data-i18n="ui_use_as_target_btn">Usa come Target</span>
                     </button>
                 </div>
@@ -1011,7 +1011,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.33</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.35</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1226,7 +1226,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.33</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.35</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1678,10 +1678,24 @@
         let eadIcon = "✅";
         let eadText = "-- m";
 
+        // Mostra solo la metrica che ha senso pratico per la miscela nel Target:
+        // - Trimix (Elio > 0): solo END, l'EAD classica perde di significato con l'elio in miscela.
+        // - Nitrox (Elio = 0, O2 ≠ 21%): solo EAD, senza elio la END coinciderebbe con la profondità reale.
+        // - Aria standard (O2 = 21%, Elio = 0): nessuna delle due, sarebbero entrambe uguali alla profondità reale.
+        const isTrimixTarget = fHe > 0;
+        const isStdAirTarget = !isTrimixTarget && Math.abs(oE - 0.21) < 0.001;
+        const showEnd = isTrimixTarget;
+        const showEad = !isTrimixTarget && !isStdAirTarget;
+
+        chkEnd.style.display = showEnd ? '' : 'none';
+        chkEad.style.display = showEad ? '' : 'none';
+        chkEnd.style.gridColumn = (showEnd && !showEad) ? 'span 2' : '';
+        chkEad.style.gridColumn = (showEad && !showEnd) ? 'span 2' : '';
+
         if (plannedDepth > 0 && oE > 0) {
             const end = Math.round((plannedDepth + 10) * (1 - fHe) - 10);
             endText = `${end} m`;
-            if (end > plannedDepth) {
+            if (showEnd && end > plannedDepth) {
                 endIcon = "⚠️";
                 chkEnd.classList.add('item-warn');
                 warnings.push(fmt(t.sf_warn_end, { end: end }));
@@ -1695,7 +1709,7 @@
             if (fN2_target > 0) {
                 const ead = Math.round((plannedDepth + 10) * (fN2_target / 0.79) - 10);
                 eadText = `${ead} m`;
-                if (ead > plannedDepth) {
+                if (showEad && ead > plannedDepth) {
                     eadIcon = "⚠️";
                     chkEad.classList.add('item-warn');
                     warnings.push(fmt(t.sf_warn_ead, { ead: ead }));
