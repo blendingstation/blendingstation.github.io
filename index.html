@@ -1018,7 +1018,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.40</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.41</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1240,7 +1240,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.40</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.41</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1876,10 +1876,12 @@
             if(s.d > 0.05) {
                 runningP += s.d;
                 if (gasModel === 'real' && _realSol && runningP >= pE - 0.5) {
-                    // Final step: use mole-based composition from vdW solver
+                    // Final step: use mole-based composition from vdW solver.
+                    // L'Aria/gas di completamento porta con sé anche una quota di
+                    // O2 ed Elio (tfO2/tfHe) — va sommata, non solo la parte dedicata.
                     const nTotF = _realSol.nTotS + _realSol.dn_he + _realSol.dn_o2 + _realSol.dn_air;
-                    rO2 = (_realSol.nTotS * oS + _realSol.dn_o2 * oPurity) / nTotF * runningP;
-                    rHe = (_realSol.nTotS * hS + _realSol.dn_he * hePurity) / nTotF * runningP;
+                    rO2 = (_realSol.nTotS * oS + _realSol.dn_o2 * oPurity + _realSol.dn_air * tfO2) / nTotF * runningP;
+                    rHe = (_realSol.nTotS * hS + _realSol.dn_he * hePurity + _realSol.dn_air * tfHe) / nTotF * runningP;
                 } else {
                     rHe += (s.type === 'HE' ? s.d * hePurity : (s.type === 'AIR' ? s.d * tfHe : 0));
                     rO2 += (s.type === 'O2' ? s.d * oPurity : (s.type === 'AIR' ? s.d * tfO2 : 0));
