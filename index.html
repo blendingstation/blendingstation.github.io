@@ -754,7 +754,7 @@
                 <div class="input-group"><label data-i18n="ui_blender_label">Blender</label><input type="text" id="blenderName" placeholder="nome" autocomplete="name" data-i18n-aria="md_blender_label" aria-label="Nome Blender"></div>
                 <div class="input-group"><label id="lbl_customer">Diver</label><input type="text" id="customerName" placeholder="nome" autocomplete="name" data-i18n-aria="md_diver_label" aria-label="Nome Diver"></div>
                 <div class="input-group" style="grid-column: span 2;"><label data-i18n="ui_pricelist_label">Listino Applicato</label>
-                    <select id="priceProfile" onchange="calc()">
+                    <select id="priceProfile" onchange="saveAndCalc()">
                         <option value="soci" selected data-i18n="ui_socio_opt">Socio</option>
                         <option value="nonsoci" data-i18n="ui_nonsocio_opt">Non Socio / Esterno</option>
                         <option value="reale" data-i18n="ui_realeint_opt">Costo Reale (Interno)</option>
@@ -1018,7 +1018,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.39</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.40</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1240,7 +1240,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.39</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.40</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1321,6 +1321,7 @@
             soci: { he: document.getElementById('pHe_soci').value, o2: document.getElementById('pO2_soci').value, air: document.getElementById('pAir_soci').value, fix: document.getElementById('pFix_soci').value },
             nonsoci: { he: document.getElementById('pHe_nonsoci').value, o2: document.getElementById('pO2_nonsoci').value, air: document.getElementById('pAir_nonsoci').value, fix: document.getElementById('pFix_nonsoci').value },
             fisso: {},
+            profile: document.getElementById('priceProfile').value,
             date: document.getElementById('priceDate').value, ppo2: document.getElementById('ppo2Limit').value,
             shopName: document.getElementById('shopName') ? document.getElementById('shopName').value : ''
         };
@@ -1406,6 +1407,7 @@
                 if (costs.fisso[k] !== undefined) setBoth('pFisso_' + k, parseFloat(costs.fisso[k] || 0).toFixed(2));
             });
         }
+        if(costs.profile) document.getElementById('priceProfile').value = costs.profile;
         }
     }
 
