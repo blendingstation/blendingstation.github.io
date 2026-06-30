@@ -358,23 +358,6 @@
                 0 -1px 0 rgba(0,0,0,0.15) inset,
                 0 12px 36px rgba(0,0,0,0.38),
                 0 4px 10px rgba(0,0,0,0.18);
-            max-width: 100%;
-            margin: 0 auto;
-            transition: max-width 0.38s cubic-bezier(0.4, 0, 0.2, 1), padding 0.38s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .float-nav-wrap.compact .float-nav {
-            max-width: fit-content;
-            padding: 4px;
-        }
-        .float-nav-wrap.compact .fn-item {
-            padding: 0 12px;
-            gap: 0;
-        }
-        .float-nav-wrap.compact .fn-item span {
-            max-width: 0;
-            max-height: 0;
-            opacity: 0;
-            margin: 0;
         }
         [data-theme="light"] .float-nav {
             background: rgba(255,255,255,0.88);
@@ -398,7 +381,7 @@
             border: none;
             background: transparent;
             color: rgba(255,255,255,0.62);
-            transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease, padding 0.38s cubic-bezier(0.4, 0, 0.2, 1), gap 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
             white-space: nowrap;
             position: relative;
             flex: 1;
@@ -423,7 +406,7 @@
             border: none;
         }
         .fn-item i { font-size: 1.3em; }
-        .fn-item span { font-size: 0.58em; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; max-width: 60px; max-height: 20px; transition: opacity 0.2s ease, max-width 0.38s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.38s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; }
+        .fn-item span { font-size: 0.58em; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; }
         /* ── FULLSCREEN OPERATIVE MODE ── */
         body.fs-active { overflow: hidden; }
 
@@ -1035,7 +1018,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.49</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.50</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1257,7 +1240,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.49</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.50</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2941,46 +2924,6 @@ function mobileNav(tab) {
 
         localStorage.setItem('mobileTab', tab);
     }
-
-    // --- Floating nav: si compatta scrollando verso il basso, si riapre
-    // scrollando verso l'alto o fermandosi (stesso pattern di Instagram).
-    // Listener in fase di "capture" così funziona sia sullo scroll della
-    // finestra sia su quello dei contenitori interni delle tab statiche
-    // (Info/Prezzi usano position:fixed sul body).
-    // Avviato a DOMContentLoaded perché l'HTML della nav è più avanti nel
-    // documento rispetto a questo script: query immediata troverebbe null.
-    document.addEventListener('DOMContentLoaded', function initScrollAwareNav() {
-        const navWrap = document.querySelector('.float-nav-wrap');
-        if (!navWrap) return;
-        let lastY = 0;
-
-        function getScrollY(target) {
-            if (target === document || target === window) return window.scrollY;
-            return target.scrollTop || 0;
-        }
-
-        function handleScroll(e) {
-            const target = e.target === document ? document.scrollingElement : e.target;
-            const y = getScrollY(target);
-            const delta = y - lastY;
-
-            // Soglia più ampia per ignorare il "jitter" naturale dello scroll
-            // inerziale su mobile (altrimenti la barra sfarfalla tra i due stati
-            // durante un singolo gesto di scroll veloce).
-            // Resta compatta finché non si scrolla verso l'alto (o si torna in
-            // cima): nessun ritorno automatico per inattività, come Instagram.
-            if (Math.abs(delta) > 18) {
-                if (delta > 0 && y > 60) {
-                    navWrap.classList.add('compact');
-                } else {
-                    navWrap.classList.remove('compact');
-                }
-                lastY = y;
-            }
-        }
-
-        document.addEventListener('scroll', handleScroll, { capture: true, passive: true });
-    });
 
     function syncPrice(targetId, val) {
         const el = document.getElementById(targetId);
