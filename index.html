@@ -358,6 +358,26 @@
                 0 -1px 0 rgba(0,0,0,0.15) inset,
                 0 12px 36px rgba(0,0,0,0.38),
                 0 4px 10px rgba(0,0,0,0.18);
+            transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .float-nav-wrap {
+            transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), left 0.3s cubic-bezier(0.4, 0, 0.2, 1), right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .float-nav-wrap.compact {
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%);
+            max-width: fit-content;
+        }
+        .float-nav-wrap.compact .float-nav { padding: 4px; }
+        .float-nav-wrap.compact .fn-item {
+            padding: 0 12px;
+            height: 48px;
+        }
+        .float-nav-wrap.compact .fn-item span {
+            max-width: 0;
+            opacity: 0;
+            margin: 0;
         }
         [data-theme="light"] .float-nav {
             background: rgba(255,255,255,0.88);
@@ -381,7 +401,7 @@
             border: none;
             background: transparent;
             color: rgba(255,255,255,0.62);
-            transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease, padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
             position: relative;
             flex: 1;
@@ -406,7 +426,7 @@
             border: none;
         }
         .fn-item i { font-size: 1.3em; }
-        .fn-item span { font-size: 0.58em; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; }
+        .fn-item span { font-size: 0.58em; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1; max-width: 60px; transition: opacity 0.2s ease, max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; }
         /* ── FULLSCREEN OPERATIVE MODE ── */
         body.fs-active { overflow: hidden; }
 
@@ -1018,7 +1038,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.44</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.45</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1240,7 +1260,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.44</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.45</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2924,6 +2944,47 @@ function mobileNav(tab) {
 
         localStorage.setItem('mobileTab', tab);
     }
+
+    // --- Floating nav: si compatta scrollando verso il basso, si riapre
+    // scrollando verso l'alto o fermandosi (stesso pattern di Instagram).
+    // Listener in fase di "capture" così funziona sia sullo scroll della
+    // finestra sia su quello dei contenitori interni delle tab statiche
+    // (Info/Prezzi usano position:fixed sul body).
+    // Avviato a DOMContentLoaded perché l'HTML della nav è più avanti nel
+    // documento rispetto a questo script: query immediata troverebbe null.
+    document.addEventListener('DOMContentLoaded', function initScrollAwareNav() {
+        const navWrap = document.querySelector('.float-nav-wrap');
+        if (!navWrap) return;
+        let lastY = 0;
+        let idleTimer = null;
+
+        function getScrollY(target) {
+            if (target === document || target === window) return window.scrollY;
+            return target.scrollTop || 0;
+        }
+
+        function handleScroll(e) {
+            const target = e.target === document ? document.scrollingElement : e.target;
+            const y = getScrollY(target);
+            const delta = y - lastY;
+
+            if (Math.abs(delta) > 4) {
+                if (delta > 0 && y > 40) {
+                    navWrap.classList.add('compact');
+                } else {
+                    navWrap.classList.remove('compact');
+                }
+                lastY = y;
+            }
+
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(function() {
+                navWrap.classList.remove('compact');
+            }, 1200);
+        }
+
+        document.addEventListener('scroll', handleScroll, { capture: true, passive: true });
+    });
 
     function syncPrice(targetId, val) {
         const el = document.getElementById(targetId);
