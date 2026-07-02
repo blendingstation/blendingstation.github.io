@@ -179,76 +179,76 @@
     <!-- SECTION: PREVIEW -->
     <div class="preview-wrapper">
       <div class="card preview-card" id="labelPreviewContainer">
-        <!-- SKIN SWITCHER: swipe sull'anteprima per cambiare stile -->
-        <div class="skin-slider-wrap" id="skinSliderWrap">
+        <div class="skin-nav-wrap">
+          <button class="skin-arrow" id="arrowLeft" onclick="switchSkin(0)" aria-label="Skin precedente">&#8249;</button>
 
-          <!-- SKIN 0: Classica (rosso/bianco) -->
-          <div class="label-content skin-slide" id="skinClassic">
-            <div class="label-header">
-              <span class="mod-label">MOD</span><span id="modDisplay">-- m</span>
+          <div class="skin-slider-wrap" id="skinSliderWrap">
+
+            <!-- SKIN 0: Classica -->
+            <div class="label-content skin-slide" id="skinClassic">
+              <div class="label-header">
+                <span class="mod-label">MOD</span><span id="modDisplay">-- m</span>
+              </div>
+              <div class="label-body">
+                <div class="row-mix" id="rowMix">
+                  <div class="mix-pair">
+                    <span class="text-label">O₂:</span>
+                    <span class="box-value" id="o2Display">--%</span>
+                  </div>
+                  <div class="mix-pair" id="heMixPair">
+                    <span class="text-label" id="heLabelText">He:</span>
+                    <span class="box-value" id="heDisplay">--%</span>
+                  </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row-meta">
+                  <span id="dateTimeDisplay">--/--/--</span>
+                </div>
+                <div style="margin-top:5px; display:flex; flex-direction:column; gap:4px;">
+                  <div class="row-info">
+                    <span>Analizzato da:</span>
+                    <span id="diverDisplay">--</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="label-body">
-              <div class="row-mix" id="rowMix">
-                <div class="mix-pair">
-                  <span class="text-label">O₂:</span>
-                  <span class="box-value" id="o2Display">--%</span>
+
+            <!-- SKIN 1: Divesoft-inspired -->
+            <div class="label-content label-divesoft skin-slide" id="skinDivesoft">
+              <div class="dv-section dv-top">
+                <div class="dv-mix-ratio" id="dvMixRatio">--/--</div>
+              </div>
+              <hr class="dv-hr">
+              <div class="dv-section dv-labels-row">
+                <span class="dv-lbl">MOD</span>
+                <span class="dv-lbl" id="dvPpo2Badge">PPO₂ --</span>
+              </div>
+              <div class="dv-section dv-middle">
+                <span class="dv-mod-num" id="dvModNum">--</span><span class="dv-mod-unit">m</span>
+              </div>
+              <hr class="dv-hr">
+              <div class="dv-section dv-gas-row">
+                <div class="dv-gas-cell">
+                  <span class="dv-lbl">O₂</span>
+                  <span class="dv-gas-val" id="dvO2">--%</span>
                 </div>
-                <div class="mix-pair" id="heMixPair">
-                  <span class="text-label" id="heLabelText">He:</span>
-                  <span class="box-value" id="heDisplay">--%</span>
+                <div class="dv-gas-cell dv-gas-right">
+                  <span class="dv-lbl">He</span>
+                  <span class="dv-gas-val" id="dvHe">--%</span>
                 </div>
               </div>
-              <div class="divider"></div>
-              <div class="row-meta">
-                <span id="dateTimeDisplay">--/--/--</span>
-              </div>
-              <div style="margin-top:5px; display:flex; flex-direction:column; gap:4px;">
-                <div class="row-info">
-                  <span>Analizzato da:</span>
-                  <span id="diverDisplay">--</span>
-                </div>
+              <hr class="dv-hr">
+              <div class="dv-section dv-footer-row">
+                <span class="dv-footer-val" id="dvDiver">--</span>
+                <span class="dv-footer-val" id="dvDate">--</span>
               </div>
             </div>
+
           </div>
 
-          <!-- SKIN 1: Divesoft-inspired (bianco/nero, grande) -->
-          <div class="label-content label-divesoft skin-slide" id="skinDivesoft">
-            <!-- 1. Mix ratio centrato -->
-            <div class="dv-mix-ratio" id="dvMixRatio">--/--</div>
-            <!-- 2. Linea separatoria -->
-            <hr class="dv-line">
-            <!-- 3. MOD sx + PPO2 dx -->
-            <div class="dv-row-labels">
-              <span class="dv-small-label">MOD</span>
-              <span class="dv-small-label" id="dvPpo2Badge">PPO₂ --</span>
-            </div>
-            <!-- 4. Metri centrati -->
-            <div class="dv-mod-center">
-              <span id="dvModNum">--</span><span class="dv-m">m</span>
-            </div>
-            <!-- 5. Linea + O2 e He -->
-            <hr class="dv-line">
-            <div class="dv-row-vals">
-              <div class="dv-val-cell">
-                <span class="dv-small-label">O₂</span>
-                <span class="dv-val" id="dvO2">--%</span>
-              </div>
-              <div class="dv-val-cell dv-val-right">
-                <span class="dv-small-label">He</span>
-                <span class="dv-val" id="dvHe">--%</span>
-              </div>
-            </div>
-            <!-- 6. Linea + nome sx / data dx -->
-            <hr class="dv-line">
-            <div class="dv-row-footer">
-              <span class="dv-footer-text" id="dvDiver">--</span>
-              <span class="dv-footer-text" id="dvDate">--</span>
-            </div>
-          </div>
-
+          <button class="skin-arrow" id="arrowRight" onclick="switchSkin(1)" aria-label="Skin successiva">&#8250;</button>
         </div>
 
-        <!-- Indicatori puntini -->
         <div class="skin-dots">
           <span class="skin-dot active" id="dot0"></span>
           <span class="skin-dot" id="dot1"></span>
@@ -278,7 +278,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.0
+      2026 TankLabel - Version 5.2
     </p>
   </footer>
 
@@ -508,41 +508,34 @@
     function fitDivesoftText() {
       if (currentSkin !== 1) return;
       const skinEl = document.getElementById("skinDivesoft");
-      const ratio = document.getElementById("dvMixRatio");
-      const modEl = document.getElementById("dvModNum");
-      const modCenter = modEl ? modEl.parentElement : null;
-      if (!ratio || !skinEl) return;
-
-      // Forza reflow sincrono prima di misurare
+      if (!skinEl) return;
       void skinEl.offsetWidth;
 
-      // --- Scala il mix ratio in larghezza ---
-      ratio.style.fontSize = "";
-      void ratio.offsetWidth;
-      const avail = skinEl.clientWidth * 0.84;
-      if (avail > 0) {
-        let scale = 1;
-        while (ratio.scrollWidth > avail && scale > 0.3) {
-          scale -= 0.05;
-          ratio.style.fontSize = `calc(var(--base-px-size) * 4.5 * ${scale})`;
+      // Scala il mix ratio: usa la larghezza del suo contenitore diretto (già al netto del padding)
+      const ratio = document.getElementById("dvMixRatio");
+      if (ratio) {
+        ratio.style.fontSize = "";
+        void ratio.offsetWidth;
+        const avail = ratio.parentElement.clientWidth;
+        let s = 1;
+        while (ratio.scrollWidth > avail && s > 0.2) {
+          s -= 0.04;
+          ratio.style.fontSize = `calc(var(--dv-w) * ${(0.28 * s).toFixed(4)})`;
           void ratio.offsetWidth;
         }
       }
 
-      // --- Scala il numero MOD in larghezza E altezza ---
-      if (modEl && modCenter) {
-        modEl.style.fontSize = "";
-        void modEl.offsetWidth;
-        let mScale = 1;
-        const maxW = modCenter.clientWidth * 0.85;
-        const maxH = modCenter.clientHeight * 0.90;
-        while (
-          mScale > 0.2 &&
-          (modEl.scrollWidth > maxW || modEl.offsetHeight > maxH)
-        ) {
-          mScale -= 0.04;
-          modEl.style.fontSize = `calc(var(--base-px-size) * 5.5 * ${mScale})`;
-          void modEl.offsetWidth;
+      // Scala il numero MOD in larghezza
+      const modNum = document.getElementById("dvModNum");
+      if (modNum) {
+        modNum.style.fontSize = "";
+        void modNum.offsetWidth;
+        const maxW = modNum.parentElement.clientWidth;
+        let ms = 1;
+        while (modNum.scrollWidth > maxW && ms > 0.2) {
+          ms -= 0.04;
+          modNum.style.fontSize = `calc(var(--dv-w) * ${(0.45 * ms).toFixed(4)})`;
+          void modNum.offsetWidth;
         }
       }
     }
@@ -616,6 +609,13 @@
       document.querySelectorAll(".skin-dot").forEach((d, i) =>
         d.classList.toggle("active", i === idx)
       );
+
+      // Frecce: mostra solo quella che porta alla skin opposta
+      const arrowL = document.getElementById("arrowLeft");
+      const arrowR = document.getElementById("arrowRight");
+      if (arrowL) arrowL.style.visibility = idx === 1 ? "visible" : "hidden";
+      if (arrowR) arrowR.style.visibility = idx === 0 ? "visible" : "hidden";
+
       updatePreview();
     }
 
@@ -746,6 +746,7 @@
         el.style.width = `${widthMm * finalScale}px`;
         el.style.height = `${heightMm * finalScale}px`;
         el.style.setProperty("--base-px-size", `${basePx * scaleFactor}px`);
+        el.style.setProperty("--dv-w", `${widthMm * finalScale}px`);
       });
 
       fitMixRow();
