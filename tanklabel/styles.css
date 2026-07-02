@@ -710,21 +710,58 @@ footer {
 }
 
 /* ── SKIN DIVESOFT ── */
+
+/* Frecce più visibili */
+.skin-arrow {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.2s;
+}
+.skin-arrow[style*="hidden"] { opacity: 0; pointer-events: none; }
+
 .label-divesoft {
   background: #ffffff;
   color: #111111;
-  display: block;
-  padding: 4% 6%;
+  /* FLEX COLUMN — distribuisce le sezioni nell'altezza disponibile */
+  display: flex;
+  flex-direction: column;
+  padding: 5% 6%;
   box-sizing: border-box;
   border-radius: 8px;
   overflow: hidden;
   font-family: var(--font-family);
 }
 
-.dv-section { display: block; }
-.dv-top { text-align: center; }
+/* IMPORTANTE: dv-section NON deve avere display:block
+   altrimenti sovrascrive flex:1 su dv-middle */
+.dv-top    { flex-shrink: 0; text-align: center; }
+.dv-labels-row { flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
+.dv-middle { flex: 1; min-height: 0; display: flex; justify-content: center; align-items: center; gap: 0.05em; }
+.dv-gas-row    { flex-shrink: 0; display: flex; justify-content: space-between; align-items: flex-end; }
+.dv-footer-row { flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
 
-/* Mix ratio: occupa circa 30% dell'altezza — font grande, il fit JS lo riduce se serve */
+.dv-hr {
+  flex-shrink: 0;
+  border: none;
+  border-top: 1.5px solid #999;
+  margin: 2% 0;
+}
+
+/* Testi — font basato sulla larghezza dell'etichetta (--dv-w) */
 .dv-mix-ratio {
   font-size: calc(var(--dv-w) * 0.28);
   font-weight: 900;
@@ -732,39 +769,15 @@ footer {
   letter-spacing: -0.02em;
   white-space: nowrap;
   overflow: hidden;
-  display: block;
   text-align: center;
-}
-
-.dv-hr {
-  border: none;
-  border-top: 1.5px solid #888;
-  margin: 2% 0;
-  display: block;
-}
-
-/* MOD / PPO2 */
-.dv-labels-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .dv-lbl {
-  font-size: calc(var(--base-px-size) * 0.70);
+  font-size: calc(var(--dv-w) * 0.055);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #444;
-}
-
-/* Numero MOD: occupa circa 35% dell'altezza */
-.dv-middle {
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-  gap: 0.05em;
+  color: #555;
 }
 
 .dv-mod-num {
@@ -772,40 +785,24 @@ footer {
   font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 1;
-  display: inline-block;
 }
 
 .dv-mod-unit {
   font-size: calc(var(--dv-w) * 0.11) !important;
   font-weight: 700;
-  padding-bottom: 0.15em;
-  display: inline-block;
-}
-
-/* O2 / He */
-.dv-gas-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  align-self: flex-end;
+  padding-bottom: 0.12em;
 }
 
 .dv-gas-cell { display: flex; flex-direction: column; }
 .dv-gas-right { align-items: flex-end; }
 
 .dv-gas-val {
-  font-size: calc(var(--base-px-size) * 1.1);
+  font-size: calc(var(--dv-w) * 0.085);
   font-weight: 800;
-  display: block;
-}
-
-/* Nome / Data */
-.dv-footer-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .dv-footer-val {
-  font-size: calc(var(--base-px-size) * 0.80);
+  font-size: calc(var(--dv-w) * 0.065);
   font-weight: 700;
 }
