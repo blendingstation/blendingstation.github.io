@@ -142,6 +142,7 @@
             <label><i class="fas fa-ruler-combined"></i> Dimensioni (mm)</label>
             <div class="dual-input">
               <div class="number-stepper">
+                <div style="font-size:0.65em; font-weight:700; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Larghezza</div>
                 <input type="number" id="labelWidth" value="50" min="30" inputmode="numeric" pattern="[0-9]*" onfocus="this.select()" />
                 <div class="stepper-buttons">
                   <button type="button" class="stepper-btn" onclick="stepValue('labelWidth', 1)" aria-label="Aumenta"><i class="fas fa-chevron-up"></i></button>
@@ -150,6 +151,7 @@
               </div>
               <span>x</span>
               <div class="number-stepper">
+                <div style="font-size:0.65em; font-weight:700; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Altezza</div>
                 <input type="number" id="labelHeight" value="50" min="30" inputmode="numeric" pattern="[0-9]*" onfocus="this.select()" />
                 <div class="stepper-buttons">
                   <button type="button" class="stepper-btn" onclick="stepValue('labelHeight', 1)" aria-label="Aumenta"><i class="fas fa-chevron-up"></i></button>
@@ -215,19 +217,19 @@
 
             <!-- SKIN 1: Divesoft-inspired -->
             <div class="label-content label-divesoft skin-slide" id="skinDivesoft">
-              <div class="dv-section dv-top">
+              <div class="dv-top">
                 <div class="dv-mix-ratio" id="dvMixRatio">--/--</div>
               </div>
               <hr class="dv-hr">
-              <div class="dv-section dv-labels-row">
+              <div class="dv-labels-row">
                 <span class="dv-lbl">MOD</span>
                 <span class="dv-lbl" id="dvPpo2Badge">PPO₂ --</span>
               </div>
-              <div class="dv-section dv-middle">
+              <div class="dv-middle">
                 <span class="dv-mod-num" id="dvModNum">--</span><span class="dv-mod-unit">m</span>
               </div>
               <hr class="dv-hr">
-              <div class="dv-section dv-gas-row">
+              <div class="dv-gas-row">
                 <div class="dv-gas-cell">
                   <span class="dv-lbl">O₂</span>
                   <span class="dv-gas-val" id="dvO2">--%</span>
@@ -238,7 +240,7 @@
                 </div>
               </div>
               <hr class="dv-hr">
-              <div class="dv-section dv-footer-row">
+              <div class="dv-footer-row">
                 <span class="dv-footer-val" id="dvDiver">--</span>
                 <span class="dv-footer-val" id="dvDate">--</span>
               </div>
@@ -278,7 +280,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.2
+      2026 TankLabel - Version 5.3
     </p>
   </footer>
 
