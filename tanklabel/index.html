@@ -157,6 +157,9 @@
                 </div>
               </div>
             </div>
+            <p id="divesoftOrientationNote" style="display:none; margin:6px 0 0 0; font-size:0.72em; color:#f59e0b; font-weight:600;">
+              <i class="fas fa-info-circle"></i> La skin Divesoft è ottimizzata per etichette verticali (altezza ≥ larghezza).
+            </p>
           </div>
 
           <div class="form-group">
@@ -176,44 +179,79 @@
     <!-- SECTION: PREVIEW -->
     <div class="preview-wrapper">
       <div class="card preview-card" id="labelPreviewContainer">
-        <!-- THE LABEL -->
-        <div class="label-content">
-          <div class="label-header">
-            <span class="mod-label">MOD</span><span id="modDisplay">-- m</span>
-          </div>
-          <div class="label-body">
-            <!-- Gas Mix -->
-            <div class="row-mix" id="rowMix">
-              <div class="mix-pair">
-                <span class="text-label">O₂:</span>
-                <span class="box-value" id="o2Display">--%</span>
-              </div>
-              <div class="mix-pair" id="heMixPair">
-                <span class="text-label" id="heLabelText">He:</span>
-                <span class="box-value" id="heDisplay">--%</span>
-              </div>
+        <!-- SKIN SWITCHER: swipe sull'anteprima per cambiare stile -->
+        <div class="skin-slider-wrap" id="skinSliderWrap">
+
+          <!-- SKIN 0: Classica (rosso/bianco) -->
+          <div class="label-content skin-slide" id="skinClassic">
+            <div class="label-header">
+              <span class="mod-label">MOD</span><span id="modDisplay">-- m</span>
             </div>
-
-            <div class="divider"></div>
-
-            <!-- Meta Data -->
-            <div class="row-meta">
-              <span id="dateTimeDisplay">--/--/--</span>
-            </div>
-
-            <!-- People -->
-            <div style="
-                  margin-top: 5px;
-                  display: flex;
-                  flex-direction: column;
-                  gap: 4px;
-                ">
-              <div class="row-info">
-                <span>Analizzato da:</span>
-                <span id="diverDisplay">--</span>
+            <div class="label-body">
+              <div class="row-mix" id="rowMix">
+                <div class="mix-pair">
+                  <span class="text-label">O₂:</span>
+                  <span class="box-value" id="o2Display">--%</span>
+                </div>
+                <div class="mix-pair" id="heMixPair">
+                  <span class="text-label" id="heLabelText">He:</span>
+                  <span class="box-value" id="heDisplay">--%</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row-meta">
+                <span id="dateTimeDisplay">--/--/--</span>
+              </div>
+              <div style="margin-top:5px; display:flex; flex-direction:column; gap:4px;">
+                <div class="row-info">
+                  <span>Analizzato da:</span>
+                  <span id="diverDisplay">--</span>
+                </div>
               </div>
             </div>
           </div>
+
+          <!-- SKIN 1: Divesoft-inspired (bianco/nero, grande) -->
+          <div class="label-content label-divesoft skin-slide" id="skinDivesoft">
+            <!-- 1. Mix ratio centrato -->
+            <div class="dv-mix-ratio" id="dvMixRatio">--/--</div>
+            <!-- 2. Linea separatoria -->
+            <hr class="dv-line">
+            <!-- 3. MOD sx + PPO2 dx -->
+            <div class="dv-row-labels">
+              <span class="dv-small-label">MOD</span>
+              <span class="dv-small-label" id="dvPpo2Badge">PPO₂ --</span>
+            </div>
+            <!-- 4. Metri centrati -->
+            <div class="dv-mod-center">
+              <span id="dvModNum">--</span><span class="dv-m">m</span>
+            </div>
+            <!-- 5. Linea + O2 e He -->
+            <hr class="dv-line">
+            <div class="dv-row-vals">
+              <div class="dv-val-cell">
+                <span class="dv-small-label">O₂</span>
+                <span class="dv-val" id="dvO2">--%</span>
+              </div>
+              <div class="dv-val-cell dv-val-right">
+                <span class="dv-small-label">He</span>
+                <span class="dv-val" id="dvHe">--%</span>
+              </div>
+            </div>
+            <!-- 6. Linea + nome sx / data dx -->
+            <hr class="dv-line">
+            <div class="dv-row-footer">
+              <span class="dv-footer-text" id="dvDiver">--</span>
+              <span class="dv-footer-text" id="dvDate">--</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Indicatori puntini -->
+        <div class="skin-dots">
+          <span class="skin-dot active" id="dot0"></span>
+          <span class="skin-dot" id="dot1"></span>
         </div>
       </div>
 
@@ -240,7 +278,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 4.9
+      2026 TankLabel - Version 5.0
     </p>
   </footer>
 
@@ -467,6 +505,48 @@
       DOM.displays[id] = document.getElementById(id);
     });
 
+    function fitDivesoftText() {
+      if (currentSkin !== 1) return;
+      const skinEl = document.getElementById("skinDivesoft");
+      const ratio = document.getElementById("dvMixRatio");
+      const modEl = document.getElementById("dvModNum");
+      const modCenter = modEl ? modEl.parentElement : null;
+      if (!ratio || !skinEl) return;
+
+      // Forza reflow sincrono prima di misurare
+      void skinEl.offsetWidth;
+
+      // --- Scala il mix ratio in larghezza ---
+      ratio.style.fontSize = "";
+      void ratio.offsetWidth;
+      const avail = skinEl.clientWidth * 0.84;
+      if (avail > 0) {
+        let scale = 1;
+        while (ratio.scrollWidth > avail && scale > 0.3) {
+          scale -= 0.05;
+          ratio.style.fontSize = `calc(var(--base-px-size) * 4.5 * ${scale})`;
+          void ratio.offsetWidth;
+        }
+      }
+
+      // --- Scala il numero MOD in larghezza E altezza ---
+      if (modEl && modCenter) {
+        modEl.style.fontSize = "";
+        void modEl.offsetWidth;
+        let mScale = 1;
+        const maxW = modCenter.clientWidth * 0.85;
+        const maxH = modCenter.clientHeight * 0.90;
+        while (
+          mScale > 0.2 &&
+          (modEl.scrollWidth > maxW || modEl.offsetHeight > maxH)
+        ) {
+          mScale -= 0.04;
+          modEl.style.fontSize = `calc(var(--base-px-size) * 5.5 * ${mScale})`;
+          void modEl.offsetWidth;
+        }
+      }
+    }
+
     // --- Init ---
     let currentPpo2Max = 1.4;
 
@@ -474,6 +554,7 @@
       loadSettings();
       initHeliumToggle();
       initPpo2Mode();
+      switchSkin(currentSkin); // ripristina la skin salvata
       setupEventListeners();
       updatePreview();
     }
@@ -511,6 +592,33 @@
       if (!enabled) DOM.inputs.heInput.value = 0;
     }
 
+    // --- Skin attiva (0=Classica, 1=Divesoft) ---
+    let currentSkin = parseInt(localStorage.getItem("currentSkin") || "0");
+
+    function getActiveLabelContent() {
+      return currentSkin === 0
+        ? document.getElementById("skinClassic")
+        : document.getElementById("skinDivesoft");
+    }
+
+    // Esposto globalmente così export-utils.js lo trova tramite DOM.labelContent
+    // che viene aggiornato ogni volta che si cambia skin
+    function refreshDomLabelContent() {
+      DOM.labelContent = getActiveLabelContent();
+    }
+
+    function switchSkin(idx) {
+      currentSkin = idx;
+      localStorage.setItem("currentSkin", idx);
+      refreshDomLabelContent();
+
+      // Aggiorna puntini
+      document.querySelectorAll(".skin-dot").forEach((d, i) =>
+        d.classList.toggle("active", i === idx)
+      );
+      updatePreview();
+    }
+
     function setupEventListeners() {
       Object.values(DOM.inputs).forEach((input) => {
         input.addEventListener("input", () => {
@@ -530,6 +638,25 @@
           input.value = after;
           input.setSelectionRange(pos, pos);
         }
+      });
+
+      // Swipe sull'anteprima per cambiare skin
+      const slider = document.getElementById("skinSliderWrap");
+      let touchStartX = 0;
+      slider.addEventListener("touchstart", (e) => {
+        touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+      slider.addEventListener("touchend", (e) => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 40) {
+          switchSkin(dx < 0 ? 1 : 0);
+        }
+      }, { passive: true });
+      // Click/swipe su desktop con mouse
+      slider.addEventListener("mousedown", (e) => { touchStartX = e.clientX; });
+      slider.addEventListener("mouseup", (e) => {
+        const dx = e.clientX - touchStartX;
+        if (Math.abs(dx) > 40) switchSkin(dx < 0 ? 1 : 0);
       });
     }
 
@@ -558,23 +685,56 @@
       const o2 = num("o2Input");
       const he = num("heInput");
       const mod = calculateMOD(o2);
+      const diver = val("diverName");
+      const now = new Date();
+      const dateStr = now.toLocaleDateString("it-IT");
 
+      // --- SKIN 0: Classica ---
       DOM.displays.modDisplay.textContent = `${mod} m`;
       DOM.displays.o2Display.textContent = `${o2.toFixed(1)}%`;
       DOM.displays.heDisplay.textContent = `${he.toFixed(1)}%`;
-      DOM.displays.diverDisplay.textContent = val("diverName");
+      DOM.displays.diverDisplay.textContent = diver;
+      DOM.displays.dateTimeDisplay.textContent = dateStr;
 
-      // Mostra la coppia "He:" sull'etichetta solo se l'elio è attivo, e in
-      // quel caso passa al layout a colonne (etichetta sopra il box) per
-      // risparmiare spazio orizzontale, utile soprattutto su etichette strette/verticali
       const heActive = document.getElementById("heGroup").style.display !== "none";
       document.getElementById("heMixPair").style.display = heActive ? "" : "none";
       document.getElementById("rowMix").classList.toggle("stacked", heActive);
 
-      const now = new Date();
-      DOM.displays.dateTimeDisplay.textContent = now.toLocaleDateString("it-IT");
+      // --- SKIN 1: Divesoft ---
+      const o2str = o2 % 1 === 0 ? o2.toFixed(0) : o2.toFixed(1);
+      const hestr = he % 1 === 0 ? he.toFixed(0) : he.toFixed(1);
+      document.getElementById("dvMixRatio").textContent = heActive
+        ? `${o2str}/${hestr}`
+        : `${o2str}/0`;
+      document.getElementById("dvModNum").textContent = mod;
+      document.getElementById("dvPpo2Badge").textContent = `PPO₂ ${currentPpo2Max.toFixed(1)}`;
+      document.getElementById("dvO2").textContent = `${o2.toFixed(1)}%`;
+      document.getElementById("dvHe").textContent = heActive ? `${he.toFixed(1)}%` : "0%";
+      document.getElementById("dvDiver").textContent = diver;
+      document.getElementById("dvDate").textContent = dateStr;
 
-      // Scala responsive: adatta al contenitore con max 150%
+      // Mostra/nasconde la skin attiva
+      document.getElementById("skinClassic").style.display = currentSkin === 0 ? "" : "none";
+      document.getElementById("skinDivesoft").style.display = currentSkin === 1 ? "" : "none";
+      refreshDomLabelContent();
+
+      // Se skin Divesoft è attiva, imponi proporzione verticale (h >= w)
+      // per garantire che tutto il contenuto sia visibile
+      const note = document.getElementById("divesoftOrientationNote");
+      if (currentSkin === 1) {
+        const widthMm = num("labelWidth");
+        const heightMm = num("labelHeight");
+        if (widthMm > heightMm) {
+          DOM.inputs["labelHeight"].value = widthMm;
+          if (note) note.style.display = "";
+        } else {
+          if (note) note.style.display = "none";
+        }
+      } else {
+        if (note) note.style.display = "none";
+      }
+
+      // Scala responsive
       const widthMm = num("labelWidth");
       const heightMm = num("labelHeight");
       const basePx = num("basePxSize");
@@ -582,18 +742,15 @@
       const scaleFactor = Math.min(containerWidth / (widthMm * 5), 1.5);
       const finalScale = 5 * scaleFactor;
 
-      DOM.labelContent.style.width = `${widthMm * finalScale}px`;
-      DOM.labelContent.style.height = `${heightMm * finalScale}px`;
-      DOM.labelContent.style.setProperty(
-        "--base-px-size",
-        `${basePx * scaleFactor}px`,
-      );
+      [document.getElementById("skinClassic"), document.getElementById("skinDivesoft")].forEach(el => {
+        el.style.width = `${widthMm * finalScale}px`;
+        el.style.height = `${heightMm * finalScale}px`;
+        el.style.setProperty("--base-px-size", `${basePx * scaleFactor}px`);
+      });
 
-      // Restringe automaticamente la riga O2/He se non entra nella larghezza
-      // dell'etichetta (capita soprattutto con l'Elio attivo)
       fitMixRow();
-      // Restringe il MOD se non entra nella banda rossa (etichette piccole)
       fitModText();
+      fitDivesoftText();
     }
 
     function fitMixRow() {
