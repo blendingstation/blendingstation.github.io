@@ -181,76 +181,77 @@
     <!-- SECTION: PREVIEW -->
     <div class="preview-wrapper">
       <div class="card preview-card" id="labelPreviewContainer">
-        <div class="skin-nav-wrap">
-          <button class="skin-arrow" id="arrowLeft" onclick="switchSkin(0)" aria-label="Skin precedente">&#8249;</button>
 
-          <div class="skin-slider-wrap" id="skinSliderWrap">
+        <!-- Frecce assolute, sempre visibili, sovrapposte all'etichetta -->
+        <button class="skin-arrow skin-arrow-l" id="arrowLeft"  onclick="switchSkin(0)">&#8249;</button>
+        <button class="skin-arrow skin-arrow-r" id="arrowRight" onclick="switchSkin(1)">&#8250;</button>
 
-            <!-- SKIN 0: Classica -->
-            <div class="label-content skin-slide" id="skinClassic">
-              <div class="label-header">
-                <span class="mod-label">MOD</span><span id="modDisplay">-- m</span>
+        <!-- Etichette -->
+        <div class="skin-slider-wrap" id="skinSliderWrap">
+
+          <!-- SKIN 0: Classica -->
+          <div class="label-content skin-slide" id="skinClassic">
+            <div class="label-header">
+              <span class="mod-label">MOD</span><span id="modDisplay">-- m</span>
+            </div>
+            <div class="label-body">
+              <div class="row-mix" id="rowMix">
+                <div class="mix-pair">
+                  <span class="text-label">O&#8322;:</span>
+                  <span class="box-value" id="o2Display">--%</span>
+                </div>
+                <div class="mix-pair" id="heMixPair">
+                  <span class="text-label" id="heLabelText">He:</span>
+                  <span class="box-value" id="heDisplay">--%</span>
+                </div>
               </div>
-              <div class="label-body">
-                <div class="row-mix" id="rowMix">
-                  <div class="mix-pair">
-                    <span class="text-label">O₂:</span>
-                    <span class="box-value" id="o2Display">--%</span>
-                  </div>
-                  <div class="mix-pair" id="heMixPair">
-                    <span class="text-label" id="heLabelText">He:</span>
-                    <span class="box-value" id="heDisplay">--%</span>
-                  </div>
-                </div>
-                <div class="divider"></div>
-                <div class="row-meta">
-                  <span id="dateTimeDisplay">--/--/--</span>
-                </div>
-                <div style="margin-top:5px; display:flex; flex-direction:column; gap:4px;">
-                  <div class="row-info">
-                    <span>Analizzato da:</span>
-                    <span id="diverDisplay">--</span>
-                  </div>
+              <div class="divider"></div>
+              <div class="row-meta">
+                <span id="dateTimeDisplay">--/--/--</span>
+              </div>
+              <div style="margin-top:5px; display:flex; flex-direction:column; gap:4px;">
+                <div class="row-info">
+                  <span>Analizzato da:</span>
+                  <span id="diverDisplay">--</span>
                 </div>
               </div>
             </div>
-
-            <!-- SKIN 1: Divesoft-inspired -->
-            <div class="label-content label-divesoft skin-slide" id="skinDivesoft">
-              <div class="dv-top">
-                <div class="dv-mix-ratio" id="dvMixRatio">--/--</div>
-              </div>
-              <hr class="dv-hr">
-              <div class="dv-labels-row">
-                <span class="dv-lbl">MOD</span>
-                <span class="dv-lbl" id="dvPpo2Badge">PPO₂ --</span>
-              </div>
-              <div class="dv-middle">
-                <span class="dv-mod-num" id="dvModNum">--</span><span class="dv-mod-unit">m</span>
-              </div>
-              <hr class="dv-hr">
-              <div class="dv-gas-row">
-                <div class="dv-gas-cell">
-                  <span class="dv-lbl">O₂</span>
-                  <span class="dv-gas-val" id="dvO2">--%</span>
-                </div>
-                <div class="dv-gas-cell dv-gas-right">
-                  <span class="dv-lbl">He</span>
-                  <span class="dv-gas-val" id="dvHe">--%</span>
-                </div>
-              </div>
-              <hr class="dv-hr">
-              <div class="dv-footer-row">
-                <span class="dv-footer-val" id="dvDiver">--</span>
-                <span class="dv-footer-val" id="dvDate">--</span>
-              </div>
-            </div>
-
           </div>
 
-          <button class="skin-arrow" id="arrowRight" onclick="switchSkin(1)" aria-label="Skin successiva">&#8250;</button>
+          <!-- SKIN 1: Divesoft-inspired -->
+          <div class="label-content label-divesoft skin-slide" id="skinDivesoft">
+            <div class="dv-top">
+              <div id="dvMixRatio" class="dv-mix-ratio">--/--</div>
+            </div>
+            <hr class="dv-hr">
+            <div class="dv-labels-row">
+              <span class="dv-lbl">MOD</span>
+              <span class="dv-lbl" id="dvPpo2Badge">PPO&#8322; --</span>
+            </div>
+            <div class="dv-middle">
+              <span id="dvModNum" class="dv-mod-num">--</span><span class="dv-mod-unit">m</span>
+            </div>
+            <hr class="dv-hr">
+            <div class="dv-gas-row">
+              <div class="dv-gas-cell">
+                <span class="dv-lbl">O&#8322;</span>
+                <span class="dv-gas-val" id="dvO2">--%</span>
+              </div>
+              <div class="dv-gas-cell dv-gas-right">
+                <span class="dv-lbl">He</span>
+                <span class="dv-gas-val" id="dvHe">--%</span>
+              </div>
+            </div>
+            <hr class="dv-hr">
+            <div class="dv-footer-row">
+              <span class="dv-footer-val" id="dvDiver">--</span>
+              <span class="dv-footer-val" id="dvDate">--</span>
+            </div>
+          </div>
+
         </div>
 
+        <!-- Puntini indicatori -->
         <div class="skin-dots">
           <span class="skin-dot active" id="dot0"></span>
           <span class="skin-dot" id="dot1"></span>
@@ -280,7 +281,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.3
+      2026 TankLabel - Version 5.4
     </p>
   </footer>
 
@@ -507,54 +508,38 @@
       DOM.displays[id] = document.getElementById(id);
     });
 
-    function fitDivesoftText() {
-      if (currentSkin !== 1) return;
-      const skinEl = document.getElementById("skinDivesoft");
-      if (!skinEl) return;
-      void skinEl.offsetWidth;
-
-      // Scala il mix ratio: usa la larghezza del suo contenitore diretto (già al netto del padding)
-      const ratio = document.getElementById("dvMixRatio");
-      if (ratio) {
-        ratio.style.fontSize = "";
-        void ratio.offsetWidth;
-        const avail = ratio.parentElement.clientWidth;
-        let s = 1;
-        while (ratio.scrollWidth > avail && s > 0.2) {
-          s -= 0.04;
-          ratio.style.fontSize = `calc(var(--dv-w) * ${(0.28 * s).toFixed(4)})`;
-          void ratio.offsetWidth;
-        }
-      }
-
-      // Scala il numero MOD in larghezza
-      const modNum = document.getElementById("dvModNum");
-      if (modNum) {
-        modNum.style.fontSize = "";
-        void modNum.offsetWidth;
-        const maxW = modNum.parentElement.clientWidth;
-        let ms = 1;
-        while (modNum.scrollWidth > maxW && ms > 0.2) {
-          ms -= 0.04;
-          modNum.style.fontSize = `calc(var(--dv-w) * ${(0.45 * ms).toFixed(4)})`;
-          void modNum.offsetWidth;
-        }
-      }
-    }
-
-    // --- Init ---
+    // --- Skin attiva ---
+    let currentSkin = parseInt(localStorage.getItem("currentSkin") || "0");
     let currentPpo2Max = 1.4;
 
-    function init() {
-      loadSettings();
-      initHeliumToggle();
-      initPpo2Mode();
-      switchSkin(currentSkin); // ripristina la skin salvata
-      setupEventListeners();
+    function getActiveLabelContent() {
+      return currentSkin === 0
+        ? document.getElementById("skinClassic")
+        : document.getElementById("skinDivesoft");
+    }
+    function refreshDomLabelContent() {
+      DOM.labelContent = getActiveLabelContent();
+    }
+
+    function switchSkin(idx) {
+      currentSkin = idx;
+      localStorage.setItem("currentSkin", idx);
+      refreshDomLabelContent();
+      document.querySelectorAll(".skin-dot").forEach((d, i) =>
+        d.classList.toggle("active", i === idx)
+      );
+      const aL = document.getElementById("arrowLeft");
+      const aR = document.getElementById("arrowRight");
+      if (aL) aL.style.opacity = idx === 1 ? "1" : "0";
+      if (aR) aR.style.opacity = idx === 0 ? "1" : "0";
       updatePreview();
     }
 
-    // --- Tipo di Gas: Fondo (1.4) / Decompressivo (1.6) ---
+    function calculateMOD(o2) {
+      if (o2 <= 0) return 0;
+      return Math.max(0, Math.round((currentPpo2Max / (o2 / 100) - 1) * 10));
+    }
+
     function setPpo2Mode(value) {
       currentPpo2Max = value;
       document.getElementById("btnGasFondo").classList.toggle("active", value === 1.4);
@@ -568,101 +553,19 @@
       setPpo2Mode(saved === 1.6 ? 1.6 : 1.4);
     }
 
-    // --- Toggle Elio (Trimix) ---
     function toggleHelium(show) {
-      const heGroup = document.getElementById("heGroup");
-      const toggleRow = document.getElementById("heliumToggleRow");
-      heGroup.style.display = show ? "flex" : "none";
-      toggleRow.style.display = show ? "none" : "block";
-      if (!show) DOM.inputs.heInput.value = 0;
+      document.getElementById("heGroup").style.display = show ? "" : "none";
+      document.getElementById("heliumToggleRow").style.display = show ? "none" : "";
+      if (!show) document.getElementById("heInput").value = 0;
       localStorage.setItem("heliumEnabled", show ? "1" : "0");
       updatePreview();
-      saveSettings();
     }
 
     function initHeliumToggle() {
       const enabled = localStorage.getItem("heliumEnabled") === "1";
-      document.getElementById("heGroup").style.display = enabled ? "flex" : "none";
-      document.getElementById("heliumToggleRow").style.display = enabled ? "none" : "block";
-      if (!enabled) DOM.inputs.heInput.value = 0;
+      toggleHelium(enabled);
     }
 
-    // --- Skin attiva (0=Classica, 1=Divesoft) ---
-    let currentSkin = parseInt(localStorage.getItem("currentSkin") || "0");
-
-    function getActiveLabelContent() {
-      return currentSkin === 0
-        ? document.getElementById("skinClassic")
-        : document.getElementById("skinDivesoft");
-    }
-
-    // Esposto globalmente così export-utils.js lo trova tramite DOM.labelContent
-    // che viene aggiornato ogni volta che si cambia skin
-    function refreshDomLabelContent() {
-      DOM.labelContent = getActiveLabelContent();
-    }
-
-    function switchSkin(idx) {
-      currentSkin = idx;
-      localStorage.setItem("currentSkin", idx);
-      refreshDomLabelContent();
-
-      // Aggiorna puntini
-      document.querySelectorAll(".skin-dot").forEach((d, i) =>
-        d.classList.toggle("active", i === idx)
-      );
-
-      // Frecce: mostra solo quella che porta alla skin opposta
-      const arrowL = document.getElementById("arrowLeft");
-      const arrowR = document.getElementById("arrowRight");
-      if (arrowL) arrowL.style.visibility = idx === 1 ? "visible" : "hidden";
-      if (arrowR) arrowR.style.visibility = idx === 0 ? "visible" : "hidden";
-
-      updatePreview();
-    }
-
-    function setupEventListeners() {
-      Object.values(DOM.inputs).forEach((input) => {
-        input.addEventListener("input", () => {
-          updatePreview();
-          saveSettings();
-        });
-      });
-      window.addEventListener("resize", updatePreview);
-
-      // Capitalizza automaticamente la prima lettera di ogni parola (nome e cognome)
-      document.getElementById("diverName").addEventListener("input", (e) => {
-        const input = e.target;
-        const pos = input.selectionStart;
-        const before = input.value;
-        const after = before.replace(/(^|\s)([a-zà-ü])/g, (m, sep, letter) => sep + letter.toUpperCase());
-        if (after !== before) {
-          input.value = after;
-          input.setSelectionRange(pos, pos);
-        }
-      });
-
-      // Swipe sull'anteprima per cambiare skin
-      const slider = document.getElementById("skinSliderWrap");
-      let touchStartX = 0;
-      slider.addEventListener("touchstart", (e) => {
-        touchStartX = e.touches[0].clientX;
-      }, { passive: true });
-      slider.addEventListener("touchend", (e) => {
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        if (Math.abs(dx) > 40) {
-          switchSkin(dx < 0 ? 1 : 0);
-        }
-      }, { passive: true });
-      // Click/swipe su desktop con mouse
-      slider.addEventListener("mousedown", (e) => { touchStartX = e.clientX; });
-      slider.addEventListener("mouseup", (e) => {
-        const dx = e.clientX - touchStartX;
-        if (Math.abs(dx) > 40) switchSkin(dx < 0 ? 1 : 0);
-      });
-    }
-
-    // --- Freccette +/- personalizzate (i browser mobile nascondono quelle native) ---
     function stepValue(id, delta) {
       const input = document.getElementById(id);
       let val = (parseFloat(input.value) || 0) + delta;
@@ -672,14 +575,34 @@
       input.dispatchEvent(new Event("input", { bubbles: true }));
     }
 
-    // --- Calcoli ---
-    function calculateMOD(o2) {
-      if (o2 <= 0) return 0;
-      // Legge di Dalton: MOD = ((PO2max / fO2) - 1) * 10
-      return Math.max(0, Math.round((currentPpo2Max / (o2 / 100) - 1) * 10));
+    function setupEventListeners() {
+      Object.values(DOM.inputs).forEach((input) => {
+        input.addEventListener("input", () => { updatePreview(); saveSettings(); });
+      });
+      window.addEventListener("resize", updatePreview);
+
+      document.getElementById("diverName").addEventListener("input", (e) => {
+        const input = e.target;
+        const pos = input.selectionStart;
+        const before = input.value;
+        const after = before.replace(/(^|\s)([a-zà-ü])/g, (m, sep, letter) => sep + letter.toUpperCase());
+        if (after !== before) { input.value = after; input.setSelectionRange(pos, pos); }
+      });
+
+      const slider = document.getElementById("skinSliderWrap");
+      let touchStartX = 0;
+      slider.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+      slider.addEventListener("touchend", (e) => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 40) switchSkin(dx < 0 ? 1 : 0);
+      }, { passive: true });
+      slider.addEventListener("mousedown", (e) => { touchStartX = e.clientX; });
+      slider.addEventListener("mouseup", (e) => {
+        const dx = e.clientX - touchStartX;
+        if (Math.abs(dx) > 40) switchSkin(dx < 0 ? 1 : 0);
+      });
     }
 
-    // --- Preview ---
     function updatePreview() {
       const val = (id) => DOM.inputs[id].value;
       const num = (id) => parseFloat(val(id)) || 0;
@@ -705,55 +628,115 @@
       // --- SKIN 1: Divesoft ---
       const o2str = o2 % 1 === 0 ? o2.toFixed(0) : o2.toFixed(1);
       const hestr = he % 1 === 0 ? he.toFixed(0) : he.toFixed(1);
-      document.getElementById("dvMixRatio").textContent = heActive
-        ? `${o2str}/${hestr}`
-        : `${o2str}/0`;
+      document.getElementById("dvMixRatio").textContent = heActive ? `${o2str}/${hestr}` : `${o2str}/0`;
       document.getElementById("dvModNum").textContent = mod;
-      document.getElementById("dvPpo2Badge").textContent = `PPO₂ ${currentPpo2Max.toFixed(1)}`;
+      document.getElementById("dvPpo2Badge").textContent = `PPO\u2082 ${currentPpo2Max.toFixed(1)}`;
       document.getElementById("dvO2").textContent = `${o2.toFixed(1)}%`;
       document.getElementById("dvHe").textContent = heActive ? `${he.toFixed(1)}%` : "0%";
       document.getElementById("dvDiver").textContent = diver;
       document.getElementById("dvDate").textContent = dateStr;
 
-      // Mostra/nasconde la skin attiva
+      // Mostra skin attiva
       document.getElementById("skinClassic").style.display = currentSkin === 0 ? "" : "none";
       document.getElementById("skinDivesoft").style.display = currentSkin === 1 ? "" : "none";
       refreshDomLabelContent();
 
-      // Se skin Divesoft è attiva, imponi proporzione verticale (h >= w)
-      // per garantire che tutto il contenuto sia visibile
+      // Vincolo verticale per skin Divesoft
       const note = document.getElementById("divesoftOrientationNote");
       if (currentSkin === 1) {
-        const widthMm = num("labelWidth");
-        const heightMm = num("labelHeight");
-        if (widthMm > heightMm) {
-          DOM.inputs["labelHeight"].value = widthMm;
-          if (note) note.style.display = "";
-        } else {
-          if (note) note.style.display = "none";
-        }
-      } else {
-        if (note) note.style.display = "none";
-      }
+        const wMm = num("labelWidth"), hMm = num("labelHeight");
+        if (wMm > hMm) { DOM.inputs["labelHeight"].value = wMm; if (note) note.style.display = ""; }
+        else { if (note) note.style.display = "none"; }
+      } else { if (note) note.style.display = "none"; }
 
-      // Scala responsive
+      // Dimensioni
       const widthMm = num("labelWidth");
       const heightMm = num("labelHeight");
       const basePx = num("basePxSize");
       const containerWidth = DOM.previewContainer.clientWidth - 40;
       const scaleFactor = Math.min(containerWidth / (widthMm * 5), 1.5);
       const finalScale = 5 * scaleFactor;
+      const labelWpx = widthMm * finalScale;
 
       [document.getElementById("skinClassic"), document.getElementById("skinDivesoft")].forEach(el => {
-        el.style.width = `${widthMm * finalScale}px`;
+        el.style.width  = `${labelWpx}px`;
         el.style.height = `${heightMm * finalScale}px`;
         el.style.setProperty("--base-px-size", `${basePx * scaleFactor}px`);
-        el.style.setProperty("--dv-w", `${widthMm * finalScale}px`);
       });
+
+      // Font Divesoft via JS diretto (iOS Safari non eredita custom props su flex)
+      if (currentSkin === 1) {
+        const setFS = (id, px) => { const e = document.getElementById(id); if (e) e.style.fontSize = px + "px"; };
+        setFS("dvMixRatio",  Math.round(labelWpx * 0.28));
+        setFS("dvModNum",    Math.round(labelWpx * 0.45));
+        setFS("dvPpo2Badge", Math.round(labelWpx * 0.058));
+        setFS("dvO2",        Math.round(labelWpx * 0.088));
+        setFS("dvHe",        Math.round(labelWpx * 0.088));
+        setFS("dvDiver",     Math.round(labelWpx * 0.068));
+        setFS("dvDate",      Math.round(labelWpx * 0.068));
+        document.querySelectorAll(".dv-lbl").forEach(e => e.style.fontSize = Math.round(labelWpx * 0.058) + "px");
+        const modUnit = document.querySelector(".dv-mod-unit");
+        if (modUnit) modUnit.style.fontSize = Math.round(labelWpx * 0.11) + "px";
+      }
 
       fitMixRow();
       fitModText();
-      fitDivesoftText();
+      fitDivesoftText(labelWpx);
+    }
+
+    function init() {
+      loadSettings();
+      initHeliumToggle();
+      initPpo2Mode();
+      switchSkin(currentSkin);
+      setupEventListeners();
+      updatePreview();
+    }
+
+    function fitDivesoftText(labelWpx) {
+      if (currentSkin !== 1) return;
+      const skin = document.getElementById("skinDivesoft");
+      if (!skin) return;
+      void skin.offsetWidth; // forza reflow iOS
+
+      const ratio = document.getElementById("dvMixRatio");
+      const modNum = document.getElementById("dvModNum");
+      const modUnit = document.querySelector(".dv-mod-unit");
+
+      // --- Scala mix ratio in larghezza ---
+      if (ratio) {
+        const maxW = skin.clientWidth * 0.88;
+        if (ratio.scrollWidth > maxW) {
+          const newFs = parseFloat(ratio.style.fontSize) * (maxW / ratio.scrollWidth);
+          ratio.style.fontSize = Math.floor(newFs) + "px";
+          void ratio.offsetWidth;
+        }
+      }
+
+      // --- Scala MOD in larghezza E altezza disponibile in .dv-middle ---
+      if (modNum) {
+        const middle = document.querySelector(".dv-middle");
+        void middle.offsetWidth;
+        const maxW = middle ? middle.clientWidth * 0.9  : skin.clientWidth * 0.88;
+        const maxH = middle ? middle.clientHeight * 0.92 : 9999;
+
+        // Scala per larghezza
+        if (modNum.scrollWidth > maxW) {
+          const f = parseFloat(modNum.style.fontSize) * (maxW / modNum.scrollWidth);
+          modNum.style.fontSize = Math.floor(f) + "px";
+          void modNum.offsetWidth;
+        }
+        // Scala per altezza
+        if (modNum.offsetHeight > maxH) {
+          const f = parseFloat(modNum.style.fontSize) * (maxH / modNum.offsetHeight);
+          modNum.style.fontSize = Math.floor(f) + "px";
+          void modNum.offsetWidth;
+        }
+        // Aggiorna l'"m" proporzionalmente
+        if (modUnit) {
+          modUnit.style.fontSize = Math.round(parseFloat(modNum.style.fontSize) * 0.24) + "px";
+        }
+      }
     }
 
     function fitMixRow() {
