@@ -283,7 +283,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.5
+      2026 TankLabel - Version 5.6
     </p>
   </footer>
 
@@ -681,11 +681,33 @@
         document.querySelectorAll(".dv-lbl").forEach(e => e.style.fontSize = Math.round(labelWpx * 0.058) + "px");
         const modUnit = document.querySelector(".dv-mod-unit");
         if (modUnit) modUnit.style.fontSize = Math.round(labelWpx * 0.11) + "px";
+
+        // Centramento e layout via JS — più affidabile del CSS su iOS Safari
+        const dvTop = document.querySelector(".dv-top");
+        if (dvTop) { dvTop.style.textAlign = "center"; dvTop.style.width = "100%"; }
+        const dvMixRatio = document.getElementById("dvMixRatio");
+        if (dvMixRatio) { dvMixRatio.style.textAlign = "center"; dvMixRatio.style.width = "100%"; dvMixRatio.style.display = "block"; }
+        const dvMiddle = document.querySelector(".dv-middle");
+        if (dvMiddle) { 
+          dvMiddle.style.flex = "1 1 0px";
+          dvMiddle.style.minHeight = "0px";
+          dvMiddle.style.display = "flex"; 
+          dvMiddle.style.justifyContent = "center"; 
+          dvMiddle.style.alignItems = "center"; 
+          dvMiddle.style.width = "100%";
+          dvMiddle.style.overflow = "hidden";
+        }
+        const dvLabels = document.querySelector(".dv-labels-row");
+        if (dvLabels) { dvLabels.style.display = "flex"; dvLabels.style.justifyContent = "space-between"; dvLabels.style.alignItems = "center"; dvLabels.style.width = "100%"; }
+        const dvGas = document.querySelector(".dv-gas-row");
+        if (dvGas) { dvGas.style.display = "flex"; dvGas.style.justifyContent = "space-between"; dvGas.style.alignItems = "flex-end"; dvGas.style.width = "100%"; }
+        const dvFooter = document.querySelector(".dv-footer-row");
+        if (dvFooter) { dvFooter.style.display = "flex"; dvFooter.style.justifyContent = "space-between"; dvFooter.style.alignItems = "center"; dvFooter.style.width = "100%"; }
       }
 
       fitMixRow();
       fitModText();
-      fitDivesoftText(labelWpx);
+      fitDivesoftText(labelWpx, heightMm * finalScale);
     }
 
     function init() {
@@ -697,49 +719,50 @@
       updatePreview();
     }
 
-    function fitDivesoftText(labelWpx) {
+    function fitDivesoftText(labelWpx, labelHpx) {
       if (currentSkin !== 1) return;
       const skin = document.getElementById("skinDivesoft");
       if (!skin) return;
-      void skin.offsetWidth; // forza reflow iOS
 
+      // Forza il browser a calcolare il layout del container con l'altezza inline già settata
+      void skin.offsetHeight; // legge offsetHeight (non solo offsetWidth) per triggherare il full layout
+
+      // --- Scala ratio in larghezza ---
       const ratio = document.getElementById("dvMixRatio");
-      const modNum = document.getElementById("dvModNum");
-      const modUnit = document.querySelector(".dv-mod-unit");
-
-      // --- Scala mix ratio in larghezza ---
       if (ratio) {
-        const maxW = skin.clientWidth * 0.88;
-        if (ratio.scrollWidth > maxW) {
-          const newFs = parseFloat(ratio.style.fontSize) * (maxW / ratio.scrollWidth);
-          ratio.style.fontSize = Math.floor(newFs) + "px";
-          void ratio.offsetWidth;
+        void ratio.offsetWidth;
+        const availW = skin.clientWidth * 0.88;
+        if (ratio.scrollWidth > availW) {
+          ratio.style.fontSize = Math.floor(parseFloat(ratio.style.fontSize) * availW / ratio.scrollWidth) + "px";
+          void skin.offsetHeight; // re-layout dopo cambio ratio (modifica l'altezza di dv-top e quindi di dv-middle)
         }
       }
 
-      // --- Scala MOD in larghezza E altezza disponibile in .dv-middle ---
-      if (modNum) {
-        const middle = document.querySelector(".dv-middle");
-        void middle.offsetWidth;
-        const maxW = middle ? middle.clientWidth * 0.9  : skin.clientWidth * 0.88;
-        const maxH = middle ? middle.clientHeight * 0.92 : 9999;
+      // --- MOD: usa clientHeight di dv-middle, con fallback proporzionale ---
+      const middle = document.querySelector(".dv-middle");
+      const modNum = document.getElementById("dvModNum");
+      const modUnit = document.querySelector(".dv-mod-unit");
 
-        // Scala per larghezza
-        if (modNum.scrollWidth > maxW) {
-          const f = parseFloat(modNum.style.fontSize) * (maxW / modNum.scrollWidth);
-          modNum.style.fontSize = Math.floor(f) + "px";
+      if (modNum) {
+        void middle.offsetHeight;
+        const midH = middle ? middle.clientHeight : 0;
+
+        // Fallback: se midH è ancora 0 (flex non ha calcolato), usa il 55% dell'altezza etichetta
+        const targetH = midH > 20 ? midH : Math.round(labelHpx * 0.55);
+        let fs = Math.round(targetH * 0.85);
+        modNum.style.fontSize = fs + "px";
+        void modNum.offsetWidth;
+
+        // Scala in larghezza se necessario
+        const midW = middle ? middle.clientWidth : skin.clientWidth * 0.88;
+        if (midW > 0 && modNum.scrollWidth > midW * 0.88) {
+          fs = Math.floor(fs * (midW * 0.88) / modNum.scrollWidth);
+          modNum.style.fontSize = fs + "px";
           void modNum.offsetWidth;
         }
-        // Scala per altezza
-        if (modNum.offsetHeight > maxH) {
-          const f = parseFloat(modNum.style.fontSize) * (maxH / modNum.offsetHeight);
-          modNum.style.fontSize = Math.floor(f) + "px";
-          void modNum.offsetWidth;
-        }
-        // Aggiorna l'"m" proporzionalmente
-        if (modUnit) {
-          modUnit.style.fontSize = Math.round(parseFloat(modNum.style.fontSize) * 0.24) + "px";
-        }
+
+        // Aggiorna "m" proporzionalmente al font finale del MOD
+        if (modUnit) modUnit.style.fontSize = Math.round(fs * 0.26) + "px";
       }
     }
 
