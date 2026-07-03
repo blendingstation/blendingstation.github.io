@@ -670,6 +670,11 @@
 
       // Font Divesoft via JS diretto (iOS Safari non eredita custom props su flex)
       if (currentSkin === 1) {
+        const dvSkin = document.getElementById("skinDivesoft");
+        // Padding via JS inline — il CSS .label-divesoft viene sovrascritto da .label-content
+        const padPx = Math.round(labelWpx * 0.08); // 8% della larghezza = margine uniforme
+        if (dvSkin) dvSkin.style.padding = `${padPx}px`;
+
         const setFS = (id, px) => { const e = document.getElementById(id); if (e) e.style.fontSize = px + "px"; };
         setFS("dvMixRatio",  Math.round(labelWpx * 0.28));
         setFS("dvModNum",    Math.round(labelWpx * 0.45));
@@ -730,11 +735,21 @@
       // --- Scala ratio in larghezza ---
       const ratio = document.getElementById("dvMixRatio");
       if (ratio) {
+        void skin.offsetHeight;
         void ratio.offsetWidth;
-        const availW = skin.clientWidth * 0.88;
-        if (ratio.scrollWidth > availW) {
-          ratio.style.fontSize = Math.floor(parseFloat(ratio.style.fontSize) * availW / ratio.scrollWidth) + "px";
-          void skin.offsetHeight; // re-layout dopo cambio ratio (modifica l'altezza di dv-top e quindi di dv-middle)
+        // Usa la larghezza del parent diretto (già al netto del padding del skin)
+        const ratioParentW = ratio.parentElement ? ratio.parentElement.clientWidth : skin.clientWidth * 0.84;
+        const availW = ratioParentW * 0.96;
+        if (ratio.scrollWidth > availW && availW > 0) {
+          const scale = availW / ratio.scrollWidth;
+          ratio.style.fontSize = Math.floor(parseFloat(ratio.style.fontSize) * scale) + "px";
+          void ratio.offsetWidth;
+          // Secondo passaggio — se ancora trabocca (es. testo molto lungo come "21.3/18")
+          if (ratio.scrollWidth > availW) {
+            ratio.style.fontSize = Math.floor(parseFloat(ratio.style.fontSize) * availW / ratio.scrollWidth) + "px";
+            void ratio.offsetWidth;
+          }
+          void skin.offsetHeight; // re-layout dopo cambio ratio
         }
       }
 
