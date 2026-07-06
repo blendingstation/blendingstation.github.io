@@ -354,7 +354,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.17
+      2026 TankLabel - Version 5.18
     </p>
   </footer>
 
@@ -766,14 +766,17 @@
         if (dvSkin) dvSkin.style.padding = `${padPx}px`;
 
         const setFS = (id, px) => { const e = document.getElementById(id); if (e) e.style.fontSize = px + "px"; };
-        setFS("dvMixRatio",  Math.round(labelWpx * 0.24));
-        setFS("dvModNum",    Math.round(labelWpx * 0.45));
-        setFS("dvPpo2Badge", Math.round(labelWpx * 0.050));
-        setFS("dvO2",        Math.round(labelWpx * 0.088));
-        setFS("dvHe",        Math.round(labelWpx * 0.088));
-        setFS("dvDiver",     Math.round(labelWpx * 0.068));
-        setFS("dvDate",      Math.round(labelWpx * 0.068));
-        document.querySelectorAll(".dv-lbl").forEach(e => e.style.fontSize = Math.round(labelWpx * 0.050) + "px");
+        // dvScale: fa rispondere anche la skin Divesoft allo slider "Dimensione Testo"
+        // Il MOD (dvModNum) è gestito dal fit automatico, tutto il resto scala con lo slider
+        const dvScale = basePx / 16;
+        setFS("dvMixRatio",  Math.round(labelWpx * 0.24 * dvScale));
+        setFS("dvModNum",    Math.round(labelWpx * 0.45));          // gestito da fitDivesoftText
+        setFS("dvPpo2Badge", Math.round(labelWpx * 0.050 * dvScale));
+        setFS("dvO2",        Math.round(labelWpx * 0.088 * dvScale));
+        setFS("dvHe",        Math.round(labelWpx * 0.088 * dvScale));
+        setFS("dvDiver",     Math.round(labelWpx * 0.068 * dvScale));
+        setFS("dvDate",      Math.round(labelWpx * 0.068 * dvScale));
+        document.querySelectorAll(".dv-lbl").forEach(e => e.style.fontSize = Math.round(labelWpx * 0.050 * dvScale) + "px");
         // Garantisce il grassetto anche quando il browser non applica il CSS
         const modNumEl = document.getElementById("dvModNum");
         if (modNumEl) { modNumEl.style.fontWeight = "900"; modNumEl.style.color = "#000"; }
@@ -785,16 +788,16 @@
         if (dvMixEl) { dvMixEl.style.fontWeight = "900"; dvMixEl.style.color = "#000"; }
         ["dvO2","dvHe"].forEach(id => {
           const e = document.getElementById(id);
-          if (e) { e.style.fontWeight = "900"; e.style.color = "#000"; e.style.fontSize = Math.round(labelWpx * 0.10) + "px"; }
+          if (e) { e.style.fontWeight = "900"; e.style.color = "#000"; e.style.fontSize = Math.round(labelWpx * 0.10 * dvScale) + "px"; }
         });
         ["dvDiver","dvDate"].forEach(id => {
           const e = document.getElementById(id);
-          if (e) { e.style.fontWeight = "800"; e.style.color = "#000"; }
+          if (e) { e.style.fontWeight = "800"; e.style.color = "#000"; e.style.fontSize = Math.round(labelWpx * 0.068 * dvScale) + "px"; }
         });
         // Labels (MOD, PPO₂, O₂, HE) restano grigio scuro
         document.querySelectorAll(".dv-lbl").forEach(e => {
           e.style.color = "#555"; e.style.fontWeight = "700";
-          e.style.fontSize = Math.round(labelWpx * 0.050) + "px";
+          e.style.fontSize = Math.round(labelWpx * 0.050 * dvScale) + "px";
         });
 
         // Centramento e layout via JS — più affidabile del CSS su iOS Safari
