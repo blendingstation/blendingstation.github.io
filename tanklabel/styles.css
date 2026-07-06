@@ -648,7 +648,7 @@ footer {
   }
 }
 
-/* ── NAVIGAZIONE TEMPLATE ── */
+/* -- NAVIGAZIONE TEMPLATE -- */
 .skin-nav-bar {
   display: flex;
   align-items: center;
@@ -690,5 +690,3 @@ footer {
   flex: 1;
   padding: 0 8px;
 }
-
-
