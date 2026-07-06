@@ -183,6 +183,17 @@ body {
   align-items: center;
 }
 
+/* Nasconde le frecce native del browser — in TankLabel le frecce
+   custom esistenti (number-stepper) e il suffix % sono già i sostituti */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 input[type="text"],
 input[type="number"] {
   width: 100%;
@@ -204,9 +215,15 @@ input[type="number"]:focus {
   background: var(--color-surface);
 }
 
+/* Nei campi con suffix (%), allinea il testo a destra e riserva spazio per la % */
+.input-wrapper input[type="number"] {
+  text-align: right;
+  padding-right: 28px;
+}
+
 .input-suffix {
   position: absolute;
-  right: 16px;
+  right: 12px;
   color: var(--color-text-muted);
   font-size: 0.9rem;
   pointer-events: none;
