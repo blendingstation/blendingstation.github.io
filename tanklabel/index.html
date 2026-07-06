@@ -331,7 +331,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.9
+      2026 TankLabel - Version 5.10
     </p>
   </footer>
 
@@ -663,6 +663,9 @@
       const o2 = num("o2Input");
       const he = num("heInput");
       const mod = calculateMOD(o2);
+      // Per la skin Divesoft, il MOD viene ricalcolato con O2 arrotondato per eccesso
+      // così è coerente con la percentuale mostrata nel mix ratio grande
+      const modDivesoft = calculateMOD(Math.ceil(o2));
       const diver = val("diverName");
       const now = new Date();
       const dateStr = now.toLocaleDateString("it-IT");
@@ -679,11 +682,16 @@
       document.getElementById("rowMix").classList.toggle("stacked", heActive);
 
       // --- SKIN 1: Divesoft ---
-      const o2str = o2 % 1 === 0 ? o2.toFixed(0) : o2.toFixed(1);
-      const hestr = he % 1 === 0 ? he.toFixed(0) : he.toFixed(1);
-      document.getElementById("dvMixRatio").textContent = heActive ? `${o2str}/${hestr}` : `${o2str}/0`;
-      document.getElementById("dvModNum").textContent = mod;
+      // Mix ratio: arrotondamento per ECCESSO (sicurezza anti-iperossia)
+      // — il MOD calcolato risulta più conservativo del gas reale
+      const o2ceil = Math.ceil(o2);
+      const heceil = Math.ceil(he);
+      const o2ratioStr = o2ceil.toString();
+      const heratioStr = heceil.toString();
+      document.getElementById("dvMixRatio").textContent = heActive ? `${o2ratioStr}/${heratioStr}` : `${o2ratioStr}/0`;
+      document.getElementById("dvModNum").textContent = modDivesoft;
       document.getElementById("dvPpo2Badge").textContent = `PPO\u2082 ${currentPpo2Max.toFixed(1)}`;
+      // Percentuali reali: mostrano il valore esatto misurato
       document.getElementById("dvO2").textContent = `${o2.toFixed(1)}%`;
       document.getElementById("dvHe").textContent = heActive ? `${he.toFixed(1)}%` : "0%";
       document.getElementById("dvDiver").textContent = diver;
