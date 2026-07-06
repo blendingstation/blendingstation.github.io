@@ -72,6 +72,7 @@
       text-transform: uppercase !important;
       flex: 1 !important;
       padding: 0 8px !important;
+      color: var(--color-primary, #06b6d4) !important;
     }
   </style>
 </head>
@@ -330,7 +331,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.8
+      2026 TankLabel - Version 5.9
     </p>
   </footer>
 
@@ -732,8 +733,11 @@
         setFS("dvDiver",     Math.round(labelWpx * 0.068));
         setFS("dvDate",      Math.round(labelWpx * 0.068));
         document.querySelectorAll(".dv-lbl").forEach(e => e.style.fontSize = Math.round(labelWpx * 0.058) + "px");
+        // Garantisce il grassetto anche quando il browser non applica il CSS
+        const modNumEl = document.getElementById("dvModNum");
+        if (modNumEl) { modNumEl.style.fontWeight = "900"; }
         const modUnit = document.querySelector(".dv-mod-unit");
-        if (modUnit) modUnit.style.fontSize = Math.round(labelWpx * 0.11) + "px";
+        if (modUnit) { modUnit.style.fontSize = Math.round(labelWpx * 0.11) + "px"; modUnit.style.fontWeight = "700"; }
 
         // Centramento e layout via JS — più affidabile del CSS su iOS Safari
         const dvTop = document.querySelector(".dv-top");
