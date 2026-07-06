@@ -305,7 +305,9 @@
               <span class="dv-lbl" id="dvPpo2Badge">PPO&#8322; --</span>
             </div>
             <div class="dv-middle">
-              <span id="dvModNum" class="dv-mod-num">--</span><span class="dv-mod-unit">m</span>
+              <div class="dv-mod-wrap">
+                <span id="dvModNum" class="dv-mod-num">--</span><span class="dv-mod-unit">m</span>
+              </div>
             </div>
             <hr class="dv-hr">
             <div class="dv-gas-row">
@@ -352,7 +354,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.13
+      2026 TankLabel - Version 5.17
     </p>
   </footer>
 
@@ -766,17 +768,34 @@
         const setFS = (id, px) => { const e = document.getElementById(id); if (e) e.style.fontSize = px + "px"; };
         setFS("dvMixRatio",  Math.round(labelWpx * 0.24));
         setFS("dvModNum",    Math.round(labelWpx * 0.45));
-        setFS("dvPpo2Badge", Math.round(labelWpx * 0.058));
+        setFS("dvPpo2Badge", Math.round(labelWpx * 0.050));
         setFS("dvO2",        Math.round(labelWpx * 0.088));
         setFS("dvHe",        Math.round(labelWpx * 0.088));
         setFS("dvDiver",     Math.round(labelWpx * 0.068));
         setFS("dvDate",      Math.round(labelWpx * 0.068));
-        document.querySelectorAll(".dv-lbl").forEach(e => e.style.fontSize = Math.round(labelWpx * 0.058) + "px");
+        document.querySelectorAll(".dv-lbl").forEach(e => e.style.fontSize = Math.round(labelWpx * 0.050) + "px");
         // Garantisce il grassetto anche quando il browser non applica il CSS
         const modNumEl = document.getElementById("dvModNum");
-        if (modNumEl) { modNumEl.style.fontWeight = "900"; }
+        if (modNumEl) { modNumEl.style.fontWeight = "900"; modNumEl.style.color = "#000"; }
         const modUnit = document.querySelector(".dv-mod-unit");
-        if (modUnit) { modUnit.style.fontSize = Math.round(labelWpx * 0.11) + "px"; modUnit.style.fontWeight = "700"; }
+        if (modUnit) { modUnit.style.fontSize = Math.round(labelWpx * 0.11) + "px"; modUnit.style.fontWeight = "900"; modUnit.style.color = "#000"; }
+
+        // Grassetto e nero puro su tutti gli elementi principali
+        const dvMixEl = document.getElementById("dvMixRatio");
+        if (dvMixEl) { dvMixEl.style.fontWeight = "900"; dvMixEl.style.color = "#000"; }
+        ["dvO2","dvHe"].forEach(id => {
+          const e = document.getElementById(id);
+          if (e) { e.style.fontWeight = "900"; e.style.color = "#000"; e.style.fontSize = Math.round(labelWpx * 0.10) + "px"; }
+        });
+        ["dvDiver","dvDate"].forEach(id => {
+          const e = document.getElementById(id);
+          if (e) { e.style.fontWeight = "800"; e.style.color = "#000"; }
+        });
+        // Labels (MOD, PPO₂, O₂, HE) restano grigio scuro
+        document.querySelectorAll(".dv-lbl").forEach(e => {
+          e.style.color = "#555"; e.style.fontWeight = "700";
+          e.style.fontSize = Math.round(labelWpx * 0.050) + "px";
+        });
 
         // Centramento e layout via JS — più affidabile del CSS su iOS Safari
         const dvTop = document.querySelector(".dv-top");
@@ -787,12 +806,26 @@
         if (dvMiddle) { 
           dvMiddle.style.flex = "1 1 0px";
           dvMiddle.style.minHeight = "0px";
-          dvMiddle.style.display = "flex"; 
-          dvMiddle.style.justifyContent = "center"; 
-          dvMiddle.style.alignItems = "center"; 
+          dvMiddle.style.display = "flex";
+          dvMiddle.style.justifyContent = "center";
+          dvMiddle.style.alignItems = "center";   // CENTRA il wrapper verticalmente
           dvMiddle.style.width = "100%";
           dvMiddle.style.overflow = "hidden";
         }
+        // Wrapper interno: allinea numero e "m" in basso (stessa base)
+        const dvWrap = document.querySelector(".dv-mod-wrap");
+        if (dvWrap) {
+          dvWrap.style.display = "flex";
+          dvWrap.style.alignItems = "baseline";   // numero e m condividono la stessa baseline visiva
+          dvWrap.style.lineHeight = "1";
+        }
+        // Margini dei separatori ridotti al minimo per dare più spazio al MOD
+        document.querySelectorAll("#skinDivesoft .dv-hr").forEach(hr => {
+          hr.style.margin = "0";
+        });
+        // Label MOD/PPO₂ più compatta
+        const dvLabelsRow = document.querySelector(".dv-labels-row");
+        if (dvLabelsRow) { dvLabelsRow.style.padding = "0"; dvLabelsRow.style.lineHeight = "1"; }
         const dvLabels = document.querySelector(".dv-labels-row");
         if (dvLabels) { dvLabels.style.display = "flex"; dvLabels.style.justifyContent = "space-between"; dvLabels.style.alignItems = "center"; dvLabels.style.width = "100%"; }
         const dvGas = document.querySelector(".dv-gas-row");
@@ -856,21 +889,29 @@
         const midH = middle ? middle.clientHeight : 0;
 
         // Fallback: se midH è ancora 0 (flex non ha calcolato), usa il 55% dell'altezza etichetta
-        const targetH = midH > 20 ? midH : Math.round(labelHpx * 0.62);
-        let fs = Math.round(targetH * 0.85);
+        const targetH = midH > 20 ? midH : Math.round(labelHpx * 0.68);
+        let fs = Math.round(targetH * 1.00);
         modNum.style.fontSize = fs + "px";
         void modNum.offsetWidth;
 
-        // Scala in larghezza se necessario
+        // Imposta "m" proporzionalmente, poi scala tutto insieme se non entra
         const midW = middle ? middle.clientWidth : skin.clientWidth * 0.88;
-        if (midW > 0 && modNum.scrollWidth > midW * 0.88) {
-          fs = Math.floor(fs * (midW * 0.88) / modNum.scrollWidth);
+        if (modUnit) {
+          modUnit.style.fontSize = Math.round(fs * 0.26) + "px";
+          void modUnit.offsetWidth;
+        }
+        // Scala considerando larghezza TOTALE numero + "m"
+        const totalW = modNum.scrollWidth + (modUnit ? modUnit.scrollWidth : 0);
+        if (midW > 0 && totalW > midW * 0.92) {
+          const scale = (midW * 0.92) / totalW;
+          fs = Math.floor(fs * scale);
           modNum.style.fontSize = fs + "px";
           void modNum.offsetWidth;
+          if (modUnit) {
+            modUnit.style.fontSize = Math.round(fs * 0.26) + "px";
+            void modUnit.offsetWidth;
+          }
         }
-
-        // Aggiorna "m" proporzionalmente al font finale del MOD
-        if (modUnit) modUnit.style.fontSize = Math.round(fs * 0.26) + "px";
       }
     }
 
