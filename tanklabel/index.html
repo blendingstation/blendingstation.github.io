@@ -74,6 +74,21 @@
       padding: 0 8px !important;
       color: var(--color-primary, #06b6d4) !important;
     }
+    /* Nota valore esatto sotto la box nella skin classica */
+    .label-note-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .exact-note {
+      display: block;
+      font-size: calc(var(--base-px-size) * 0.5);
+      color: #111;
+      font-weight: 600;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
   </style>
 </head>
 
@@ -252,11 +267,17 @@
             <div class="label-body">
               <div class="row-mix" id="rowMix">
                 <div class="mix-pair">
-                  <span class="text-label">O&#8322;:</span>
+                  <div class="label-note-wrap">
+                    <span class="text-label">O&#8322;:</span>
+                    <span class="exact-note" id="o2ExactNote"></span>
+                  </div>
                   <span class="box-value" id="o2Display">--%</span>
                 </div>
                 <div class="mix-pair" id="heMixPair">
-                  <span class="text-label" id="heLabelText">He:</span>
+                  <div class="label-note-wrap">
+                    <span class="text-label" id="heLabelText">He:</span>
+                    <span class="exact-note" id="heExactNote"></span>
+                  </div>
                   <span class="box-value" id="heDisplay">--%</span>
                 </div>
               </div>
@@ -331,7 +352,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.10
+      2026 TankLabel - Version 5.12
     </p>
   </footer>
 
@@ -665,29 +686,39 @@
       const mod = calculateMOD(o2);
       // Per la skin Divesoft, il MOD viene ricalcolato con O2 arrotondato per eccesso
       // così è coerente con la percentuale mostrata nel mix ratio grande
-      const modDivesoft = calculateMOD(Math.ceil(o2));
+      const dvO2ceil = Math.ceil(o2);
+      const modDivesoft = calculateMOD(dvO2ceil);
       const diver = val("diverName");
       const now = new Date();
       const dateStr = now.toLocaleDateString("it-IT");
 
       // --- SKIN 0: Classica ---
       DOM.displays.modDisplay.textContent = `${mod} m`;
-      DOM.displays.o2Display.textContent = `${o2.toFixed(1)}%`;
-      DOM.displays.heDisplay.textContent = `${he.toFixed(1)}%`;
-      DOM.displays.diverDisplay.textContent = diver;
-      DOM.displays.dateTimeDisplay.textContent = dateStr;
 
       const heActive = document.getElementById("heGroup").style.display !== "none";
       document.getElementById("heMixPair").style.display = heActive ? "" : "none";
       document.getElementById("rowMix").classList.toggle("stacked", heActive);
 
+      // O2: arrotondato per eccesso nella box, esatto nella nota sotto
+      const o2ceil = Math.ceil(o2);
+      DOM.displays.o2Display.textContent = `${o2ceil}%`;
+      const o2Note = document.getElementById("o2ExactNote");
+      if (o2Note) o2Note.textContent = (o2ceil !== o2) ? `${o2.toFixed(1)}% misurato` : "";
+
+      // He: stesso trattamento
+      const heceil = Math.ceil(he);
+      DOM.displays.heDisplay.textContent = `${heceil}%`;
+      const heNote = document.getElementById("heExactNote");
+      if (heNote) heNote.textContent = (heActive && heceil !== he) ? `${he.toFixed(1)}% misurato` : "";
+
+      DOM.displays.diverDisplay.textContent = diver;
+      DOM.displays.dateTimeDisplay.textContent = dateStr;
+
       // --- SKIN 1: Divesoft ---
       // Mix ratio: arrotondamento per ECCESSO (sicurezza anti-iperossia)
-      // — il MOD calcolato risulta più conservativo del gas reale
-      const o2ceil = Math.ceil(o2);
-      const heceil = Math.ceil(he);
-      const o2ratioStr = o2ceil.toString();
-      const heratioStr = heceil.toString();
+      const dvHeceil = Math.ceil(he);
+      const o2ratioStr = dvO2ceil.toString();
+      const heratioStr = dvHeceil.toString();
       document.getElementById("dvMixRatio").textContent = heActive ? `${o2ratioStr}/${heratioStr}` : `${o2ratioStr}/0`;
       document.getElementById("dvModNum").textContent = modDivesoft;
       document.getElementById("dvPpo2Badge").textContent = `PPO\u2082 ${currentPpo2Max.toFixed(1)}`;
