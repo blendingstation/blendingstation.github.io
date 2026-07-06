@@ -352,7 +352,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.12
+      2026 TankLabel - Version 5.13
     </p>
   </footer>
 
@@ -719,7 +719,7 @@
       const dvHeceil = Math.ceil(he);
       const o2ratioStr = dvO2ceil.toString();
       const heratioStr = dvHeceil.toString();
-      document.getElementById("dvMixRatio").textContent = heActive ? `${o2ratioStr}/${heratioStr}` : `${o2ratioStr}/0`;
+      document.getElementById("dvMixRatio").textContent = heActive ? `${o2ratioStr} / ${heratioStr}` : `${o2ratioStr} / 0`;
       document.getElementById("dvModNum").textContent = modDivesoft;
       document.getElementById("dvPpo2Badge").textContent = `PPO\u2082 ${currentPpo2Max.toFixed(1)}`;
       // Percentuali reali: mostrano il valore esatto misurato
@@ -764,7 +764,7 @@
         if (dvSkin) dvSkin.style.padding = `${padPx}px`;
 
         const setFS = (id, px) => { const e = document.getElementById(id); if (e) e.style.fontSize = px + "px"; };
-        setFS("dvMixRatio",  Math.round(labelWpx * 0.28));
+        setFS("dvMixRatio",  Math.round(labelWpx * 0.24));
         setFS("dvModNum",    Math.round(labelWpx * 0.45));
         setFS("dvPpo2Badge", Math.round(labelWpx * 0.058));
         setFS("dvO2",        Math.round(labelWpx * 0.088));
@@ -817,6 +817,8 @@
 
     function fitDivesoftText(labelWpx, labelHpx) {
       if (currentSkin !== 1) return;
+      // Salta le chiamate con parametri non validi (prima del layout iniziale)
+      if (!labelWpx || labelWpx <= 0 || !labelHpx || labelHpx <= 0) return;
       const skin = document.getElementById("skinDivesoft");
       if (!skin) return;
 
@@ -854,7 +856,7 @@
         const midH = middle ? middle.clientHeight : 0;
 
         // Fallback: se midH è ancora 0 (flex non ha calcolato), usa il 55% dell'altezza etichetta
-        const targetH = midH > 20 ? midH : Math.round(labelHpx * 0.55);
+        const targetH = midH > 20 ? midH : Math.round(labelHpx * 0.62);
         let fs = Math.round(targetH * 0.85);
         modNum.style.fontSize = fs + "px";
         void modNum.offsetWidth;
