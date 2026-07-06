@@ -28,6 +28,52 @@
 
   <!-- Splash screen critical CSS - renders before JS, prevents white flash -->
   <style>html,body{background:#0f172a !important;margin:0;padding:0}#splashScreen{position:fixed;inset:0;z-index:99999;background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px}#splashScreen svg{width:90px;height:90px;animation:sp 1.5s ease-in-out infinite}#splashScreen .st{color:#fff;font-size:1.4em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-align:center}#splashScreen .ss{color:#06b6d4;font-size:.75em;font-weight:600;letter-spacing:.15em;text-transform:uppercase}#splashScreen .sd{display:flex;gap:8px}#splashScreen .sd span{width:8px;height:8px;border-radius:50%;background:#06b6d4;animation:sd 1.2s ease-in-out infinite}#splashScreen .sd span:nth-child(2){animation-delay:.2s}#splashScreen .sd span:nth-child(3){animation-delay:.4s}#splashScreen.hidden{opacity:0;transition:opacity .5s ease;pointer-events:none}@keyframes sp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.85}}@keyframes sd{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}.main-container{visibility:hidden}</style>
+  <style>
+    /* CSS critico nav-bar template — inline per garantire applicazione su tutte le versioni */
+    .skin-nav-bar {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding: 8px 4px !important;
+      margin-bottom: 8px !important;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .skin-nav-btn {
+      width: 56px !important;
+      height: 56px !important;
+      min-width: 56px !important;
+      border-radius: 50% !important;
+      border: 2.5px solid var(--color-primary, #06b6d4) !important;
+      background: transparent !important;
+      color: var(--color-primary, #06b6d4) !important;
+      font-size: 2.4rem !important;
+      font-weight: 700 !important;
+      line-height: 1 !important;
+      cursor: pointer;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.2s, color 0.2s, opacity 0.2s;
+      flex-shrink: 0 !important;
+      padding: 0 !important;
+    }
+    .skin-nav-btn:active {
+      background: var(--color-primary, #06b6d4) !important;
+      color: #fff !important;
+    }
+    .skin-nav-label {
+      text-align: center !important;
+      font-size: 0.9rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.08em !important;
+      text-transform: uppercase !important;
+      flex: 1 !important;
+      padding: 0 8px !important;
+    }
+  </style>
 </head>
 
 <body style="background-color:#0f172a;">
@@ -284,7 +330,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.7
+      2026 TankLabel - Version 5.8
     </p>
   </footer>
 
