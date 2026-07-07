@@ -30,6 +30,32 @@
   <style>html,body{background:#0f172a !important;margin:0;padding:0}#splashScreen{position:fixed;inset:0;z-index:99999;background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px}#splashScreen svg{width:90px;height:90px;animation:sp 1.5s ease-in-out infinite}#splashScreen .st{color:#fff;font-size:1.4em;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-align:center}#splashScreen .ss{color:#06b6d4;font-size:.75em;font-weight:600;letter-spacing:.15em;text-transform:uppercase}#splashScreen .sd{display:flex;gap:8px}#splashScreen .sd span{width:8px;height:8px;border-radius:50%;background:#06b6d4;animation:sd 1.2s ease-in-out infinite}#splashScreen .sd span:nth-child(2){animation-delay:.2s}#splashScreen .sd span:nth-child(3){animation-delay:.4s}#splashScreen.hidden{opacity:0;transition:opacity .5s ease;pointer-events:none}@keyframes sp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:.85}}@keyframes sd{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}.main-container{visibility:hidden}</style>
   <style>
     /* CSS critico nav-bar template — inline per garantire applicazione su tutte le versioni */
+    /* Nasconde le frecce native browser su TUTTI gli input numerici —
+       evita doppio set di frecce sulle celle con stepper custom
+       e sovrapposizione sulla % nei campi O2/He */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+      margin: 0 !important;
+    }
+    input[type="number"],
+    input[type=number] {
+      -moz-appearance: textfield !important;
+    }
+
+    /* % vicina al numero nei campi O2/He */
+    .input-wrapper input[type=number] {
+      text-align: right !important;
+      padding-right: 28px !important;
+    }
+    .input-suffix { right: 12px !important; }
+
     .skin-nav-bar {
       display: flex !important;
       flex-direction: row !important;
