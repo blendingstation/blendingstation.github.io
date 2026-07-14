@@ -2003,6 +2003,16 @@
                 const pad = Math.max(0, Math.floor((W - full.length) / 2));
                 return ' '.repeat(pad) + full;
             }).join('\n') + '\n';
+        // Lettura bombola: deve stare PRIMA del template che usa cylLabelReport
+        const cylSel = document.getElementById('cylSelect');
+        const cylLabelReport = (() => {
+            if (!cylSel || cylSel.selectedIndex < 0) return '';
+            const opt = cylSel.options[cylSel.selectedIndex];
+            if (!opt) return '';
+            const biboVal = opt.getAttribute('data-i18n-bibo');
+            if (biboVal) return 'Bibo ' + biboVal;
+            return opt.text.trim();
+        })();
         })() : ``) + `------------------------------\n      ${t.rc_title}\n------------------------------\n` + `${t.rc_diver}: ${c}\n${t.rc_cylinder}: ${cylLabelReport}\n${t.rc_listino}: ${activeProfile}\n\n${t.rc_residuo}:\nO2: ${oS}% | HE: ${hS}% | N2: ${nS}%\n${t.rc_bar}: ${document.getElementById('pS').value} BAR\n\n${t.rc_target}:\nO2: ${oE}% | HE: ${hE}% | N2: ${nE}%\n${t.rc_bar}: ${document.getElementById('pE').value} BAR\n\n${t.rc_accept_signature}:\n\n\n──────────────────────────────\n------------------------------\n${t.rc_data}: ${new Date().toLocaleDateString(t.rc_locale || 'it-IT')}\n${t.rc_blender}: ${b}\n${t.rc_firma}:\n\n\n──────────────────────────────\n------------------------------\n${t.rc_totale}: ${document.getElementById('resGrandTotal').innerText}\n------------------------------\n            ✦ ✦ ✦\n    ${t.rc_remember_analyze}\n    ${t.rc_footer1}\n        ${t.rc_footer2}\n     ${t.rc_footer3}\n       ${t.rc_footer4}\n            ✦ ✦ ✦`;
         document.getElementById('receipt').innerText = text; 
         document.getElementById('asciiContainer').style.display = 'block';
@@ -2010,16 +2020,6 @@
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
         // Save to history ONLY when a real report is generated
-        const cylSel = document.getElementById('cylSelect');
-        const cylLabelReport = (() => {
-            if (!cylSel || cylSel.selectedIndex < 0) return '';
-            const opt = cylSel.options[cylSel.selectedIndex];
-            if (!opt) return '';
-            // Per i Bibo usiamo sempre "Bibo X+X" indipendente dalla lingua del report
-            const biboVal = opt.getAttribute('data-i18n-bibo');
-            if (biboVal) return 'Bibo ' + biboVal;
-            return opt.text.trim();
-        })();
         const cylVolVal = document.getElementById('cylVol').value;
         let cylLabel = cylSel.options[cylSel.selectedIndex] ? cylSel.options[cylSel.selectedIndex].text.trim() : '';
         if (cylSel.value === 'altro' && cylVolVal) cylLabel += ' (' + cylVolVal + 'L)';
