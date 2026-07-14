@@ -1980,6 +1980,23 @@
         const oS = document.getElementById('o2S').value, hS = document.getElementById('heS').value, nS = (100 - parseFloat(oS) - parseFloat(hS)).toFixed(1);
         const oE = document.getElementById('o2E').value, hE = document.getElementById('heE').value, nE = (100 - parseFloat(oE) - parseFloat(hE)).toFixed(1);
         
+        // Lettura bombola — deve stare qui, nello scope esterno accessibile dal template
+        const cylSel = document.getElementById('cylSelect');
+        const cylLabelReport = (() => {
+            if (!cylSel || cylSel.selectedIndex < 0) return '';
+            const opt = cylSel.options[cylSel.selectedIndex];
+            if (!opt) return '';
+            // Bibo: sempre "Bibo X+X" indipendente dalla lingua
+            const biboVal = opt.getAttribute('data-i18n-bibo');
+            if (biboVal) return 'Bibo ' + biboVal;
+            // Altro: mostra i litri inseriti dall'utente
+            if (cylSel.value === 'altro') {
+                const vol = document.getElementById('cylVol') ? document.getElementById('cylVol').value : '';
+                return vol ? vol + ' L (custom)' : 'Custom';
+            }
+            return opt.text.trim();
+        })();
+
         const text = `` + (document.getElementById('shopName').value ? (() => {
             const name = document.getElementById('shopName').value.toUpperCase();
             const W = 30;
@@ -2003,16 +2020,6 @@
                 const pad = Math.max(0, Math.floor((W - full.length) / 2));
                 return ' '.repeat(pad) + full;
             }).join('\n') + '\n';
-        // Lettura bombola: deve stare PRIMA del template che usa cylLabelReport
-        const cylSel = document.getElementById('cylSelect');
-        const cylLabelReport = (() => {
-            if (!cylSel || cylSel.selectedIndex < 0) return '';
-            const opt = cylSel.options[cylSel.selectedIndex];
-            if (!opt) return '';
-            const biboVal = opt.getAttribute('data-i18n-bibo');
-            if (biboVal) return 'Bibo ' + biboVal;
-            return opt.text.trim();
-        })();
         })() : ``) + `------------------------------\n      ${t.rc_title}\n------------------------------\n` + `${t.rc_diver}: ${c}\n${t.rc_cylinder}: ${cylLabelReport}\n${t.rc_listino}: ${activeProfile}\n\n${t.rc_residuo}:\nO2: ${oS}% | HE: ${hS}% | N2: ${nS}%\n${t.rc_bar}: ${document.getElementById('pS').value} BAR\n\n${t.rc_target}:\nO2: ${oE}% | HE: ${hE}% | N2: ${nE}%\n${t.rc_bar}: ${document.getElementById('pE').value} BAR\n\n${t.rc_accept_signature}:\n\n\n──────────────────────────────\n------------------------------\n${t.rc_data}: ${new Date().toLocaleDateString(t.rc_locale || 'it-IT')}\n${t.rc_blender}: ${b}\n${t.rc_firma}:\n\n\n──────────────────────────────\n------------------------------\n${t.rc_totale}: ${document.getElementById('resGrandTotal').innerText}\n------------------------------\n            ✦ ✦ ✦\n    ${t.rc_remember_analyze}\n    ${t.rc_footer1}\n        ${t.rc_footer2}\n     ${t.rc_footer3}\n       ${t.rc_footer4}\n            ✦ ✦ ✦`;
         document.getElementById('receipt').innerText = text; 
         document.getElementById('asciiContainer').style.display = 'block';
