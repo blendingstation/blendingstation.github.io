@@ -706,6 +706,24 @@
                     </div>
 
                     </div>
+                    <div class="setting-item" id="spurgo_settings_item">
+                        <label class="setting-label" style="margin-bottom:6px">
+                            <i class="fa-solid fa-valve" style="color:var(--accent);margin-right:6px;"></i>
+                            <span id="lbl_spurgo">Spurgo</span>
+                        </label>
+                        <div style="display:flex;gap:8px;margin-top:4px">
+                            <button type="button" id="spurgoBtn_no"
+                              onclick="setSpurgo('no')"
+                              style="flex:1;padding:8px 4px;border-radius:8px;border:2px solid var(--accent);font-size:0.78em;font-weight:700;cursor:pointer;background:var(--accent);color:#fff;transition:all .2s">
+                              ✅ Evita (consigliato)
+                            </button>
+                            <button type="button" id="spurgoBtn_yes"
+                              onclick="setSpurgo('yes')"
+                              style="flex:1;padding:8px 4px;border-radius:8px;border:2px solid var(--accent);font-size:0.78em;font-weight:700;cursor:pointer;background:transparent;color:var(--accent);transition:all .2s">
+                              🔴 Consenti spurgo
+                            </button>
+                        </div>
+                    </div>
 
                     <div class="setting-item">
                         <div onclick="toggleFontSettings()" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
@@ -748,6 +766,7 @@
                     </select>
                 </div>
                 <div class="input-group"><label id="lbl_prio">Priorità</label><select id="fillOrder" onchange="calc()"><option value="HE_FIRST" data-i18n="ui_priority_he_first">He ➔ O₂ ➔ Aria</option><option value="O2_FIRST" selected data-i18n="ui_priority_o2_first">O₂ ➔ He ➔ Aria</option></select></div>
+
                 <div class="input-group"><label id="lbl_vol" data-i18n="ui_volume_label">Volume (L)</label><input type="number" id="cylVol" value="15" readonly style="transition:background 0.2s,color 0.2s;" oninput="saveAndCalc()" inputmode="decimal" onfocus="this.select()"></div>
                 <div class="input-group"><label id="lbl_maxp" data-i18n="ui_totalgas_label">Gas Totale (L)</label><input type="number" id="gasTot" value="3150" readonly></div>
                 
@@ -1073,6 +1092,28 @@
                 </label>
             </div>
             <div id="why_topoff_m" class="why-explain-box" data-i18n="ui_topoff_explain">Attiva questa modalità se completi la ricarica con un gas diverso dall'aria.</div>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border-ui); margin:12px 0;">
+
+        <!-- Spurgo -->
+        <div class="setting-item" style="flex-direction:column; align-items:flex-start;">
+            <label class="setting-label" style="margin-bottom:8px">
+                <i class="fa-solid fa-valve" style="color:var(--accent);margin-right:6px;"></i>
+                <span id="lbl_spurgo_m">Spurgo</span>
+            </label>
+            <div style="display:flex;gap:8px;width:100%">
+                <button type="button"
+                  onclick="setSpurgo('no')" id="spurgoBtnM_no"
+                  style="flex:1;padding:10px 4px;border-radius:8px;border:2px solid var(--accent);font-size:0.82em;font-weight:700;cursor:pointer;background:var(--accent);color:#fff;transition:all .2s">
+                  ✅ Evita (consigliato)
+                </button>
+                <button type="button"
+                  onclick="setSpurgo('yes')" id="spurgoBtnM_yes"
+                  style="flex:1;padding:10px 4px;border-radius:8px;border:2px solid var(--accent);font-size:0.82em;font-weight:700;cursor:pointer;background:transparent;color:var(--accent);transition:all .2s">
+                  🔴 Consenti spurgo
+                </button>
+            </div>
         </div>
 
         <hr style="border:none; border-top:1px solid var(--border-ui); margin:12px 0;">
@@ -1833,14 +1874,34 @@
         dO2 = sol.dO2;
 
         if (dO2 < 0) {
-            let pMaxStartO2 = (oE * pE - tfO2 * (pE - dHe)) / (oS - tfO2);
-            if (pMaxStartO2 < pStartreale && (oS - tfO2) > 0) {
-                let extraScarica = pStartreale - Math.max(0, pMaxStartO2);
-                dScarica += extraScarica;
-                pStartreale = pS - dScarica;
-                sol = solveTopOffBlend(oS, hS, pStartreale, oE, hE, pE, tfO2, tfHe, tfN2, oPurity, hePurity);
-                dHe = Math.max(0, sol.dHe);
-                dO2 = sol.dO2;
+            const allowSpurgo = (localStorage.getItem('allowSpurgo') || 'no') === 'yes';
+            if (allowSpurgo) {
+                if ((oS - tfO2) > 0) {
+                    // CASO A: oS > tfO2 — troppo O2 nel residuo rispetto all'aria
+                    let pMaxStartO2 = (oE * pE - tfO2 * (pE - dHe)) / (oS - tfO2);
+                    if (pMaxStartO2 < pStartreale) {
+                        let extraScarica = pStartreale - Math.max(0, pMaxStartO2);
+                        dScarica += extraScarica;
+                        pStartreale = pS - dScarica;
+                        sol = solveTopOffBlend(oS, hS, pStartreale, oE, hE, pE, tfO2, tfHe, tfN2, oPurity, hePurity);
+                        dHe = Math.max(0, sol.dHe);
+                        dO2 = sol.dO2;
+                    }
+                } else if ((oS - tfO2) < 0) {
+                    // CASO B: oS < tfO2 — mix ipossico (es. Trimix 6/80)
+                    const denom = oS - tfO2 * (1 - hS);
+                    if (Math.abs(denom) > 0.001) {
+                        const pBleedTarget = pE * (oE - tfO2 * (1 - hE)) / denom;
+                        if (pBleedTarget > 0 && pBleedTarget < pStartreale) {
+                            const extraScarica = pStartreale - pBleedTarget;
+                            dScarica += extraScarica;
+                            pStartreale = pS - dScarica;
+                            sol = solveTopOffBlend(oS, hS, pStartreale, oE, hE, pE, tfO2, tfHe, tfN2, oPurity, hePurity);
+                            dHe = Math.max(0, sol.dHe);
+                            dO2 = sol.dO2;
+                        }
+                    }
+                }
             }
         }
 
@@ -2705,6 +2766,29 @@
         localStorage.setItem('fontSettingsOpen', isOpen ? '0' : '1');
     }
 
+    function setSpurgo(val) {
+        localStorage.setItem('allowSpurgo', val);
+        // Aggiorna entrambe le versioni (desktop e mobile) dei bottoni
+        [['spurgoBtn_no','spurgoBtn_yes'], ['spurgoBtnM_no','spurgoBtnM_yes']].forEach(function(pair) {
+            var btnNo  = document.getElementById(pair[0]);
+            var btnYes = document.getElementById(pair[1]);
+            if (!btnNo || !btnYes) return;
+            var accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#06b6d4';
+            if (val === 'yes') {
+                btnYes.style.background = accent;  btnYes.style.color = '#fff';
+                btnNo.style.background  = 'transparent'; btnNo.style.color = accent;
+            } else {
+                btnNo.style.background  = accent;  btnNo.style.color = '#fff';
+                btnYes.style.background = 'transparent'; btnYes.style.color = accent;
+            }
+        });
+        calc();
+    }
+    function initSpurgo() {
+        const saved = localStorage.getItem('allowSpurgo') || 'no';
+        setSpurgo(saved);
+    }
+
     function initFontSettings() {
         const open = localStorage.getItem('fontSettingsOpen') === '1'; // chiuso di default
         document.getElementById('fontSettingsContent').style.display = open ? 'block' : 'none';
@@ -3149,6 +3233,7 @@ function mobileNav(tab) {
         initAdvancedSettings();
         initPriceSettings();
         initFontSettings();
+        initSpurgo();
         initLang();
         changeLang();
 
