@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tanklabel-v9';
+const CACHE_NAME = 'tanklabel-v10';
 const ASSETS = [
   './',
   './index.html',
@@ -14,56 +14,60 @@ const ASSETS = [
   './favicon-32.png'
 ];
 
-// Install: cache all assets, bypassando la cache HTTP del browser
-// (altrimenti potremmo ottenere comunque una risposta vecchia anche se
-// stiamo creando una cache nuova)
+// Install: pre-carica tutti gli asset sempre freschi dalla rete
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return Promise.all(
+    caches.open(CACHE_NAME).then(cache =>
+      Promise.all(
         ASSETS.map(url =>
-          fetch(url, { cache: 'no-cache' }).then(response => cache.put(url, response))
+          fetch(url, { cache: 'no-store' })
+            .then(r => { if (r.ok) cache.put(url, r); })
+            .catch(() => {}) // se offline durante install, ignora
         )
-      );
-    })
+      )
+    )
   );
-  self.skipWaiting();
+  self.skipWaiting(); // attiva subito senza aspettare che tutte le tab chiudano
 });
 
-// Activate: clean old caches and take control immediately
+// Activate: elimina cache vecchie e prendi controllo immediato
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     )
   );
-  self.clients.claim();
+  self.clients.claim(); // controlla tutte le tab aperte subito
 });
 
-// Fetch: network first for HTML, cache fallback for rest
+// Fetch: NETWORK FIRST per tutti i file
+// → quando online ottieni sempre la versione più recente
+// → quando offline usa la cache come fallback
 self.addEventListener('fetch', event => {
-  if (event.request.mode === 'navigate') {
-    // Always try network first for page navigation
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          // Update cache with fresh version
+  // Ignora richieste non-GET e cross-origin
+  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  if (url.origin !== location.origin) return;
+
+  event.respondWith(
+    fetch(event.request, { cache: 'no-store' })
+      .then(response => {
+        // Aggiorna la cache con la versione fresca
+        if (response.ok) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          return response;
-        })
-        .catch(() => caches.match('./index.html'))
-    );
-  } else {
-    event.respondWith(
-      caches.match(event.request).then(cached => {
-        return cached || fetch(event.request, { cache: 'no-cache' }).catch(() => caches.match('./index.html'));
+        }
+        return response;
       })
-    );
-  }
+      .catch(() =>
+        // Offline: usa la cache
+        caches.match(event.request)
+          .then(cached => cached || caches.match('./index.html'))
+      )
+  );
 });
 
-// Listen for messages from the page
+// Messaggio dalla pagina per forzare aggiornamento
 self.addEventListener('message', event => {
   if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
