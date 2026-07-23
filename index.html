@@ -707,21 +707,23 @@
 
                     </div>
                     <div class="setting-item" id="spurgo_settings_item">
-                        <label class="setting-label" style="margin-bottom:6px">
-                            <i class="fa-solid fa-valve" style="color:var(--accent);margin-right:6px;"></i>
-                            <span id="lbl_spurgo">Spurgo</span>
-                        </label>
-                        <div style="display:flex;gap:8px;margin-top:4px">
-                            <button type="button" id="spurgoBtn_no"
-                              onclick="setSpurgo('no')"
-                              style="flex:1;padding:8px 4px;border-radius:8px;border:2px solid var(--accent);font-size:0.78em;font-weight:700;cursor:pointer;background:var(--accent);color:#fff;transition:all .2s">
-                              ✅ Evita (consigliato)
-                            </button>
-                            <button type="button" id="spurgoBtn_yes"
-                              onclick="setSpurgo('yes')"
-                              style="flex:1;padding:8px 4px;border-radius:8px;border:2px solid var(--accent);font-size:0.78em;font-weight:700;cursor:pointer;background:transparent;color:var(--accent);transition:all .2s">
-                              🔴 Consenti spurgo
-                            </button>
+                        <div onclick="toggleSpurgoSettings()" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
+                            <label class="setting-label" style="margin-bottom:0; cursor:pointer;"><i class="fa-solid fa-wind" style="color:var(--accent); margin-right:6px;"></i><span id="lbl_spurgo">Spurgo</span></label>
+                            <i class="fa-solid fa-chevron-down" id="spurgoChevron" style="color:#64748b; font-size:0.8em; transition:transform 0.2s;"></i>
+                        </div>
+                        <div id="spurgoSettingsContent" style="display:none; margin-top:8px;">
+                            <div style="display:flex;gap:8px;">
+                                <button type="button" id="spurgoBtn_no"
+                                  onclick="setSpurgo('no')"
+                                  style="flex:1;padding:8px 4px;border-radius:8px;border:2px solid var(--accent);font-size:0.78em;font-weight:700;cursor:pointer;background:var(--accent);color:#fff;transition:all .2s">
+                                  ✅ Evita (consigliato)
+                                </button>
+                                <button type="button" id="spurgoBtn_yes"
+                                  onclick="setSpurgo('yes')"
+                                  style="flex:1;padding:8px 4px;border-radius:8px;border:2px solid var(--accent);font-size:0.78em;font-weight:700;cursor:pointer;background:transparent;color:var(--accent);transition:all .2s">
+                                  🔴 Consenti spurgo
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -734,7 +736,15 @@
                             <input type="range" id="fontSlider" min="12" max="22" value="16" oninput="updateFontSize(this.value)" style="width:100%;">
                         </div>
                     </div>
-                    <div class="setting-item"><label class="setting-label"><i class="fa-solid fa-shop" style="color:var(--accent); margin-right:6px;"></i><span data-i18n="ui_shopname_label">Nome Centro / Negozio</span></label><input type="text" id="shopName" placeholder="es. Dive Center Roma" data-i18n-placeholder="ui_shopname_ph" oninput="saveAndCalc();" style="width:100%; padding:7px 10px; border-radius:8px; border:1px solid var(--border-ui); background:var(--input-bg); color:var(--input-text); font-size:0.82em; margin-top:4px; box-sizing:border-box;"></div>
+                    <div class="setting-item">
+                        <div onclick="toggleShopSettings()" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
+                            <label class="setting-label" style="margin-bottom:0; cursor:pointer;"><i class="fa-solid fa-shop" style="color:var(--accent); margin-right:6px;"></i><span data-i18n="ui_shopname_label">Nome Centro / Negozio</span></label>
+                            <i class="fa-solid fa-chevron-down" id="shopSettingsChevron" style="color:#64748b; font-size:0.8em; transition:transform 0.2s;"></i>
+                        </div>
+                        <div id="shopSettingsContent" style="display:none; margin-top:8px;">
+                            <input type="text" id="shopName" placeholder="es. Dive Center Roma" data-i18n-placeholder="ui_shopname_ph" oninput="saveAndCalc();" style="width:100%; padding:7px 10px; border-radius:8px; border:1px solid var(--border-ui); background:var(--input-bg); color:var(--input-text); font-size:0.82em; box-sizing:border-box;">
+                        </div>
+                    </div>
 
                     <div class="setting-item">
                         <a href="https://blendingstation.github.io/tanklabel/" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:space-between; text-decoration:none; color:var(--text);">
@@ -1099,7 +1109,7 @@
         <!-- Spurgo -->
         <div class="setting-item" style="flex-direction:column; align-items:flex-start;">
             <label class="setting-label" style="margin-bottom:8px">
-                <i class="fa-solid fa-valve" style="color:var(--accent);margin-right:6px;"></i>
+                <i class="fa-solid fa-wind" style="color:var(--accent);margin-right:6px;"></i>
                 <span id="lbl_spurgo_m">Spurgo</span>
             </label>
             <div style="display:flex;gap:8px;width:100%">
@@ -2766,6 +2776,40 @@
         localStorage.setItem('fontSettingsOpen', isOpen ? '0' : '1');
     }
 
+    function toggleSpurgoSettings() {
+        const content = document.getElementById('spurgoSettingsContent');
+        const chevron = document.getElementById('spurgoChevron');
+        if (!content || !chevron) return;
+        const isOpen = content.style.display === 'block';
+        content.style.display = isOpen ? 'none' : 'block';
+        chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        localStorage.setItem('spurgoSettingsOpen', isOpen ? '0' : '1');
+    }
+    function initSpurgoAccordion() {
+        const open = localStorage.getItem('spurgoSettingsOpen') === '1';
+        const content = document.getElementById('spurgoSettingsContent');
+        const chevron = document.getElementById('spurgoChevron');
+        if (content) content.style.display = open ? 'block' : 'none';
+        if (chevron) chevron.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    function toggleShopSettings() {
+        const content = document.getElementById('shopSettingsContent');
+        const chevron = document.getElementById('shopSettingsChevron');
+        if (!content || !chevron) return;
+        const isOpen = content.style.display === 'block';
+        content.style.display = isOpen ? 'none' : 'block';
+        chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        localStorage.setItem('shopSettingsOpen', isOpen ? '0' : '1');
+    }
+    function initShopAccordion() {
+        const open = localStorage.getItem('shopSettingsOpen') === '1';
+        const content = document.getElementById('shopSettingsContent');
+        const chevron = document.getElementById('shopSettingsChevron');
+        if (content) content.style.display = open ? 'block' : 'none';
+        if (chevron) chevron.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
     function setSpurgo(val) {
         localStorage.setItem('allowSpurgo', val);
         // Aggiorna entrambe le versioni (desktop e mobile) dei bottoni
@@ -3234,6 +3278,8 @@ function mobileNav(tab) {
         initPriceSettings();
         initFontSettings();
         initSpurgo();
+        initSpurgoAccordion();
+        initShopAccordion();
         initLang();
         changeLang();
 
