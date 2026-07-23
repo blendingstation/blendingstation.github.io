@@ -108,6 +108,13 @@
         .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-ui); padding-bottom: 8px; }
         .btn-close-settings { background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.1em; }
         .setting-item { margin-bottom: 15px; border-bottom: 1px solid var(--border-ui); padding-bottom: 10px; }
+        .settings-accordion-content {
+          background: var(--bg-secondary, rgba(0,0,0,0.04));
+          border-radius: 8px;
+          padding: 10px 12px;
+          border: 1px solid var(--border-ui);
+          margin-top: 8px;
+        }
         .setting-label { display: block; font-size: 0.65em; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
         input[type="range"] { width: 100%; height: 6px; background: #e2e8f0; border-radius: 5px; cursor: pointer; accent-color: var(--accent); }
 
@@ -603,7 +610,7 @@
                             <i class="fa-solid fa-chevron-down" id="priceSettingsChevron" style="color:#64748b; font-size:0.8em; transition:transform 0.2s;"></i>
                         </div>
 
-                        <div id="priceSettingsContent" style="display:block; margin-top:10px;">
+                        <div id="priceSettingsContent" class="settings-accordion-content">
                         <div class="price-tabs">
                             <button class="tab-btn active" onclick="switchPriceTab('tab_soci')" data-i18n="ui_tab_soci">Soci</button>
                             <button class="tab-btn" onclick="switchPriceTab('tab_nonsoci')" data-i18n="ui_tab_esterni">Esterni</button>
@@ -659,7 +666,7 @@
                         </div>
                     </div>
 
-                    <div id="advancedSettingsContent" style="display:none;">
+                    <div id="advancedSettingsContent" class="settings-accordion-content" style="display:none;">
 
                     <div class="setting-item">
                         <label class="setting-label" data-i18n="ui_gasmodel_label">Modello Gas</label>
@@ -711,7 +718,7 @@
                             <label class="setting-label" style="margin-bottom:0; cursor:pointer;"><i class="fa-solid fa-wind" style="color:var(--accent); margin-right:6px;"></i><span id="lbl_spurgo">Spurgo</span></label>
                             <i class="fa-solid fa-chevron-down" id="spurgoChevron" style="color:#64748b; font-size:0.8em; transition:transform 0.2s;"></i>
                         </div>
-                        <div id="spurgoSettingsContent" style="display:none; margin-top:8px;">
+                        <div id="spurgoSettingsContent" class="settings-accordion-content" style="display:none;">
                             <div style="display:flex;gap:8px;">
                                 <button type="button" id="spurgoBtn_no"
                                   onclick="setSpurgo('no')"
@@ -732,7 +739,7 @@
                             <label class="setting-label" style="margin-bottom:0; cursor:pointer;"><i class="fa-solid fa-text-height" style="color:var(--accent); margin-right:6px;"></i><span id="lbl_font" data-i18n="lbl_font">Dimensione Font</span></label>
                             <i class="fa-solid fa-chevron-down" id="fontSettingsChevron" style="color:#64748b; font-size:0.8em; transition:transform 0.2s;"></i>
                         </div>
-                        <div id="fontSettingsContent" style="display:none; margin-top:8px;">
+                        <div id="fontSettingsContent" class="settings-accordion-content" style="display:none;">
                             <input type="range" id="fontSlider" min="12" max="22" value="16" oninput="updateFontSize(this.value)" style="width:100%;">
                         </div>
                     </div>
@@ -741,7 +748,7 @@
                             <label class="setting-label" style="margin-bottom:0; cursor:pointer;"><i class="fa-solid fa-shop" style="color:var(--accent); margin-right:6px;"></i><span data-i18n="ui_shopname_label">Nome Centro / Negozio</span></label>
                             <i class="fa-solid fa-chevron-down" id="shopSettingsChevron" style="color:#64748b; font-size:0.8em; transition:transform 0.2s;"></i>
                         </div>
-                        <div id="shopSettingsContent" style="display:none; margin-top:8px;">
+                        <div id="shopSettingsContent" class="settings-accordion-content" style="display:none;">
                             <input type="text" id="shopName" placeholder="es. Dive Center Roma" data-i18n-placeholder="ui_shopname_ph" oninput="saveAndCalc();" style="width:100%; padding:7px 10px; border-radius:8px; border:1px solid var(--border-ui); background:var(--input-bg); color:var(--input-text); font-size:0.82em; box-sizing:border-box;">
                         </div>
                     </div>
