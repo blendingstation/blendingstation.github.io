@@ -754,6 +754,16 @@
                     </div>
 
                     <div class="setting-item">
+                        <div onclick="toggleAnalyzerSettings()" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
+                            <label class="setting-label" style="margin-bottom:0; cursor:pointer;"><i class="fa-solid fa-magnifying-glass-chart" style="color:var(--accent); margin-right:6px;"></i><span>Numero Seriale Analizzatore</span></label>
+                            <i class="fa-solid fa-chevron-down" id="analyzerSettingsChevron" style="color:#64748b; font-size:0.8em; transition:transform 0.2s;"></i>
+                        </div>
+                        <div id="analyzerSettingsContent" class="settings-accordion-content" style="display:none;">
+                            <input type="text" id="analyzerSerial" placeholder="es. Analox O2EII #4471" oninput="saveAndCalc();" style="width:100%; padding:7px 10px; border-radius:8px; border:1px solid var(--border-ui); background:var(--input-bg); color:var(--input-text); font-size:0.82em; box-sizing:border-box;">
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
                         <a href="https://blendingstation.github.io/tanklabel/" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:space-between; text-decoration:none; color:var(--text);">
                             <span style="font-size:0.82em; font-weight:700; color:#64748b;"><i class="fa-solid fa-tag" style="color:var(--accent); margin-right:6px;"></i><span data-i18n="ui_tanklabel_link">Crea Etichetta (TankLabel)</span></span>
                             <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75em; color:#64748b;"></i>
@@ -1054,7 +1064,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.60</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.61</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1172,10 +1182,20 @@
         <hr style="border:none; border-top:1px solid var(--border-ui); margin:12px 0;">
 
         <!-- 6. Nome Centro Blending -->
-        <div class="setting-item" style="border-bottom:none;">
+        <div class="setting-item">
             <label class="setting-label"><i class="fa-solid fa-shop" style="color:var(--accent); margin-right:6px;"></i><span data-i18n="ui_shopname_label">Nome Centro / Negozio</span></label>
             <input type="text" id="shopNameMobile" placeholder="es. Dive Center Roma" data-i18n-placeholder="ui_shopname_ph"
                 oninput="document.getElementById('shopName').value=this.value; saveAndCalc();"
+                style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--border-ui); background:var(--input-bg); color:var(--input-text); font-size:0.85em; margin-top:4px; box-sizing:border-box;">
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border-ui); margin:12px 0;">
+
+        <!-- 6b. Numero Seriale Analizzatore -->
+        <div class="setting-item" style="border-bottom:none;">
+            <label class="setting-label"><i class="fa-solid fa-magnifying-glass-chart" style="color:var(--accent); margin-right:6px;"></i><span>Numero Seriale Analizzatore</span></label>
+            <input type="text" id="analyzerSerialMobile" placeholder="es. Analox O2EII #4471"
+                oninput="document.getElementById('analyzerSerial').value=this.value; saveAndCalc();"
                 style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--border-ui); background:var(--input-bg); color:var(--input-text); font-size:0.85em; margin-top:4px; box-sizing:border-box;">
         </div>
 
@@ -1301,7 +1321,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.60</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.61</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -1384,7 +1404,8 @@
             fisso: {},
             profile: document.getElementById('priceProfile').value,
             date: document.getElementById('priceDate').value, ppo2: document.getElementById('ppo2Limit').value,
-            shopName: document.getElementById('shopName') ? document.getElementById('shopName').value : ''
+            shopName: document.getElementById('shopName') ? document.getElementById('shopName').value : '',
+            analyzerSerial: document.getElementById('analyzerSerial') ? document.getElementById('analyzerSerial').value : ''
         };
         ['ean_bibo','ean_mono','ean_11_1','ossigeno_5_7','ossigeno_bombolini','trimix_bombolini'].forEach(function(k) {
             const el = document.getElementById('pFisso_' + k);
@@ -1463,6 +1484,7 @@
             document.getElementById('priceDate').value = costs.date || "";
             if(costs.ppo2) document.getElementById('ppo2Limit').value = costs.ppo2;
         if(costs.shopName) { var _sn=document.getElementById('shopName'); var _snm=document.getElementById('shopNameMobile'); if(_sn)_sn.value=costs.shopName; if(_snm)_snm.value=costs.shopName; }
+        if(costs.analyzerSerial) { var _as=document.getElementById('analyzerSerial'); var _asm=document.getElementById('analyzerSerialMobile'); if(_as)_as.value=costs.analyzerSerial; if(_asm)_asm.value=costs.analyzerSerial; }
         if(costs.fisso) {
             ['ean_bibo','ean_mono','ean_11_1','ossigeno_5_7','ossigeno_bombolini','trimix_bombolini'].forEach(function(k) {
                 if (costs.fisso[k] !== undefined) setBoth('pFisso_' + k, parseFloat(costs.fisso[k] || 0).toFixed(2));
@@ -2510,6 +2532,7 @@
         const pEVal = document.getElementById('pE').value;
         const dataOggi = new Date().toLocaleDateString('it-IT');
         const shopNameVal = (document.getElementById('shopName') ? document.getElementById('shopName').value : '').trim();
+        const analyzerSerialVal = (document.getElementById('analyzerSerial') ? document.getElementById('analyzerSerial').value : '').trim();
 
         const html = `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
 <title>Registro di Miscelazione Gas</title>
@@ -2605,7 +2628,7 @@
       <div class="field"><label>O&#8322; misurato (%)</label><div class="box">&nbsp;</div></div>
       <div class="field"><label>He misurato (%)</label><div class="box">&nbsp;</div></div>
       <div class="field"><label>CO (ppm, se disp.)</label><div class="box">&nbsp;</div></div>
-      <div class="field"><label>Strumento / matricola analizzatore</label><div class="box">&nbsp;</div></div>
+      <div class="field${analyzerSerialVal ? ' auto' : ''}"><label>Strumento / matricola analizzatore</label><div class="box">${analyzerSerialVal || '&nbsp;'}</div></div>
     </div>
   </section>
   <section class="signoff">
@@ -2974,6 +2997,22 @@
         const open = localStorage.getItem('shopSettingsOpen') === '1';
         const content = document.getElementById('shopSettingsContent');
         const chevron = document.getElementById('shopSettingsChevron');
+        if (content) content.style.display = open ? 'block' : 'none';
+        if (chevron) chevron.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+    function toggleAnalyzerSettings() {
+        const content = document.getElementById('analyzerSettingsContent');
+        const chevron = document.getElementById('analyzerSettingsChevron');
+        if (!content || !chevron) return;
+        const isOpen = content.style.display === 'block';
+        content.style.display = isOpen ? 'none' : 'block';
+        chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        localStorage.setItem('analyzerSettingsOpen', isOpen ? '0' : '1');
+    }
+    function initAnalyzerAccordion() {
+        const open = localStorage.getItem('analyzerSettingsOpen') === '1';
+        const content = document.getElementById('analyzerSettingsContent');
+        const chevron = document.getElementById('analyzerSettingsChevron');
         if (content) content.style.display = open ? 'block' : 'none';
         if (chevron) chevron.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
     }
@@ -3448,6 +3487,7 @@ function mobileNav(tab) {
         initSpurgo();
         initSpurgoAccordion();
         initShopAccordion();
+        initAnalyzerAccordion();
         initLang();
         changeLang();
 
