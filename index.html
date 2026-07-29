@@ -1254,6 +1254,9 @@
                 <div class="cost-row"><span data-i18n="ui_cost_oxygen">OSSIGENO</span><span class="gas-val-alligned" id="litriO2">0 L</span><span class="euro" id="costoO2">€ 0.00</span></div>
                 <div class="cost-row"><span data-i18n="ui_cost_air">ARIA</span><span class="gas-val-alligned" id="litriAria">0 L</span><span class="euro" id="costoAir">€ 0.00</span></div>
                 <button class="btn-ascii" onclick="generateReceipt()"><i class="fa-solid fa-receipt"></i> <span id="btn_report">Genera Report</span></button>
+                <button onclick="generateRegistroMiscelazione()" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; background:transparent; color:var(--accent); border:1.5px solid var(--accent); border-radius:8px; cursor:pointer; font-weight:700; font-size:0.78em; text-transform:uppercase; letter-spacing:0.04em; margin-top:8px;">
+                    <i class="fa-solid fa-file-signature"></i> <span>Registro Miscelazione</span>
+                </button>
                 <button onclick="showHistoryModal()" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; background:transparent; color:var(--accent); border:1.5px solid var(--accent); border-radius:8px; cursor:pointer; font-weight:700; font-size:0.78em; text-transform:uppercase; letter-spacing:0.04em; margin-top:8px;">
                     <i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="ui_view_history_btn">Visualizza Storico Ricariche</span>
                 </button>
@@ -2480,6 +2483,126 @@
         const win = window.open('', '_blank', 'width=400,height=600');
         win.document.write('<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GAS BLENDER REPORT<\/title><link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@500;700&display=swap" rel="stylesheet"><style>@page{margin:0;size:auto;}*{margin:0;padding:0;box-sizing:border-box;}html,body{background:#fff;}pre{font-family:\'Azeret Mono\',monospace;font-size:13px;white-space:pre;padding:10mm;color:#000;line-height:1.5;}<\/style><\/head><body><pre>' + receiptText + '<\/pre><script>window.onload=function(){setTimeout(function(){window.print();window.close();},400);};<\/script><\/body><\/html>');
         win.document.close();
+    }
+
+    // ── REGISTRO DI MISCELAZIONE (documento A4, L. 70/2026 art.12) ───────────
+    function generateRegistroMiscelazione() {
+        try {
+        const cylSel = document.getElementById('cylSelect');
+        const cylLabel = (() => {
+            if (!cylSel || cylSel.selectedIndex < 0) return '';
+            const opt = cylSel.options[cylSel.selectedIndex];
+            if (!opt) return '';
+            const biboVal = opt.getAttribute('data-i18n-bibo');
+            if (biboVal) return 'Bibo ' + biboVal;
+            if (cylSel.value === 'altro') {
+                const vol = document.getElementById('cylVol') ? document.getElementById('cylVol').value : '';
+                return vol ? vol + ' L (custom)' : 'Custom';
+            }
+            return opt.text.trim();
+        })();
+
+        const oS = document.getElementById('o2S').value, hS = document.getElementById('heS').value;
+        const nS = (100 - parseFloat(oS) - parseFloat(hS)).toFixed(1);
+        const oE = document.getElementById('o2E').value, hE = document.getElementById('heE').value;
+        const nE = (100 - parseFloat(oE) - parseFloat(hE)).toFixed(1);
+        const dataOggi = new Date().toLocaleDateString('it-IT');
+
+        const html = `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
+<title>Registro di Miscelazione Gas</title>
+<style>
+  :root{ --ink:#1c2b2e; --line:#2c4a4f; --muted:#5a6b6d; --paper:#fbfaf7; --accent:#8a6b3f; }
+  *{ box-sizing:border-box; }
+  body{ font-family:'Georgia','Times New Roman',serif; color:var(--ink); background:#fff; margin:0; }
+  .sheet{ width:210mm; min-height:297mm; margin:0 auto; padding:18mm 20mm; }
+  @page{ size:A4; margin:0; }
+  header{ display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid var(--ink); padding-bottom:14px; margin-bottom:22px; }
+  header h1{ font-size:22px; margin:0; letter-spacing:0.5px; }
+  header .sub{ font-family:Arial,sans-serif; font-size:11px; color:var(--muted); margin-top:4px; }
+  header .meta{ font-family:Arial,sans-serif; font-size:11px; text-align:right; color:var(--muted); line-height:1.5; }
+  .norm{ font-family:Arial,sans-serif; font-size:10.5px; color:var(--accent); background:rgba(138,107,63,0.08); border-left:3px solid var(--accent); padding:8px 12px; margin-bottom:26px; }
+  section{ margin-bottom:22px; }
+  section h2{ font-family:Arial,sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted); border-bottom:1px solid #cfc9ba; padding-bottom:5px; margin:0 0 12px 0; }
+  .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px 20px; }
+  .field{ font-family:Arial,sans-serif; }
+  .field label{ display:block; font-size:9.5px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-bottom:3px; }
+  .field .box{ border-bottom:1px solid var(--ink); min-height:20px; }
+  .field.auto .box{ background:rgba(138,107,63,0.07); border-bottom:1px solid var(--accent); padding:2px 6px; font-size:12px; }
+  .field.auto label::after{ content:" (da app)"; color:var(--accent); text-transform:none; font-style:italic; }
+  .prepost{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .prepost .col{ border:1px solid #cfc9ba; padding:14px 16px; }
+  .prepost .col h3{ font-family:Arial,sans-serif; font-size:10px; letter-spacing:1px; text-transform:uppercase; margin:0 0 10px 0; }
+  .analisi .grid{ grid-template-columns:repeat(4,1fr); }
+  .signoff{ display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:34px; }
+  .signoff .who{ font-family:Arial,sans-serif; }
+  .signoff .who p{ font-size:10.5px; color:var(--muted); margin:0 0 26px 0; }
+  .sigline{ border-bottom:1px solid var(--ink); height:34px; }
+  .sigline + .cap{ font-family:Arial,sans-serif; font-size:9.5px; color:var(--muted); margin-top:4px; }
+  footer{ margin-top:30px; border-top:1px solid #cfc9ba; padding-top:10px; font-family:Arial,sans-serif; font-size:9px; color:var(--muted); display:flex; justify-content:space-between; }
+</style></head><body>
+<div class="sheet">
+  <header>
+    <div><h1>Registro di Miscelazione Gas</h1><div class="sub">BlendingStation &mdash; Nitrox / Trimix Blending Report</div></div>
+    <div class="meta">N&deg; report: ______<br>Data: ${dataOggi}</div>
+  </header>
+  <div class="norm">Documento conservato ai sensi della L. 7 maggio 2026, n. 70, art. 12 &mdash; conservazione minima 6 mesi, disponibile su richiesta delle autorità competenti.</div>
+  <section>
+    <h2>Dati generali</h2>
+    <div class="grid">
+      <div class="field"><label>Bombola &ndash; matricola/seriale</label><div class="box">&nbsp;</div></div>
+      <div class="field auto"><label>Capacit&agrave; / tipo bombola</label><div class="box">${cylLabel}</div></div>
+      <div class="field auto"><label>Miscela richiesta (target)</label><div class="box">O2 ${oE}% &middot; He ${hE}% &middot; N2 ${nE}%</div></div>
+    </div>
+  </section>
+  <section>
+    <h2>Dati di carica</h2>
+    <div class="prepost">
+      <div class="col">
+        <h3>Pre-carica</h3>
+        <div class="grid" style="grid-template-columns:1fr 1fr;">
+          <div class="field"><label>Pressione iniziale</label><div class="box">&nbsp;</div></div>
+          <div class="field auto"><label>Miscela residua stimata</label><div class="box">O2 ${oS}% &middot; He ${hS}% &middot; N2 ${nS}%</div></div>
+        </div>
+      </div>
+      <div class="col">
+        <h3>Post-carica</h3>
+        <div class="grid" style="grid-template-columns:1fr 1fr;">
+          <div class="field"><label>Pressione finale</label><div class="box">&nbsp;</div></div>
+          <div class="field"><label>Ora fine carica</label><div class="box">&nbsp;</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="analisi">
+    <h2>Analisi del gas erogato</h2>
+    <div class="grid">
+      <div class="field"><label>O&#8322; misurato (%)</label><div class="box">&nbsp;</div></div>
+      <div class="field"><label>He misurato (%)</label><div class="box">&nbsp;</div></div>
+      <div class="field"><label>CO (ppm, se disp.)</label><div class="box">&nbsp;</div></div>
+      <div class="field"><label>Strumento / matricola analizzatore</label><div class="box">&nbsp;</div></div>
+    </div>
+  </section>
+  <section class="signoff">
+    <div class="who">
+      <p>Il blender dichiara di aver eseguito la miscelazione e l'analisi sopra riportate.</p>
+      <div class="field"><label>Nome e cognome</label><div class="box">&nbsp;</div></div>
+      <div class="sigline"></div><div class="cap">Firma blender</div>
+    </div>
+    <div class="who">
+      <p>Il cliente dichiara di aver verificato personalmente la miscela ricevuta.</p>
+      <div class="field"><label>Nome e cognome</label><div class="box">&nbsp;</div></div>
+      <div class="sigline"></div><div class="cap">Firma cliente</div>
+    </div>
+  </section>
+  <footer><span>Generato da BlendingStation</span><span>Conservare per almeno 6 mesi &mdash; L. 70/2026, art. 12</span></footer>
+</div>
+<script>window.onload=function(){ setTimeout(function(){ window.print(); }, 300); };<\/script>
+</body></html>`;
+
+        const win = window.open('', '_blank');
+        win.document.write(html);
+        win.document.close();
+        } catch(err) { alert(curT().al_error_prefix + ' ' + err.message); }
     }
 
     // ── FULLSCREEN OPERATIVE MODE ─────────────────────────────
