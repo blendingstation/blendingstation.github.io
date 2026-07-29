@@ -1054,7 +1054,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.51</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.52</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1301,7 +1301,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.51</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.52</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2517,6 +2517,7 @@
   :root{ --ink:#1c2b2e; --line:#2c4a4f; --muted:#5a6b6d; --paper:#fbfaf7; --accent:#8a6b3f; }
   *{ box-sizing:border-box; }
   body{ font-family:'Georgia','Times New Roman',serif; color:var(--ink); background:#fff; margin:0; }
+  @media screen{ body{ padding-top:46px; } }
   .sheet{ width:210mm; min-height:297mm; margin:0 auto; padding:14mm 16mm; }
   @page{ size:A4; margin:0; }
   header{ display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid var(--ink); padding-bottom:10px; margin-bottom:16px; }
@@ -2549,8 +2550,11 @@
   .copytype .copy-checks{ display:flex; gap:20px; font-size:10px; color:var(--ink); flex-shrink:0; }
   .copytype .copy-checks span{ display:flex; align-items:center; gap:6px; }
   .copytype .chk{ width:12px; height:12px; border:1.5px solid var(--ink); display:inline-block; }
-  footer{ margin-top:10px; border-top:1px solid #cfc9ba; padding-top:8px; font-family:Arial,sans-serif; font-size:8.5px; color:var(--muted); display:flex; justify-content:space-between; }
+  footer{ margin-top:10px; border-top:1px solid #cfc9ba; padding-top:8px; font-family:Arial,sans-serif; font-size:8.5px; color:var(--muted); display:flex; justify-content:space-between; }  .closebar{ position:fixed; top:0; left:0; right:0; background:var(--ink); padding:10px 16px; display:flex; justify-content:flex-end; z-index:999; }
+  .closebar button{ font-family:Arial,sans-serif; font-size:13px; font-weight:700; color:#fff; background:#c0392b; border:none; border-radius:6px; padding:8px 16px; cursor:pointer; }
+  @media print{ .closebar{ display:none; } }
 </style></head><body>
+<div class="closebar"><button onclick="window.close()">✕ Chiudi</button></div>
 <div class="sheet">
   <header>
     <div>
