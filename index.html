@@ -1254,10 +1254,10 @@
                 <div class="cost-row"><span data-i18n="ui_cost_oxygen">OSSIGENO</span><span class="gas-val-alligned" id="litriO2">0 L</span><span class="euro" id="costoO2">€ 0.00</span></div>
                 <div class="cost-row"><span data-i18n="ui_cost_air">ARIA</span><span class="gas-val-alligned" id="litriAria">0 L</span><span class="euro" id="costoAir">€ 0.00</span></div>
                 <button class="btn-ascii" onclick="generateReceipt()"><i class="fa-solid fa-receipt"></i> <span id="btn_report">Genera Report</span></button>
-                <button onclick="generateRegistroMiscelazione()" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; background:transparent; color:var(--accent); border:1.5px solid var(--accent); border-radius:8px; cursor:pointer; font-weight:700; font-size:0.78em; text-transform:uppercase; letter-spacing:0.04em; margin-top:8px;">
+                <button onclick="generateRegistroMiscelazione()" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; background:var(--color-he); color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:700; font-size:0.78em; text-transform:uppercase; letter-spacing:0.04em; margin-top:8px;">
                     <i class="fa-solid fa-file-signature"></i> <span>Registro Miscelazione</span>
                 </button>
-                <button onclick="showHistoryModal()" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; background:transparent; color:var(--accent); border:1.5px solid var(--accent); border-radius:8px; cursor:pointer; font-weight:700; font-size:0.78em; text-transform:uppercase; letter-spacing:0.04em; margin-top:8px;">
+                <button onclick="showHistoryModal()" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; background:#475569; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:700; font-size:0.78em; text-transform:uppercase; letter-spacing:0.04em; margin-top:8px;">
                     <i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="ui_view_history_btn">Visualizza Storico Ricariche</span>
                 </button>
             </div>
@@ -2504,9 +2504,12 @@
 
         const oS = document.getElementById('o2S').value, hS = document.getElementById('heS').value;
         const nS = (100 - parseFloat(oS) - parseFloat(hS)).toFixed(1);
+        const pSVal = document.getElementById('pS').value;
         const oE = document.getElementById('o2E').value, hE = document.getElementById('heE').value;
         const nE = (100 - parseFloat(oE) - parseFloat(hE)).toFixed(1);
+        const pEVal = document.getElementById('pE').value;
         const dataOggi = new Date().toLocaleDateString('it-IT');
+        const shopNameVal = (document.getElementById('shopName') ? document.getElementById('shopName').value : '').trim();
 
         const html = `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
 <title>Registro di Miscelazione Gas</title>
@@ -2520,55 +2523,69 @@
   header h1{ font-size:22px; margin:0; letter-spacing:0.5px; }
   header .sub{ font-family:Arial,sans-serif; font-size:11px; color:var(--muted); margin-top:4px; }
   header .meta{ font-family:Arial,sans-serif; font-size:11px; text-align:right; color:var(--muted); line-height:1.5; }
+  header .shopname{ font-family:Arial,sans-serif; font-size:11px; font-weight:700; letter-spacing:0.5px; color:var(--accent); text-transform:uppercase; margin-bottom:4px; }
   .norm{ font-family:Arial,sans-serif; font-size:10.5px; color:var(--accent); background:rgba(138,107,63,0.08); border-left:3px solid var(--accent); padding:8px 12px; margin-bottom:26px; }
   section{ margin-bottom:22px; }
   section h2{ font-family:Arial,sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted); border-bottom:1px solid #cfc9ba; padding-bottom:5px; margin:0 0 12px 0; }
-  .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px 20px; }
+  .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px 28px; }
   .field{ font-family:Arial,sans-serif; }
-  .field label{ display:block; font-size:9.5px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-bottom:3px; }
-  .field .box{ border-bottom:1px solid var(--ink); min-height:20px; }
-  .field.auto .box{ background:rgba(138,107,63,0.07); border-bottom:1px solid var(--accent); padding:2px 6px; font-size:12px; }
+  .field label{ display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-bottom:6px; }
+  .field .box{ border-bottom:1.5px solid var(--ink); min-height:40px; font-size:18px; display:flex; align-items:flex-end; padding-bottom:4px; }
+  .field.auto .box{ background:rgba(138,107,63,0.07); border-bottom:1.5px solid var(--accent); padding:6px 10px; font-size:20px; font-weight:600; min-height:40px; }
   .field.auto label::after{ content:" (da app)"; color:var(--accent); text-transform:none; font-style:italic; }
   .prepost{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-  .prepost .col{ border:1px solid #cfc9ba; padding:14px 16px; }
-  .prepost .col h3{ font-family:Arial,sans-serif; font-size:10px; letter-spacing:1px; text-transform:uppercase; margin:0 0 10px 0; }
-  .analisi .grid{ grid-template-columns:repeat(4,1fr); }
-  .signoff{ display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:34px; }
+  .prepost .col{ border:1px solid #cfc9ba; padding:18px 20px; }
+  .prepost .col h3{ font-family:Arial,sans-serif; font-size:12px; letter-spacing:1px; text-transform:uppercase; margin:0 0 14px 0; }
+  .analisi .grid{ grid-template-columns:repeat(2,1fr); }
+  .prepost .field.auto .box{ justify-content:center; text-align:center; }
+  .signoff{ border:1px solid #cfc9ba; padding:20px 22px; margin-top:34px; }
+  .signoff-grid{ display:grid; grid-template-columns:1fr 1fr; gap:40px; }
   .signoff .who{ font-family:Arial,sans-serif; }
-  .signoff .who p{ font-size:10.5px; color:var(--muted); margin:0 0 26px 0; }
-  .sigline{ border-bottom:1px solid var(--ink); height:34px; }
-  .sigline + .cap{ font-family:Arial,sans-serif; font-size:9.5px; color:var(--muted); margin-top:4px; }
-  footer{ margin-top:30px; border-top:1px solid #cfc9ba; padding-top:10px; font-family:Arial,sans-serif; font-size:9px; color:var(--muted); display:flex; justify-content:space-between; }
+  .signoff .who p{ font-size:12px; color:var(--muted); margin:0 0 30px 0; }
+  .sigline{ border-bottom:1.5px solid var(--ink); height:50px; }
+  .sigline + .cap{ font-family:Arial,sans-serif; font-size:10.5px; color:var(--muted); margin-top:4px; }
+  .copytype{ display:flex; justify-content:flex-end; gap:28px; margin-top:24px; font-family:Arial,sans-serif; font-size:11px; color:var(--ink); }
+  .copytype span{ display:flex; align-items:center; gap:8px; }
+  .copytype .chk{ width:14px; height:14px; border:1.5px solid var(--ink); display:inline-block; }
+  footer{ margin-top:14px; border-top:1px solid #cfc9ba; padding-top:10px; font-family:Arial,sans-serif; font-size:9px; color:var(--muted); display:flex; justify-content:space-between; }
+  .privacy{ font-family:Arial,sans-serif; font-size:8.5px; color:var(--muted); text-align:center; margin-top:6px; }
 </style></head><body>
 <div class="sheet">
   <header>
-    <div><h1>Registro di Miscelazione Gas</h1><div class="sub">BlendingStation &mdash; Nitrox / Trimix Blending Report</div></div>
+    <div>
+      ${shopNameVal ? '<div class="shopname">' + shopNameVal + '</div>' : ''}
+      <h1>Registro di Miscelazione Gas</h1>
+      <div class="sub">BlendingStation &mdash; Nitrox / Trimix Blending Report</div>
+    </div>
     <div class="meta">N&deg; report: ______<br>Data: ${dataOggi}</div>
   </header>
-  <div class="norm">Documento conservato ai sensi della L. 7 maggio 2026, n. 70, art. 12 &mdash; conservazione minima 6 mesi, disponibile su richiesta delle autorità competenti.</div>
+  <div class="norm">Documento predisposto a fini di tracciabilità e tutela, in coerenza con gli obblighi di registrazione previsti dalla L. 7 maggio 2026, n. 70.</div>
   <section>
     <h2>Dati generali</h2>
-    <div class="grid">
+    <div class="grid" style="grid-template-columns:1fr 1fr;">
       <div class="field"><label>Bombola &ndash; matricola/seriale</label><div class="box">&nbsp;</div></div>
       <div class="field auto"><label>Capacit&agrave; / tipo bombola</label><div class="box">${cylLabel}</div></div>
-      <div class="field auto"><label>Miscela richiesta (target)</label><div class="box">O2 ${oE}% &middot; He ${hE}% &middot; N2 ${nE}%</div></div>
     </div>
   </section>
   <section>
     <h2>Dati di carica</h2>
     <div class="prepost">
       <div class="col">
-        <h3>Pre-carica</h3>
+        <h3>Residuo</h3>
         <div class="grid" style="grid-template-columns:1fr 1fr;">
-          <div class="field"><label>Pressione iniziale</label><div class="box">&nbsp;</div></div>
-          <div class="field auto"><label>Miscela residua stimata</label><div class="box">O2 ${oS}% &middot; He ${hS}% &middot; N2 ${nS}%</div></div>
+          <div class="field auto"><label>O2%</label><div class="box">${oS}</div></div>
+          <div class="field auto"><label>He%</label><div class="box">${hS}</div></div>
+          <div class="field auto"><label>N2%</label><div class="box">${nS}</div></div>
+          <div class="field auto"><label>Bar</label><div class="box">${pSVal}</div></div>
         </div>
       </div>
       <div class="col">
-        <h3>Post-carica</h3>
+        <h3>Target</h3>
         <div class="grid" style="grid-template-columns:1fr 1fr;">
-          <div class="field"><label>Pressione finale</label><div class="box">&nbsp;</div></div>
-          <div class="field"><label>Ora fine carica</label><div class="box">&nbsp;</div></div>
+          <div class="field auto"><label>O2%</label><div class="box">${oE}</div></div>
+          <div class="field auto"><label>He%</label><div class="box">${hE}</div></div>
+          <div class="field auto"><label>N2%</label><div class="box">${nE}</div></div>
+          <div class="field auto"><label>Bar</label><div class="box">${pEVal}</div></div>
         </div>
       </div>
     </div>
@@ -2583,6 +2600,7 @@
     </div>
   </section>
   <section class="signoff">
+    <div class="signoff-grid">
     <div class="who">
       <p>Il blender dichiara di aver eseguito la miscelazione e l'analisi sopra riportate.</p>
       <div class="field"><label>Nome e cognome</label><div class="box">&nbsp;</div></div>
@@ -2593,8 +2611,17 @@
       <div class="field"><label>Nome e cognome</label><div class="box">&nbsp;</div></div>
       <div class="sigline"></div><div class="cap">Firma cliente</div>
     </div>
+    </div>
   </section>
-  <footer><span>Generato da BlendingStation</span><span>Conservare per almeno 6 mesi &mdash; L. 70/2026, art. 12</span></footer>
+  <div class="copytype">
+    <span><i class="chk"></i> Copia Cliente</span>
+    <span><i class="chk"></i> Copia Interna</span>
+  </div>
+  <footer>
+    <span>Generato da BlendingStation</span>
+    <span>Conservazione consigliata: almeno 6 mesi</span>
+  </footer>
+  <div class="privacy">Dati trattati ai sensi del Regolamento UE 2016/679 per finalità di sicurezza e tracciabilità.</div>
 </div>
 <script>window.onload=function(){ setTimeout(function(){ window.print(); }, 300); };<\/script>
 </body></html>`;
