@@ -2517,21 +2517,21 @@
   :root{ --ink:#1c2b2e; --line:#2c4a4f; --muted:#5a6b6d; --paper:#fbfaf7; --accent:#8a6b3f; }
   *{ box-sizing:border-box; }
   body{ font-family:'Georgia','Times New Roman',serif; color:var(--ink); background:#fff; margin:0; }
-  .sheet{ width:210mm; min-height:297mm; margin:0 auto; padding:18mm 20mm; }
+  .sheet{ width:210mm; min-height:297mm; margin:0 auto; padding:18mm 20mm; zoom:0.95; }
   @page{ size:A4; margin:0; }
   header{ display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid var(--ink); padding-bottom:14px; margin-bottom:22px; }
   header h1{ font-size:22px; margin:0; letter-spacing:0.5px; }
   header .sub{ font-family:Arial,sans-serif; font-size:11px; color:var(--muted); margin-top:4px; }
   header .meta{ font-family:Arial,sans-serif; font-size:11px; text-align:right; color:var(--muted); line-height:1.5; }
   header .shopname{ font-family:Arial,sans-serif; font-size:11px; font-weight:700; letter-spacing:0.5px; color:var(--accent); text-transform:uppercase; margin-bottom:4px; }
-  .norm{ font-family:Arial,sans-serif; font-size:10.5px; color:var(--accent); background:rgba(138,107,63,0.08); border-left:3px solid var(--accent); padding:8px 12px; margin-bottom:26px; }
+  .norm{ font-family:Arial,sans-serif; font-size:10.5px; color:var(--ink); background:#e8e8e6; border-left:3px solid #9a9a94; padding:8px 12px; margin-bottom:26px; }
   section{ margin-bottom:22px; }
   section h2{ font-family:Arial,sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted); border-bottom:1px solid #cfc9ba; padding-bottom:5px; margin:0 0 12px 0; }
   .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px 28px; }
   .field{ font-family:Arial,sans-serif; }
   .field label{ display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-bottom:6px; }
   .field .box{ border-bottom:1.5px solid var(--ink); min-height:40px; font-size:18px; display:flex; align-items:flex-end; padding-bottom:4px; }
-  .field.auto .box{ background:rgba(138,107,63,0.07); border-bottom:1.5px solid var(--accent); padding:6px 10px; font-size:20px; font-weight:600; min-height:40px; }
+  .field.auto .box{ background:#e8e8e6; border-bottom:1.5px solid #9a9a94; padding:6px 10px; font-size:20px; font-weight:600; min-height:40px; }
   .field.auto label::after{ content:" (da app)"; color:var(--accent); text-transform:none; font-style:italic; }
   .prepost{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
   .prepost .col{ border:1px solid #cfc9ba; padding:18px 20px; }
@@ -2544,11 +2544,12 @@
   .signoff .who p{ font-size:12px; color:var(--muted); margin:0 0 30px 0; }
   .sigline{ border-bottom:1.5px solid var(--ink); height:50px; }
   .sigline + .cap{ font-family:Arial,sans-serif; font-size:10.5px; color:var(--muted); margin-top:4px; }
-  .copytype{ display:flex; justify-content:flex-end; gap:28px; margin-top:24px; font-family:Arial,sans-serif; font-size:11px; color:var(--ink); }
-  .copytype span{ display:flex; align-items:center; gap:8px; }
+  .copytype{ display:flex; justify-content:space-between; align-items:center; gap:20px; margin-top:24px; font-family:Arial,sans-serif; }
+  .copytype .privacy-inline{ font-size:8.5px; color:var(--muted); max-width:55%; }
+  .copytype .copy-checks{ display:flex; gap:24px; font-size:11px; color:var(--ink); flex-shrink:0; }
+  .copytype .copy-checks span{ display:flex; align-items:center; gap:8px; }
   .copytype .chk{ width:14px; height:14px; border:1.5px solid var(--ink); display:inline-block; }
   footer{ margin-top:14px; border-top:1px solid #cfc9ba; padding-top:10px; font-family:Arial,sans-serif; font-size:9px; color:var(--muted); display:flex; justify-content:space-between; }
-  .privacy{ font-family:Arial,sans-serif; font-size:8.5px; color:var(--muted); text-align:center; margin-top:6px; }
 </style></head><body>
 <div class="sheet">
   <header>
@@ -2614,14 +2615,16 @@
     </div>
   </section>
   <div class="copytype">
-    <span><i class="chk"></i> Copia Cliente</span>
-    <span><i class="chk"></i> Copia Interna</span>
+    <span class="privacy-inline">Dati trattati ai sensi del Regolamento UE 2016/679 per finalità di sicurezza e tracciabilità.</span>
+    <span class="copy-checks">
+      <span><i class="chk"></i> Copia Cliente</span>
+      <span><i class="chk"></i> Copia Interna</span>
+    </span>
   </div>
   <footer>
     <span>Generato da BlendingStation</span>
     <span>Conservazione consigliata: almeno 6 mesi</span>
   </footer>
-  <div class="privacy">Dati trattati ai sensi del Regolamento UE 2016/679 per finalità di sicurezza e tracciabilità.</div>
 </div>
 <script>window.onload=function(){ setTimeout(function(){ window.print(); }, 300); };<\/script>
 </body></html>`;
