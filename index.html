@@ -1054,7 +1054,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.59</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.60</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1301,7 +1301,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.59</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.60</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2514,7 +2514,7 @@
         const html = `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
 <title>Registro di Miscelazione Gas</title>
 <style>
-  :root{ --ink:#1c2b2e; --line:#2c4a4f; --muted:#5a6b6d; --paper:#fbfaf7; --accent:#8a6b3f; }
+  :root{ --ink:#1c2b2e; --line:#2c4a4f; --muted:#1c2b2e; --paper:#fbfaf7; --accent:#8a6b3f; }
   *{ box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; }
   body{ font-family:'Georgia','Times New Roman',serif; color:var(--ink); background:#fff; margin:0; }
   @media screen{ body{ padding-top:46px; } }
@@ -2534,13 +2534,12 @@
   .field{ font-family:Arial,sans-serif; }
   .field label{ display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); margin-bottom:5.5px; }
   .field .box{ border-bottom:1.5px solid var(--ink); min-height:37px; font-size:17px; display:flex; align-items:flex-end; padding-bottom:4px; }
-  .field.auto .box{ background:#e8e8e6; border-bottom:1.5px solid #9a9a94; padding:5.5px 9.5px; font-size:19px; font-weight:600; min-height:37px; }
-  .field.auto label::after{ content:" (da app)"; color:var(--muted); text-transform:none; font-style:italic; }
+  .field.auto .box{ background:#e8e8e6; border-bottom:1.5px solid #9a9a94; padding:5.5px 9.5px; font-size:19px; font-weight:600; min-height:37px; justify-content:center; text-align:center; }
   .prepost{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
   .prepost .col{ border:1px solid #cfc9ba; padding:16px 18px; page-break-inside:avoid; }
-  .prepost .col h3{ font-family:Arial,sans-serif; font-size:11.5px; letter-spacing:1px; text-transform:uppercase; margin:0 0 10px 0; }
+  .prepost .col h3{ font-family:Arial,sans-serif; font-size:11.5px; letter-spacing:1px; text-transform:uppercase; margin:0 0 10px 0; display:flex; align-items:baseline; gap:6px; }
   .analisi .grid{ grid-template-columns:repeat(2,1fr); }
-  .prepost .field.auto .box{ justify-content:center; text-align:center; }
+  .prepost .col h3 .tag{ font-size:9.5px; color:var(--muted); text-transform:none; font-style:italic; font-weight:400; letter-spacing:0; }
   .signoff{ border:1px solid #cfc9ba; padding:17px 20px; margin-top:22px; page-break-inside:avoid; }
   .signoff-grid{ display:grid; grid-template-columns:1fr 1fr; gap:30px; }
   .signoff .who{ font-family:Arial,sans-serif; }
@@ -2581,7 +2580,7 @@
     <h2>Dati di carica</h2>
     <div class="prepost">
       <div class="col">
-        <h3>Residuo</h3>
+        <h3>Residuo <span class="tag">(da app)</span></h3>
         <div class="grid" style="grid-template-columns:1fr 1fr;">
           <div class="field auto"><label>O2%</label><div class="box">${oS}</div></div>
           <div class="field auto"><label>He%</label><div class="box">${hS}</div></div>
@@ -2590,7 +2589,7 @@
         </div>
       </div>
       <div class="col">
-        <h3>Target</h3>
+        <h3>Target <span class="tag">(da app)</span></h3>
         <div class="grid" style="grid-template-columns:1fr 1fr;">
           <div class="field auto"><label>O2%</label><div class="box">${oE}</div></div>
           <div class="field auto"><label>He%</label><div class="box">${hE}</div></div>
