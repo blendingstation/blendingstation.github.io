@@ -1054,7 +1054,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.58</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.59</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1301,7 +1301,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.58</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.59</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2524,6 +2524,8 @@
   header h1{ font-size:22px; margin:0; letter-spacing:0.5px; }
   header .sub{ font-family:Arial,sans-serif; font-size:11px; color:var(--muted); margin-top:4px; }
   header .meta{ font-family:Arial,sans-serif; font-size:11px; text-align:right; color:var(--muted); line-height:1.5; }
+  .reportno-row{ display:flex; align-items:baseline; justify-content:flex-end; gap:6px; margin-bottom:2px; }
+  .reportno-line{ display:inline-block; width:55mm; border-bottom:1.3px solid var(--ink); height:1px; }
   header .shopname{ font-family:Arial,sans-serif; font-size:11px; font-weight:700; letter-spacing:0.5px; color:var(--ink); text-transform:uppercase; margin-bottom:4px; }
   .norm{ font-family:Arial,sans-serif; font-size:10.2px; color:var(--ink); background:#e8e8e6; border-left:3px solid #9a9a94; padding:8px 12px; margin-bottom:20px; }
   section{ margin-bottom:19px; page-break-inside:avoid; }
@@ -2562,7 +2564,10 @@
       <h1>Registro di Miscelazione Gas</h1>
       <div class="sub">BlendingStation &mdash; Nitrox / Trimix Blending Report</div>
     </div>
-    <div class="meta">N&deg; report: ______<br>Data: ${dataOggi}</div>
+    <div class="meta">
+      <div class="reportno-row">N&deg; report: <span class="reportno-line"></span></div>
+      <div>Data: ${dataOggi}</div>
+    </div>
   </header>
   <div class="norm">Documento predisposto a fini di tracciabilità e tutela, in coerenza con gli obblighi di registrazione previsti dalla L. 7 maggio 2026, n. 70.</div>
   <section>
