@@ -2574,11 +2574,22 @@
   .copytype .copy-checks{ display:flex; gap:21px; font-size:10.7px; color:var(--ink); flex-shrink:0; }
   .copytype .copy-checks span{ display:flex; align-items:center; gap:6px; }
   .copytype .chk{ width:12.5px; height:12.5px; border:1.5px solid var(--ink); display:inline-block; }
-  footer{ margin-top:11px; border-top:1px solid #cfc9ba; padding-top:9px; font-family:Arial,sans-serif; font-size:9.2px; color:var(--muted); display:flex; justify-content:space-between; }  .closebar{ position:fixed; top:0; left:0; right:0; background:var(--ink); padding:10px 16px; display:flex; justify-content:flex-end; z-index:999; }
-  .closebar button{ font-family:Arial,sans-serif; font-size:13px; font-weight:700; color:#fff; background:#c0392b; border:none; border-radius:6px; padding:8px 16px; cursor:pointer; }
+  footer{ margin-top:11px; border-top:1px solid #cfc9ba; padding-top:9px; font-family:Arial,sans-serif; font-size:9.2px; color:var(--muted); display:flex; justify-content:space-between; }
+  .closebar{ position:fixed; top:0; left:0; right:0; background:var(--ink); padding:10px 16px; display:flex; justify-content:flex-end; gap:10px; z-index:999; }
+  .closebar button{ font-family:Arial,sans-serif; font-size:13px; font-weight:700; color:#fff; border:none; border-radius:6px; padding:8px 16px; cursor:pointer; }
+  .closebar .btn-print{ background:#2563eb; }
+  .closebar .btn-close{ background:#c0392b; }
   @media print{ .closebar{ display:none; } }
+  @media screen and (max-width:600px){
+    .closebar{ padding:14px 16px; gap:12px; }
+    .closebar button{ font-size:16px; padding:12px 22px; border-radius:8px; }
+    body{ padding-top:66px; }
+  }
 </style></head><body>
-<div class="closebar"><button onclick="window.close()">✕ Chiudi</button></div>
+<div class="closebar">
+  <button class="btn-print" onclick="window.print()">&#128424; Stampa</button>
+  <button class="btn-close" onclick="window.close()">&#10005; Chiudi</button>
+</div>
 <div class="sheet">
   <header>
     <div>
