@@ -1064,7 +1064,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.63</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.64</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1321,7 +1321,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.63</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.64</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2064,6 +2064,7 @@
         const t = (translations && translations[lang]) ? translations[lang] : {alert_names: 'Inserire Blender e Diver!'};
         if (!b || !c) {
             // Show modal with missing fields
+            window.namesModalPendingAction = 'receipt';
             var modal = document.getElementById('namesModal');
             var bField = document.getElementById('modalBlenderField');
             var dField = document.getElementById('modalDiverField');
@@ -2510,6 +2511,24 @@
     // ── REGISTRO DI MISCELAZIONE (documento A4, L. 70/2026 art.12) ───────────
     function generateRegistroMiscelazione() {
         try {
+        const bName = (document.getElementById('blenderName').value || '').trim();
+        const cName = (document.getElementById('customerName').value || '').trim();
+        if (!bName || !cName) {
+            window.namesModalPendingAction = 'registro';
+            var modal = document.getElementById('namesModal');
+            var bField = document.getElementById('modalBlenderField');
+            var dField = document.getElementById('modalDiverField');
+            var bInput = document.getElementById('modalBlenderInput');
+            var dInput = document.getElementById('modalDiverInput');
+            bField.style.display = !bName ? 'block' : 'none';
+            dField.style.display = !cName ? 'block' : 'none';
+            if (!bName) bInput.value = '';
+            if (!cName) dInput.value = '';
+            modal.classList.add('open');
+            setTimeout(function() { (!bName ? bInput : dInput).focus(); }, 100);
+            return;
+        }
+
         const cylSel = document.getElementById('cylSelect');
         const cylLabel = (() => {
             if (!cylSel || cylSel.selectedIndex < 0) return '';
@@ -2647,12 +2666,12 @@
     <div class="signoff-grid">
     <div class="who">
       <p>Il blender dichiara di aver eseguito la miscelazione e l'analisi sopra riportate.</p>
-      <div class="field"><label>Nome e cognome</label><div class="box">&nbsp;</div></div>
+      <div class="field auto"><label>Nome e cognome</label><div class="box">${bName}</div></div>
       <div class="sigline"></div><div class="cap">Firma blender</div>
     </div>
     <div class="who">
       <p>Il cliente dichiara di aver verificato personalmente la miscela ricevuta.</p>
-      <div class="field"><label>Nome e cognome</label><div class="box">&nbsp;</div></div>
+      <div class="field auto"><label>Nome e cognome</label><div class="box">${cName}</div></div>
       <div class="sigline"></div><div class="cap">Firma cliente</div>
     </div>
     </div>
@@ -3394,10 +3413,14 @@ function mobileNav(tab) {
             return;
         }
 
-        // Close modal and generate report
+        // Close modal and generate the pending document
         document.getElementById('namesModal').classList.remove('open');
         saveAndCalc();
-        setTimeout(function() { generateReceipt(); }, 100);
+        var action = window.namesModalPendingAction || 'receipt';
+        setTimeout(function() {
+            if (action === 'registro') { generateRegistroMiscelazione(); }
+            else { generateReceipt(); }
+        }, 100);
     }
 
     function calcBestMix() {
