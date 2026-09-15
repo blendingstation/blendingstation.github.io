@@ -1064,7 +1064,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.68</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.69</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1321,7 +1321,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.68</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.69</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2572,14 +2572,11 @@
 
         const html = `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
 <title>Registro di Miscelazione Gas</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   :root{ --ink:#1c2b2e; --line:#2c4a4f; --muted:#1c2b2e; --paper:#fbfaf7; --accent:#8a6b3f; }
-  *{ box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; }
+  *{ box-sizing:border-box; }
   body{ font-family:'Georgia','Times New Roman',serif; color:var(--ink); background:#fff; margin:0; }
-  @media screen{ body{ padding-top:46px; } }
-  .sheet{ width:210mm; min-height:260mm; margin:0 auto; padding:10mm 19mm; }
-  @page{ size:A4; margin:0; }
+  .sheet{ width:210mm; min-height:297mm; margin:0 auto; padding:17mm 19mm; }
   header{ display:flex; justify-content:space-between; align-items:flex-end; border-bottom:2px solid var(--ink); padding-bottom:13px; margin-bottom:20px; }
   header h1{ font-size:22px; margin:0; letter-spacing:0.5px; }
   header .sub{ font-family:Arial,sans-serif; font-size:11px; color:var(--muted); margin-top:4px; }
@@ -2588,7 +2585,7 @@
   .reportno-line{ display:inline-block; width:55mm; border-bottom:1.3px solid var(--ink); height:1px; }
   header .shopname{ font-family:Arial,sans-serif; font-size:11px; font-weight:700; letter-spacing:0.5px; color:var(--ink); text-transform:uppercase; margin-bottom:4px; }
   .norm{ font-family:Arial,sans-serif; font-size:10.2px; color:var(--ink); background:#e8e8e6; border-left:3px solid #9a9a94; padding:8px 12px; margin-bottom:20px; }
-  section{ margin-bottom:19px; page-break-inside:avoid; }
+  section{ margin-bottom:19px; }
   section h2{ font-family:Arial,sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted); border-bottom:1px solid #cfc9ba; padding-bottom:5px; margin:0 0 10px 0; }
   .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px 24px; }
   .field{ font-family:Arial,sans-serif; }
@@ -2596,11 +2593,11 @@
   .field .box{ border-bottom:1.5px solid var(--ink); min-height:37px; font-size:17px; display:flex; align-items:flex-end; padding-bottom:4px; }
   .field.auto .box{ background:#e8e8e6; border-bottom:1.5px solid #9a9a94; padding:5.5px 9.5px; font-size:19px; font-weight:600; min-height:37px; justify-content:center; text-align:center; }
   .prepost{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  .prepost .col{ border:1px solid #cfc9ba; padding:16px 18px; page-break-inside:avoid; }
+  .prepost .col{ border:1px solid #cfc9ba; padding:16px 18px; }
   .prepost .col h3{ font-family:Arial,sans-serif; font-size:11.5px; letter-spacing:1px; text-transform:uppercase; margin:0 0 10px 0; display:flex; align-items:baseline; gap:6px; }
   .analisi .grid{ grid-template-columns:repeat(2,1fr); }
   .prepost .col h3 .tag{ font-size:9.5px; color:var(--muted); text-transform:none; font-style:italic; font-weight:400; letter-spacing:0; }
-  .signoff{ border:1px solid #cfc9ba; padding:17px 20px; margin-top:22px; page-break-inside:avoid; }
+  .signoff{ border:1px solid #cfc9ba; padding:17px 20px; margin-top:22px; }
   .signoff-grid{ display:grid; grid-template-columns:1fr 1fr; gap:30px; }
   .signoff .who{ font-family:Arial,sans-serif; }
   .signoff .who p{ font-size:11.5px; color:var(--muted); margin:0 0 20px 0; }
@@ -2612,21 +2609,7 @@
   .copytype .copy-checks span{ display:flex; align-items:center; gap:6px; }
   .copytype .chk{ width:12.5px; height:12.5px; border:1.5px solid var(--ink); display:inline-block; }
   footer{ margin-top:11px; border-top:1px solid #cfc9ba; padding-top:9px; font-family:Arial,sans-serif; font-size:9.2px; color:var(--muted); display:flex; justify-content:space-between; }
-  .closebar{ position:fixed; top:0; left:0; right:0; background:var(--ink); padding:10px 16px; display:flex; justify-content:flex-end; gap:10px; z-index:999; }
-  .closebar button{ font-family:Arial,sans-serif; font-size:13px; font-weight:700; color:#fff; border:none; border-radius:6px; padding:8px 16px; cursor:pointer; }
-  .closebar .btn-print{ background:#2563eb; }
-  .closebar .btn-close{ background:#c0392b; }
-  @media print{ .closebar{ display:none; } }
-  @media screen and (max-width:600px){
-    .closebar{ padding:14px 16px; gap:12px; }
-    .closebar button{ font-size:16px; padding:12px 22px; border-radius:8px; }
-    body{ padding-top:66px; }
-  }
 </style></head><body>
-<div class="closebar">
-  <button class="btn-print" onclick="window.print()">&#128424; Stampa</button>
-  <button class="btn-close" onclick="window.close()">&#10005; Chiudi</button>
-</div>
 <div class="sheet">
   <header>
     <div>
@@ -2705,32 +2688,48 @@
     <span>Conservazione consigliata: almeno 6 mesi</span>
   </footer>
 </div>
-<script>
-(function(){
-  var sheet = document.querySelector('.sheet');
-  function applyFitZoom(){
-    if (window.innerWidth < 700) {
-      var scale = (window.innerWidth - 16) / 793.7;
-      if (scale > 1) scale = 1;
-      sheet.style.zoom = scale;
-    } else {
-      sheet.style.zoom = '';
-    }
-  }
-  window.addEventListener('resize', applyFitZoom);
-  window.addEventListener('orientationchange', applyFitZoom);
-  window.addEventListener('beforeprint', function(){ sheet.style.zoom = ''; });
-  window.addEventListener('afterprint', applyFitZoom);
-  window.onload = function(){
-    applyFitZoom();
-  };
-})();
-<\/script>
 </body></html>`;
 
-        const win = window.open('', '_blank');
-        win.document.write(html);
-        win.document.close();
+        // Render the document off-screen in a hidden iframe, then rasterize it
+        // and embed the image into a real A4 PDF page. This avoids the browser's
+        // own print pipeline entirely (no iOS URL/footer, no window.print()
+        // limitation inside an installed home-screen PWA), and reproduces the
+        // exact same design pixel-for-pixel.
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.top = '0';
+        iframe.style.left = '-10000px';
+        iframe.style.width = '800px';
+        iframe.style.height = '1200px';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+
+        iframe.onload = function() {
+            const sheetEl = iframe.contentDocument.querySelector('.sheet');
+            html2canvas(sheetEl, { scale: 2.5, backgroundColor: '#ffffff', useCORS: true }).then(function(canvas) {
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const pdf = new jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+                pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+                document.body.removeChild(iframe);
+
+                const fileName = 'registro-miscelazione-' + dataOggi.replace(/\//g, '-') + '.pdf';
+                const blob = pdf.output('blob');
+                const file = new File([blob], fileName, { type: 'application/pdf' });
+
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({ files: [file], title: 'Registro di Miscelazione Gas' }).catch(function(){});
+                } else {
+                    pdf.autoPrint();
+                    const url = URL.createObjectURL(pdf.output('blob'));
+                    window.open(url, '_blank');
+                    setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
+                }
+            }).catch(function(err) {
+                document.body.removeChild(iframe);
+                alert('Errore nella generazione del PDF: ' + err.message);
+            });
+        };
+        iframe.srcdoc = html;
         } catch(err) { alert(curT().al_error_prefix + ' ' + err.message); }
     }
 
