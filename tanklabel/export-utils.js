@@ -158,8 +158,62 @@ async function printLabel() {
 }
 
 /* =========================================================
- * CONDIVISIONE (Web Share API)
+ * STAMPA WIFI (AirPrint diretto su PC, foglio di condivisione su mobile/PWA)
  * ========================================================= */
+
+async function printLabelWiFi() {
+  // Verifica se il dispositivo supporta la condivisione di file.
+  // Se non la supporta (tipicamente desktop), usa esattamente printLabel()
+  // già esistente e già corretto — nessuna modifica al comportamento su PC.
+  const probeFile = new File(["x"], "probe.pdf", { type: "application/pdf" });
+  const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [probeFile] }));
+  if (!canShareFiles) {
+    return printLabel();
+  }
+
+  // Mobile / PWA installata: window.print() da una finestra aperta via
+  // script non è affidabile (limite noto di iOS sulle app installate in
+  // Home) — passiamo dal foglio di condivisione di sistema, che apre
+  // sempre "Stampa" via AirPrint. Il PDF è generato alla dimensione
+  // esatta dell'etichetta, senza margini aggiuntivi.
+  const btn = document.getElementById("btnPrintWiFi");
+  const originalHTML = btn ? btn.innerHTML : "";
+  if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...'; btn.disabled = true; }
+
+  const element = await prepareCapture();
+  try {
+    const canvas = await html2canvas(element, {
+      scale: 4,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+    });
+    const imgData = canvas.toDataURL("image/png");
+
+    const { jsPDF } = window.jspdf;
+    const widthMm = parseFloat(DOM.inputs.labelWidth.value);
+    const heightMm = parseFloat(DOM.inputs.labelHeight.value);
+
+    const doc = new jsPDF({
+      orientation: widthMm > heightMm ? "l" : "p",
+      unit: "mm",
+      format: [widthMm, heightMm],
+    });
+    doc.addImage(imgData, "PNG", 0, 0, widthMm, heightMm);
+
+    const blob = doc.output("blob");
+    const file = new File([blob], `TankLabel_${Date.now()}.pdf`, { type: "application/pdf" });
+    await navigator.share({ files: [file], title: "Etichetta TankLabel" });
+  } catch (e) {
+    if (e.name !== "AbortError") {
+      console.error("Errore Stampa WiFi:", e);
+      alert("Errore nella generazione della stampa.");
+    }
+  } finally {
+    cleanupCapture();
+    if (btn) { btn.innerHTML = originalHTML; btn.disabled = false; }
+  }
+}
+
 
 async function shareViaBluetooth() {
   if (!navigator.share) {
