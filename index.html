@@ -1078,7 +1078,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.73</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.74</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1336,7 +1336,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.73</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.74</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2477,7 +2477,9 @@
         const baseFontPx = parseFloat(window.getComputedStyle(receipt).fontSize) || 16;
         const scaleFactor = labelWidthMM / 60;
         const originalFontSize = receipt.style.fontSize;
+        const originalPadding = receipt.style.padding;
         receipt.style.fontSize = (baseFontPx * scaleFactor) + 'px';
+        receipt.style.padding = '6px';
 
         return html2canvas(receipt, {
             backgroundColor: '#ffffff',
@@ -2486,6 +2488,7 @@
             logging: false
         }).then(canvas => {
             receipt.style.fontSize = originalFontSize;
+            receipt.style.padding = originalPadding;
             const PX_PER_MM = 8;
             const ROLL_PX = labelWidthMM * PX_PER_MM;
             const TEXT_PX = (labelWidthMM - 2) * PX_PER_MM;
@@ -2512,6 +2515,7 @@
             return doc;
         }).catch(err => {
             receipt.style.fontSize = originalFontSize;
+            receipt.style.padding = originalPadding;
             throw err;
         });
     }
