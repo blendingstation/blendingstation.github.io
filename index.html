@@ -1078,7 +1078,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.72</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.73</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1336,7 +1336,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.72</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.73</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2534,7 +2534,7 @@
         });
     }
 
-    function printReceiptWiFi() {
+    function _printReceiptWiFiDirect() {
         const receiptText = document.getElementById('receipt').innerText;
         const labelWidthMM = parseFloat(document.getElementById('labelWidth') ? document.getElementById('labelWidth').value : '') || 60;
         const scaleFactor = labelWidthMM / 60;
@@ -2543,6 +2543,38 @@
         const win = window.open('', '_blank', 'width=400,height=600');
         win.document.write('<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GAS BLENDER REPORT<\/title><link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@500;700&display=swap" rel="stylesheet"><style>@page{margin:0;size:' + labelWidthMM + 'mm auto;}*{margin:0;padding:0;box-sizing:border-box;}html,body{background:#fff;width:' + labelWidthMM + 'mm;}pre{font-family:\'Azeret Mono\',monospace;font-size:' + fontPx + 'px;white-space:pre-wrap;word-break:break-word;padding:' + padMM + 'mm;color:#000;line-height:1.5;}<\/style><\/head><body><pre>' + receiptText + '<\/pre><script>window.onload=function(){setTimeout(function(){window.print();},400);};<\/script><\/body><\/html>');
         win.document.close();
+    }
+
+    function printReceiptWiFi() {
+        // Quick capability check: does this browser support sharing a file at all?
+        // If not (desktop browsers generally don't), keep the exact direct-print
+        // flow that's already confirmed working there — nothing changes on PC.
+        const probeFile = new File(['x'], 'probe.pdf', { type: 'application/pdf' });
+        const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [probeFile] }));
+        if (!canShareFiles) {
+            _printReceiptWiFiDirect();
+            return;
+        }
+        // Mobile / installed PWA: window.print() from a script-opened window is
+        // unreliable here (iOS limitation on standalone home-screen apps), so
+        // route through the system share sheet instead, which always works and
+        // offers "Stampa" via AirPrint straight away — this is not a download,
+        // the file never touches the user's storage unless they choose to save it.
+        const btn = document.getElementById('btn_print_wifi');
+        const originalHTML = btn ? btn.innerHTML : '';
+        if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...'; btn.disabled = true; }
+        _buildReceiptPDF().then(doc => {
+            const customer = (document.getElementById('customerName').value || '').replace(/\s+/g, '_');
+            const date = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
+            const filename = (customer ? 'blending_' + customer + '_' + date : 'blending_' + date) + '.pdf';
+            const blob = doc.output('blob');
+            const file = new File([blob], filename, { type: 'application/pdf' });
+            navigator.share({ files: [file], title: 'Gas Blender Report' }).catch(function(){});
+            if (btn) { btn.innerHTML = originalHTML; btn.disabled = false; }
+        }).catch(err => {
+            alert(curT().al_error_prefix + ' ' + err.message);
+            if (btn) { btn.innerHTML = originalHTML; btn.disabled = false; }
+        });
     }
 
     function printReceipt() {
