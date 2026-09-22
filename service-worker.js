@@ -1,4 +1,4 @@
-const CACHE_NAME = 'blending-station-v20';
+const CACHE_NAME = 'blending-station-v23';
 const ASSETS = [
   './',
   './index.html',
@@ -46,7 +46,7 @@ self.addEventListener('fetch', event => {
   } else {
     event.respondWith(
       caches.match(event.request).then(cached => {
-        return cached || fetch(event.request).catch(() => caches.match('./index.html'));
+        return cached || fetch(event.request);
       })
     );
   }
