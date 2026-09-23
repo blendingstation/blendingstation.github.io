@@ -199,6 +199,7 @@ async function printLabelWiFi() {
     const widthMm = parseFloat(DOM.inputs.labelWidth.value);
     const heightMm = parseFloat(DOM.inputs.labelHeight.value);
     const rotate = (parseInt(localStorage.getItem("currentSkin") || "0")) === 1; // Divesoft: ruota 90° così il lato lungo (altezza originale) combacia con la larghezza del rotolo
+    alert('DEBUG\ncurrentSkin (localStorage): ' + localStorage.getItem("currentSkin") + '\nrotate: ' + rotate + '\nwidthMm: ' + widthMm + '\nheightMm: ' + heightMm + '\ncanvas: ' + canvas.width + 'x' + canvas.height + '\ncanShareFiles: ' + canShareFiles);
 
     let imgData, pageW, pageH;
     if (rotate) {
