@@ -181,8 +181,8 @@
         .price-date-display { display: block; text-align: right; font-size: 0.65em; color: #64748b; text-transform: uppercase; font-weight: 700; margin-top: 8px; }
         
         .btn-ascii { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 15px; width: 100%; text-transform: uppercase; }
-        #asciiContainer { display: none; margin: 20px auto; padding: 20px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-ui); text-align: center; max-width: 420px; position: relative; }
-        .ascii-receipt { font-family: 'Azeret Mono', monospace; white-space: pre; font-size: 1.3em; text-align: left; display: inline-block; padding: 20px; border: 1px solid var(--border-ui); color: var(--primary); background: var(--input-bg); width: auto; max-width: 100%; }
+        #asciiContainer { display: none; margin: 20px auto; padding: 20px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-ui); text-align: center; max-width: 420px; position: relative; overflow-x: auto; }
+        .ascii-receipt { font-family: 'Azeret Mono', monospace; white-space: pre; font-size: 0.85em; text-align: left; display: inline-block; padding: 20px; border: 1px solid var(--border-ui); color: var(--primary); background: var(--input-bg); width: auto; max-width: 100%; }
 
         .site-footer { margin-top: 40px; padding: 40px 20px; background: var(--card-bg); border-top: 1px solid var(--border-ui); color: #64748b; text-align: center; }
         .footer-content { max-width: 1100px; margin: 0 auto; }
@@ -1078,7 +1078,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.79</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.80</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1336,7 +1336,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.79</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.80</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2477,19 +2477,35 @@
         const labelHeightMM = 100; // formato fisso: corrisponde al preset disponibile su AirPrint per il rotolo continuo
         const marginMM = 2;
 
-        const originalBorder = receipt.style.border;
-        const originalPadding = receipt.style.padding;
-        receipt.style.border = 'none';
-        receipt.style.padding = '10px';
+        // Copiamo il contenuto in un elemento fuori schermo, senza alcun
+        // limite di larghezza: il body della pagina ha "overflow-x:hidden"
+        // per evitare lo scroll orizzontale su telefono, e quello taglierebbe
+        // silenziosamente il testo se lo catturassimo direttamente dalla
+        // vista a schermo con un font ingrandito.
+        const scaleFactor = Math.max(1, labelWidthMM / 60);
+        const printFontPx = Math.round(16 * scaleFactor);
+        const clone = document.createElement('div');
+        clone.style.position = 'fixed';
+        clone.style.top = '0';
+        clone.style.left = '-99999px';
+        clone.style.background = '#ffffff';
+        clone.style.color = '#000000';
+        clone.style.padding = '10px';
+        clone.style.fontFamily = "'Azeret Mono', monospace";
+        clone.style.whiteSpace = 'pre';
+        clone.style.display = 'inline-block';
+        clone.style.fontSize = printFontPx + 'px';
+        clone.style.lineHeight = '1.4';
+        clone.textContent = receipt.innerText;
+        document.body.appendChild(clone);
 
-        return html2canvas(receipt, {
+        return html2canvas(clone, {
             backgroundColor: '#ffffff',
             scale: 3,
             useCORS: true,
             logging: false
         }).then(canvas => {
-            receipt.style.border = originalBorder;
-            receipt.style.padding = originalPadding;
+            document.body.removeChild(clone);
 
             // Dimensione naturale del contenuto catturato, in mm (indipendente
             // dalla scala di cattura di html2canvas).
@@ -2513,12 +2529,10 @@
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [labelWidthMM, labelHeightMM] });
-            alert('DEBUG\ncanvas: ' + canvas.width + 'x' + canvas.height + '\ncontentMM: ' + contentWmm.toFixed(1) + 'x' + contentHmm.toFixed(1) + '\nlabelWidthMM: ' + labelWidthMM + '\nfitScale: ' + fitScale.toFixed(3) + '\nfinalMM: ' + finalWmm.toFixed(1) + 'x' + finalHmm.toFixed(1) + '\noffsetX: ' + offsetX.toFixed(1));
             doc.addImage(imgData, 'JPEG', offsetX, offsetY, finalWmm, finalHmm);
             return doc;
         }).catch(err => {
-            receipt.style.border = originalBorder;
-            receipt.style.padding = originalPadding;
+            if (clone.parentNode) document.body.removeChild(clone);
             throw err;
         });
     }
