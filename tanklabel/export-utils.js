@@ -131,6 +131,7 @@ async function printLabel() {
   const widthMm = parseFloat(DOM.inputs.labelWidth.value) || 50;
   const heightMm = parseFloat(DOM.inputs.labelHeight.value) || 50;
   const basePx = parseFloat(DOM.inputs.basePxSize.value) || 16;
+  const rotate = currentSkin === 1; // Divesoft: verticale a schermo, ruotata in stampa per sfruttare tutta la larghezza del rotolo
 
   const printArea = document.getElementById("print-area");
   const clone = DOM.labelContent.cloneNode(true);
@@ -139,13 +140,19 @@ async function printLabel() {
   clone.style.height = `${heightMm}mm`;
   clone.style.fontSize = `${basePx}px`;
   clone.style.setProperty("--base-px-size", `${basePx}px`);
+  if (rotate) {
+    clone.style.transformOrigin = "top left";
+    clone.style.transform = "rotate(90deg) translateY(-100%)";
+  }
 
   printArea.innerHTML = "";
   printArea.appendChild(clone);
 
   const pageStyle = document.createElement("style");
   pageStyle.id = "_kiko_page_size";
-  pageStyle.textContent = `@page { size: ${widthMm}mm ${heightMm}mm; margin: 0; }`;
+  pageStyle.textContent = rotate
+    ? `@page { size: ${heightMm}mm ${widthMm}mm; margin: 0; }`
+    : `@page { size: ${widthMm}mm ${heightMm}mm; margin: 0; }`;
   document.head.appendChild(pageStyle);
 
   await new Promise((r) => setTimeout(r, 80));
@@ -187,18 +194,36 @@ async function printLabelWiFi() {
       useCORS: true,
       backgroundColor: "#ffffff",
     });
-    const imgData = canvas.toDataURL("image/png");
 
     const { jsPDF } = window.jspdf;
     const widthMm = parseFloat(DOM.inputs.labelWidth.value);
     const heightMm = parseFloat(DOM.inputs.labelHeight.value);
+    const rotate = currentSkin === 1; // Divesoft: ruota 90° così il lato lungo (altezza originale) combacia con la larghezza del rotolo
+
+    let imgData, pageW, pageH;
+    if (rotate) {
+      const rot = document.createElement("canvas");
+      rot.width = canvas.height;
+      rot.height = canvas.width;
+      const rctx = rot.getContext("2d");
+      rctx.translate(rot.width / 2, rot.height / 2);
+      rctx.rotate(90 * Math.PI / 180);
+      rctx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+      imgData = rot.toDataURL("image/png");
+      pageW = heightMm;
+      pageH = widthMm;
+    } else {
+      imgData = canvas.toDataURL("image/png");
+      pageW = widthMm;
+      pageH = heightMm;
+    }
 
     const doc = new jsPDF({
-      orientation: widthMm > heightMm ? "l" : "p",
+      orientation: pageW > pageH ? "l" : "p",
       unit: "mm",
-      format: [widthMm, heightMm],
+      format: [pageW, pageH],
     });
-    doc.addImage(imgData, "PNG", 0, 0, widthMm, heightMm);
+    doc.addImage(imgData, "PNG", 0, 0, pageW, pageH);
 
     const blob = doc.output("blob");
     const file = new File([blob], `TankLabel_${Date.now()}.pdf`, { type: "application/pdf" });
