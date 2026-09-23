@@ -1078,7 +1078,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.81</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.82</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1336,7 +1336,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.81</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.82</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2141,7 +2141,7 @@
                 const pad = Math.max(0, Math.floor((W - full.length) / 2));
                 return ' '.repeat(pad) + full;
             }).join('\n') + '\n';
-        })() : ``) + `------------------------------\n      ${t.rc_title}\n------------------------------\n` + `${t.rc_diver}: ${c}\n${t.rc_cylinder}: ${cylLabelReport}\n${t.rc_listino}: ${activeProfile}\n\n${t.rc_residuo}: ${document.getElementById('pS').value} BAR\nO2: ${oS}% | HE: ${hS}% | N2: ${nS}%\n\n${t.rc_target}: ${document.getElementById('pE').value} BAR\nO2: ${oE}% | HE: ${hE}% | N2: ${nE}%\n\n${t.rc_accept_signature}:\n\n──────────────────────────────\n\n${t.rc_data}: ${new Date().toLocaleDateString(t.rc_locale || 'it-IT')} | ${t.rc_blender}: ${b}\n${t.rc_firma}:\n\n──────────────────────────────\n------------------------------\n${t.rc_totale}: ${document.getElementById('resGrandTotal').innerText}\n            ✦ ✦ ✦\n    ${t.rc_remember_analyze}\n    ${t.rc_footer1} ${t.rc_footer2}\n     ${t.rc_footer3}\n       ${t.rc_footer4}\n            ✦ ✦ ✦`;
+        })() : ``) + `------------------------------\n      ${t.rc_title}\n------------------------------\n` + `${t.rc_diver}: ${c}\n${t.rc_cylinder}: ${cylLabelReport}\n${t.rc_listino}: ${activeProfile}\n\n${t.rc_residuo}: ${document.getElementById('pS').value} BAR\nO2: ${oS}% | HE: ${hS}% | N2: ${nS}%\n\n${t.rc_target}: ${document.getElementById('pE').value} BAR\nO2: ${oE}% | HE: ${hE}% | N2: ${nE}%\n\n${t.rc_accept_signature}:\n\n──────────────────────────────\n\n${t.rc_data}: ${new Date().toLocaleDateString(t.rc_locale || 'it-IT')}\n${t.rc_blender}: ${b}\n${t.rc_firma}:\n\n──────────────────────────────\n------------------------------\n${t.rc_totale}: ${document.getElementById('resGrandTotal').innerText}\n            ✦ ✦ ✦\n    ${t.rc_remember_analyze}\n    ${t.rc_footer1} ${t.rc_footer2}\n     ${t.rc_footer3}\n       ${t.rc_footer4}\n            ✦ ✦ ✦`;
         document.getElementById('receipt').innerText = text; 
         document.getElementById('asciiContainer').style.display = 'block';
         if (window.innerWidth <= 768) mobileNav('home');
