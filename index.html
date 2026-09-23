@@ -1078,7 +1078,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.76</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.77</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1336,7 +1336,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.76</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.77</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2473,13 +2473,14 @@
         if (!receipt || !receipt.innerText.trim()) {
             return Promise.reject(new Error(curT().al_generate_first));
         }
-        const labelWidthMM = parseFloat(document.getElementById('labelWidth') ? document.getElementById('labelWidth').value : '') || 60;
-        const baseFontPx = parseFloat(window.getComputedStyle(receipt).fontSize) || 16;
-        const scaleFactor = labelWidthMM / 60;
-        const originalFontSize = receipt.style.fontSize;
+        const labelWidthMM = parseFloat(document.getElementById('labelWidth') ? document.getElementById('labelWidth').value : '') || 62;
+        const labelHeightMM = 100; // formato fisso: corrisponde al preset disponibile su AirPrint per il rotolo continuo
+        const marginMM = 2;
+
+        const originalBorder = receipt.style.border;
         const originalPadding = receipt.style.padding;
-        receipt.style.fontSize = (baseFontPx * scaleFactor) + 'px';
-        receipt.style.padding = '6px';
+        receipt.style.border = 'none';
+        receipt.style.padding = '10px';
 
         return html2canvas(receipt, {
             backgroundColor: '#ffffff',
@@ -2487,34 +2488,35 @@
             useCORS: true,
             logging: false
         }).then(canvas => {
-            receipt.style.fontSize = originalFontSize;
+            receipt.style.border = originalBorder;
             receipt.style.padding = originalPadding;
-            const PX_PER_MM = 8;
-            const ROLL_PX = labelWidthMM * PX_PER_MM;
-            const TEXT_PX = (labelWidthMM - 2) * PX_PER_MM;
-            const MARGIN_PX = (ROLL_PX - TEXT_PX) / 2;
 
-            const srcW = canvas.width;
-            const srcH = canvas.height;
-            const dstH = Math.round(srcH * TEXT_PX / srcW);
+            // Dimensione naturale del contenuto catturato, in mm (indipendente
+            // dalla scala di cattura di html2canvas).
+            const CSS_PX_PER_MM = 3.7795;
+            const captureScale = 3;
+            const contentWmm = (canvas.width / captureScale) / CSS_PX_PER_MM;
+            const contentHmm = (canvas.height / captureScale) / CSS_PX_PER_MM;
 
-            const out = document.createElement('canvas');
-            out.width = ROLL_PX;
-            out.height = dstH;
-            const ctx = out.getContext('2d');
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, ROLL_PX, dstH);
-            ctx.drawImage(canvas, MARGIN_PX, 0, TEXT_PX, dstH);
+            // Scala uniforme che fa entrare TUTTO il contenuto dentro il
+            // riquadro fisso 62x100mm (meno un piccolo margine), senza mai
+            // tagliare nulla: usa il fattore più stringente tra i due assi.
+            const availW = labelWidthMM - marginMM * 2;
+            const availH = labelHeightMM - marginMM * 2;
+            const fitScale = Math.min(availW / contentWmm, availH / contentHmm);
 
-            const imgData = out.toDataURL('image/jpeg', 0.92);
+            const finalWmm = contentWmm * fitScale;
+            const finalHmm = contentHmm * fitScale;
+            const offsetX = (labelWidthMM - finalWmm) / 2;
+            const offsetY = marginMM;
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
             const { jsPDF } = window.jspdf;
-            const pageW = labelWidthMM;
-            const pageH = dstH * pageW / ROLL_PX;
-            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pageW, pageH] });
-            doc.addImage(imgData, 'JPEG', 0, 0, pageW, pageH);
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [labelWidthMM, labelHeightMM] });
+            doc.addImage(imgData, 'JPEG', offsetX, offsetY, finalWmm, finalHmm);
             return doc;
         }).catch(err => {
-            receipt.style.fontSize = originalFontSize;
+            receipt.style.border = originalBorder;
             receipt.style.padding = originalPadding;
             throw err;
         });
