@@ -131,7 +131,7 @@ async function printLabel() {
   const widthMm = parseFloat(DOM.inputs.labelWidth.value) || 50;
   const heightMm = parseFloat(DOM.inputs.labelHeight.value) || 50;
   const basePx = parseFloat(DOM.inputs.basePxSize.value) || 16;
-  const rotate = currentSkin === 1; // Divesoft: verticale a schermo, ruotata in stampa per sfruttare tutta la larghezza del rotolo
+  const rotate = (parseInt(localStorage.getItem("currentSkin") || "0")) === 1; // Divesoft: verticale a schermo, ruotata in stampa per sfruttare tutta la larghezza del rotolo
 
   const printArea = document.getElementById("print-area");
   const clone = DOM.labelContent.cloneNode(true);
@@ -198,7 +198,7 @@ async function printLabelWiFi() {
     const { jsPDF } = window.jspdf;
     const widthMm = parseFloat(DOM.inputs.labelWidth.value);
     const heightMm = parseFloat(DOM.inputs.labelHeight.value);
-    const rotate = currentSkin === 1; // Divesoft: ruota 90° così il lato lungo (altezza originale) combacia con la larghezza del rotolo
+    const rotate = (parseInt(localStorage.getItem("currentSkin") || "0")) === 1; // Divesoft: ruota 90° così il lato lungo (altezza originale) combacia con la larghezza del rotolo
 
     let imgData, pageW, pageH;
     if (rotate) {
