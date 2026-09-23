@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tanklabel-v15';
+const CACHE_NAME = 'tanklabel-v16';
 const ASSETS = [
   './',
   './index.html',
