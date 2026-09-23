@@ -182,7 +182,7 @@
         
         .btn-ascii { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 800; cursor: pointer; margin-top: 15px; width: 100%; text-transform: uppercase; }
         #asciiContainer { display: none; margin: 20px auto; padding: 20px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-ui); text-align: center; max-width: 420px; position: relative; }
-        .ascii-receipt { font-family: 'Azeret Mono', monospace; white-space: pre; font-size: 0.82em; text-align: left; display: inline-block; padding: 20px; border: 1px solid var(--border-ui); color: var(--primary); background: var(--input-bg); width: auto; max-width: 100%; }
+        .ascii-receipt { font-family: 'Azeret Mono', monospace; white-space: pre; font-size: 1em; text-align: left; display: inline-block; padding: 20px; border: 1px solid var(--border-ui); color: var(--primary); background: var(--input-bg); width: auto; max-width: 100%; }
 
         .site-footer { margin-top: 40px; padding: 40px 20px; background: var(--card-bg); border-top: 1px solid var(--border-ui); color: #64748b; text-align: center; }
         .footer-content { max-width: 1100px; margin: 0 auto; }
@@ -1078,7 +1078,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.74</b><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.75</b><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1336,7 +1336,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.74</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.75</b><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2141,7 +2141,7 @@
                 const pad = Math.max(0, Math.floor((W - full.length) / 2));
                 return ' '.repeat(pad) + full;
             }).join('\n') + '\n';
-        })() : ``) + `------------------------------\n      ${t.rc_title}\n------------------------------\n` + `${t.rc_diver}: ${c}\n${t.rc_cylinder}: ${cylLabelReport}\n${t.rc_listino}: ${activeProfile}\n\n${t.rc_residuo}:\nO2: ${oS}% | HE: ${hS}% | N2: ${nS}%\n${t.rc_bar}: ${document.getElementById('pS').value} BAR\n\n${t.rc_target}:\nO2: ${oE}% | HE: ${hE}% | N2: ${nE}%\n${t.rc_bar}: ${document.getElementById('pE').value} BAR\n\n${t.rc_accept_signature}:\n\n\n──────────────────────────────\n------------------------------\n${t.rc_data}: ${new Date().toLocaleDateString(t.rc_locale || 'it-IT')}\n${t.rc_blender}: ${b}\n${t.rc_firma}:\n\n\n──────────────────────────────\n------------------------------\n${t.rc_totale}: ${document.getElementById('resGrandTotal').innerText}\n------------------------------\n            ✦ ✦ ✦\n    ${t.rc_remember_analyze}\n    ${t.rc_footer1}\n        ${t.rc_footer2}\n     ${t.rc_footer3}\n       ${t.rc_footer4}\n            ✦ ✦ ✦`;
+        })() : ``) + `------------------------------\n      ${t.rc_title}\n------------------------------\n` + `${t.rc_diver}: ${c}  |  ${t.rc_listino}: ${activeProfile}\n${t.rc_cylinder}: ${cylLabelReport}\n\n${t.rc_residuo}: ${document.getElementById('pS').value} BAR\nO2: ${oS}% | HE: ${hS}% | N2: ${nS}%\n\n${t.rc_target}: ${document.getElementById('pE').value} BAR\nO2: ${oE}% | HE: ${hE}% | N2: ${nE}%\n\n${t.rc_accept_signature}:\n\n──────────────────────────────\n------------------------------\n${t.rc_data}: ${new Date().toLocaleDateString(t.rc_locale || 'it-IT')} | ${t.rc_blender}: ${b}\n\n${t.rc_firma}:\n\n──────────────────────────────\n------------------------------\n${t.rc_totale}: ${document.getElementById('resGrandTotal').innerText}\n            ✦ ✦ ✦\n    ${t.rc_remember_analyze}\n    ${t.rc_footer1}  ${t.rc_footer2}\n     ${t.rc_footer3}  ${t.rc_footer4}\n            ✦ ✦ ✦`;
         document.getElementById('receipt').innerText = text; 
         document.getElementById('asciiContainer').style.display = 'block';
         if (window.innerWidth <= 768) mobileNav('home');
@@ -2542,7 +2542,7 @@
         const receiptText = document.getElementById('receipt').innerText;
         const labelWidthMM = parseFloat(document.getElementById('labelWidth') ? document.getElementById('labelWidth').value : '') || 60;
         const scaleFactor = labelWidthMM / 60;
-        const fontPx = Math.round(13 * scaleFactor);
+        const fontPx = Math.round(16 * scaleFactor);
         const padMM = Math.max(2, Math.round(labelWidthMM * 0.05));
         const win = window.open('', '_blank', 'width=400,height=600');
         win.document.write('<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GAS BLENDER REPORT<\/title><link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@500;700&display=swap" rel="stylesheet"><style>@page{margin:0;size:' + labelWidthMM + 'mm auto;}*{margin:0;padding:0;box-sizing:border-box;}html,body{background:#fff;width:' + labelWidthMM + 'mm;}pre{font-family:\'Azeret Mono\',monospace;font-size:' + fontPx + 'px;white-space:pre-wrap;word-break:break-word;padding:' + padMM + 'mm;color:#000;line-height:1.5;}<\/style><\/head><body><pre>' + receiptText + '<\/pre><script>window.onload=function(){setTimeout(function(){window.print();},400);};<\/script><\/body><\/html>');
@@ -2584,7 +2584,7 @@
     function printReceipt() {
         const receiptText = document.getElementById('receipt').innerText;
         const win = window.open('', '_blank', 'width=400,height=600');
-        win.document.write('<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GAS BLENDER REPORT<\/title><link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@500;700&display=swap" rel="stylesheet"><style>@page{margin:0;size:auto;}*{margin:0;padding:0;box-sizing:border-box;}html,body{background:#fff;}pre{font-family:\'Azeret Mono\',monospace;font-size:13px;white-space:pre;padding:10mm;color:#000;line-height:1.5;}<\/style><\/head><body><pre>' + receiptText + '<\/pre><script>window.onload=function(){setTimeout(function(){window.print();window.close();},400);};<\/script><\/body><\/html>');
+        win.document.write('<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GAS BLENDER REPORT<\/title><link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@500;700&display=swap" rel="stylesheet"><style>@page{margin:0;size:auto;}*{margin:0;padding:0;box-sizing:border-box;}html,body{background:#fff;}pre{font-family:\'Azeret Mono\',monospace;font-size:16px;white-space:pre;padding:10mm;color:#000;line-height:1.5;}<\/style><\/head><body><pre>' + receiptText + '<\/pre><script>window.onload=function(){setTimeout(function(){window.print();window.close();},400);};<\/script><\/body><\/html>');
         win.document.close();
     }
 
