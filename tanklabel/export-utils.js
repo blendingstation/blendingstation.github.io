@@ -44,13 +44,19 @@ async function generatePdf() {
     const widthMm = parseFloat(DOM.inputs.labelWidth.value);
     const heightMm = parseFloat(DOM.inputs.labelHeight.value);
 
+    // Pagina = esattamente le dimensioni dell'etichetta, nessun margine,
+    // orientamento sempre "p": passando un array "format" a jsPDF con
+    // orientation "l" (o "p" con altezza<larghezza) jsPDF può scambiare
+    // internamente width/height, disallineando la pagina dall'immagine e
+    // facendo apparire l'etichetta piccola su una pagina bianca enorme.
+    // Stessa logica già usata (e verificata) in printLabelWiFi().
     const doc = new jsPDF({
-      orientation: widthMm > heightMm ? "l" : "p",
+      orientation: "p",
       unit: "mm",
-      format: [widthMm + 10, heightMm + 10],
+      format: [widthMm, heightMm],
     });
 
-    doc.addImage(imgData, "PNG", 5, 5, widthMm, heightMm);
+    doc.addImage(imgData, "PNG", 0, 0, widthMm, heightMm);
     doc.save(`TankLabel_Label_${Date.now()}.pdf`);
   } catch (e) {
     console.error("Errore PDF:", e);
