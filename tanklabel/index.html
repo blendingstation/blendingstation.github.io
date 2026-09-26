@@ -175,9 +175,16 @@
         <!-- Tipo di Gas: determina il PPO2 max usato per il calcolo del MOD -->
         <div class="form-group">
           <label><i class="fas fa-gauge-high"></i> Tipo di Gas</label>
-          <div style="display: flex; gap: 8px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button type="button" id="btnGasFondo" class="ppo2-btn active" onclick="setPpo2Mode(1.4)">Gas di Fondo (1.4)</button>
             <button type="button" id="btnGasDeco" class="ppo2-btn" onclick="setPpo2Mode(1.6)">Gas Deco (1.6)</button>
+            <button type="button" id="btnGasCustom" class="ppo2-btn" onclick="setPpo2Mode('custom')">Personalizzato</button>
+          </div>
+          <div id="ppo2CustomRow" style="display: none; align-items: center; gap: 8px; margin-top: 8px;">
+            <span style="font-size: 13px; color: var(--text-secondary, #666); white-space: nowrap;">PPO&#8322; max:</span>
+            <div class="input-wrapper" style="max-width: 120px;">
+              <input type="number" id="ppo2CustomInput" value="1.5" min="1.0" max="2.2" step="0.01" inputmode="decimal" onfocus="this.select()" oninput="setPpo2Mode('custom')" />
+            </div>
           </div>
         </div>
 
@@ -395,7 +402,7 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.25
+      2026 TankLabel - Version 5.27
     </p>
   </footer>
 
@@ -675,17 +682,45 @@
       return Math.max(0, Math.round((currentPpo2Max / (o2 / 100) - 1) * 10));
     }
 
+    function fmtPpo2(v) {
+      // Toglie gli zeri superflui (1.40 -> 1.4) ma mantiene i decimali significativi (1.45)
+      return (Math.round(v * 100) / 100).toString();
+    }
+
     function setPpo2Mode(value) {
-      currentPpo2Max = value;
-      document.getElementById("btnGasFondo").classList.toggle("active", value === 1.4);
-      document.getElementById("btnGasDeco").classList.toggle("active", value === 1.6);
-      localStorage.setItem("ppo2Max", value);
+      const customRow = document.getElementById("ppo2CustomRow");
+      const customInput = document.getElementById("ppo2CustomInput");
+      const isCustom = value === "custom";
+
+      if (isCustom) {
+        currentPpo2Max = parseFloat(customInput.value) || 1.5;
+        localStorage.setItem("ppo2Mode", "custom");
+        localStorage.setItem("ppo2Custom", currentPpo2Max);
+      } else {
+        currentPpo2Max = value;
+        localStorage.setItem("ppo2Mode", "std");
+        localStorage.setItem("ppo2Max", value);
+      }
+
+      document.getElementById("btnGasFondo").classList.toggle("active", !isCustom && value === 1.4);
+      document.getElementById("btnGasDeco").classList.toggle("active", !isCustom && value === 1.6);
+      document.getElementById("btnGasCustom").classList.toggle("active", isCustom);
+      if (customRow) customRow.style.display = isCustom ? "flex" : "none";
+
       updatePreview();
     }
 
     function initPpo2Mode() {
-      const saved = parseFloat(localStorage.getItem("ppo2Max"));
-      setPpo2Mode(saved === 1.6 ? 1.6 : 1.4);
+      const mode = localStorage.getItem("ppo2Mode");
+      if (mode === "custom") {
+        const savedCustom = parseFloat(localStorage.getItem("ppo2Custom"));
+        const customInput = document.getElementById("ppo2CustomInput");
+        if (customInput) customInput.value = isNaN(savedCustom) ? 1.5 : savedCustom;
+        setPpo2Mode("custom");
+      } else {
+        const saved = parseFloat(localStorage.getItem("ppo2Max"));
+        setPpo2Mode(saved === 1.6 ? 1.6 : 1.4);
+      }
     }
 
     function toggleHelium(show) {
@@ -782,7 +817,7 @@
       const heratioStr = dvHeceil.toString();
       document.getElementById("dvMixRatio").textContent = heActive ? `${o2ratioStr} / ${heratioStr}` : `${o2ratioStr} / 0`;
       document.getElementById("dvModNum").textContent = modDivesoft;
-      document.getElementById("dvPpo2Badge").textContent = `PPO\u2082 ${currentPpo2Max.toFixed(1)}`;
+      document.getElementById("dvPpo2Badge").textContent = `PPO\u2082 ${fmtPpo2(currentPpo2Max)}`;
       // Percentuali reali: mostrano il valore esatto misurato
       document.getElementById("dvO2").textContent = `${o2.toFixed(1)}%`;
       document.getElementById("dvHe").textContent = heActive ? `${he.toFixed(1)}%` : "0%";
