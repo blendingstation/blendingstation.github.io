@@ -162,7 +162,7 @@
           <h1>TankLabel</h1>
           <p>Generatore Etichette Mix &amp; Trimix</p>
         </div>
-        <a href="https://blendingstation.github.io/" class="back-link" aria-label="Torna a Blending Station">
+        <a href="../index.html" class="back-link" aria-label="Torna a Blending Station">
           <i class="fas fa-arrow-left"></i> <span>Blending Station</span>
         </a>
       </div>
@@ -430,6 +430,9 @@
         <button class="btn btn-accent" style="flex: 1; min-width: 80px" onclick="printViaBluetooth()" id="btPrintBtn">
           <i class="fab fa-bluetooth-b"></i> Stampa BT
         </button>
+        <button class="btn btn-secondary native-only" style="flex: 1; min-width: 80px" onclick="changeNativePrinter()">
+          <i class="fas fa-gear"></i> Stampante
+        </button>
       </div>
     </div>
   </main>
@@ -653,9 +656,27 @@
     </div>
   </div>
 
+  <!-- Printer picker: Android app only, filled by native-print.js -->
+  <div id="printerModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 440px">
+      <h3 style="font-size: 1.2rem; margin-bottom: 6px">
+        🖨️ Scegli Stampante
+      </h3>
+      <p style="color: var(--color-text-muted); font-size: 0.85rem; margin-bottom: 14px">
+        Stampanti Bluetooth associate e stampanti USB collegate. Se la tua non compare, associala dalle impostazioni Bluetooth di Android.
+      </p>
+      <div id="printerList" class="printer-list"></div>
+      <div class="modal-actions">
+        <button id="printerModalCancel" class="btn btn-secondary">Annulla</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Librerie CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- Android app only: share sheet and print dialog in place of downloads and window.print() -->
+  <script src="../native-app.js"></script>
 
   <!-- Moduli TankLabel (refactoring v4.0) -->
   <script src="digit-templates.js"></script>
@@ -663,6 +684,7 @@
   <script src="ocr-engine.js"></script>
   <script src="export-utils.js"></script>
   <script src="bluetooth-print.js"></script>
+  <script src="native-print.js"></script>
 
   <script>
     "use strict";
@@ -1199,7 +1221,8 @@
   </script>
 
   <script>
-    if ('serviceWorker' in navigator) {
+    // Not in the Android app: the app's own files ship inside the APK and are served locally
+    if ('serviceWorker' in navigator && !isNativeApp()) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./service-worker.js')
           .then(reg => {

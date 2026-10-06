@@ -1,8 +1,9 @@
-const CACHE_NAME = 'blending-station-v42';
+const CACHE_NAME = 'blending-station-v43';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './native-app.js'
 ];
 
 // Install: cache all assets
@@ -13,11 +14,14 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activate: clean old caches and take control immediately
+// Activate: clean old caches and take control immediately.
+// Only our own: TankLabel's caches live on the same origin.
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+      Promise.all(keys
+        .filter(k => k.startsWith('blending-station-') && k !== CACHE_NAME)
+        .map(k => caches.delete(k)))
     )
   );
   self.clients.claim();

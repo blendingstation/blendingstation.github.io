@@ -11,6 +11,9 @@
  *  5. Invio pacchetto TSPL in chunk da 512 byte
  *
  * Dipendenze: html2canvas (CDN), DOM e CONFIG definiti in index.html
+ *
+ * In the Android app the same TSPL packet is sent through the native plugin
+ * instead: see native-print.js.
  */
 
 "use strict";
@@ -236,7 +239,18 @@ function buildTsplPacket(captured) {
  * ENTRY POINT — chiamato dal pulsante UI
  * ========================================================= */
 
+/**
+ * True inside the Android app (Capacitor), where the WebView has no Web Bluetooth.
+ * Defined here, not in native-print.js, so the website never depends on that file.
+ */
+function isNativeApp() {
+  return !!window.Capacitor?.isNativePlatform?.();
+}
+
 async function printViaBluetooth() {
+  // Android app: print through the native plugin instead
+  if (isNativeApp()) return printViaThermalPlugin();
+
   const btn = document.getElementById("btPrintBtn");
 
   try {
@@ -265,12 +279,12 @@ async function printViaBluetooth() {
 
     setTimeout(() => {
       btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-bluetooth-b"></i> Stampa BT';
+      btn.innerHTML = '<i class="fab fa-bluetooth-b"></i> Stampa BT';
     }, 2500);
 
   } catch (err) {
     btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-bluetooth-b"></i> Stampa BT';
+    btn.innerHTML = '<i class="fab fa-bluetooth-b"></i> Stampa BT';
 
     // NotFoundError = utente ha annullato il selettore dispositivi
     if (err.name !== "NotFoundError") {
