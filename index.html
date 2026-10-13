@@ -269,8 +269,15 @@
         [data-theme="dark"] .bm-card-sub, [data-theme="dark"] .bm-mixtype-label, [data-theme="dark"] .bm-result-label { color: #94a3b8; }
         .bm-end-wrap { align-items: center; justify-content: center; gap: 12px; margin-bottom: 14px; }
         .bm-result-label { font-size: 0.7em; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #64748b; margin-bottom: 8px; }
-        .bm-bar { display: flex; height: 34px; border-radius: 17px; overflow: hidden; border: 1px solid rgba(15,23,42,0.2); max-width: 560px; margin: 0 auto; }
-        .bm-seg { display: flex; align-items: center; justify-content: center; font-size: 0.75em; font-weight: 800; white-space: nowrap; overflow: hidden; }
+        .bm-values { display: flex; justify-content: center; flex-wrap: wrap; align-items: baseline; gap: 6px 32px; margin-bottom: 12px; color: var(--primary); font-size: 28px; line-height: 1.2; }
+        .bm-val { display: inline-flex; align-items: baseline; gap: 8px; white-space: nowrap; }
+        .bm-dot { align-self: center; width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+        .bm-gas { font-size: 0.5em; font-weight: 800; letter-spacing: 0.06em; color: #64748b; }
+        .bm-num { font-family: 'Azeret Mono', monospace; font-weight: 700; }
+        [data-theme="dark"] .bm-gas { color: #94a3b8; }
+        .bm-bar { display: flex; height: 14px; border-radius: 7px; overflow: hidden; border: 1px solid rgba(15,23,42,0.2); max-width: 560px; margin: 0 auto; }
+        .bm-seg { display: block; }
+        @media (max-width: 480px) { .bm-values { font-size: 22px; gap: 6px 18px; } }
         .bm-seg-o2 { background: #1f9d55; color: #ffffff; }
         .bm-seg-he { background: #795548; color: #ffffff; }
         .bm-seg-n2 { background: #f1c40f; color: #1e293b; }
@@ -3953,9 +3960,13 @@ function mobileNav(tab) {
         segs.push(['n2', 'N2', n2]);
         const aria = segs.map(function(sg) { return sg[1] + ' ' + sg[2] + '%'; }).join(', ');
         result.innerHTML = '<div class="bm-result-label">' + label + '</div>' +
+            '<div class="bm-values">' +
+            segs.map(function(sg) {
+                return '<span class="bm-val"><span class="bm-dot bm-seg-' + sg[0] + '"></span><span class="bm-gas">' + sg[1] + '</span><span class="bm-num">' + sg[2] + '%</span></span>';
+            }).join('') + '</div>' +
             '<div class="bm-bar" role="img" aria-label="' + aria + '">' +
             segs.map(function(sg) {
-                return '<div class="bm-seg bm-seg-' + sg[0] + '" style="width:' + sg[2] + '%;">' + (sg[2] >= 9 ? sg[1] + ' ' + sg[2] + '%' : '') + '</div>';
+                return '<div class="bm-seg bm-seg-' + sg[0] + '" style="width:' + sg[2] + '%;"></div>';
             }).join('') + '</div>';
         btn.style.display = 'flex';
     }
