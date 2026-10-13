@@ -442,7 +442,11 @@
 
   <footer>
     <p style="font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)">
-      2026 TankLabel - Version 5.51
+      2026 TankLabel - Version 5.52
+    </p>
+    <p style="font-size: 0.8em">
+      <a href="#" onclick="SettingsBackup.exportFile();return false;" style="color: inherit">Esporta impostazioni</a> ·
+      <a href="#" onclick="SettingsBackup.importFile();return false;" style="color: inherit">Importa impostazioni</a>
     </p>
   </footer>
 
@@ -677,6 +681,71 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <!-- Android app only: share sheet and print dialog in place of downloads and window.print() -->
   <script src="../native-app.js"></script>
+  <script>
+/* Esporta / Importa impostazioni (nomi, prezzi, seriale analizzatore, preferenze) */
+(function () {
+  "use strict";
+  // ---- 2. Esporta / Importa ----
+  function snapshot() {
+    var data = {};
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      data[k] = localStorage.getItem(k);
+    }
+    return { app: "ondanomala-tools", exported: new Date().toISOString(), data: data };
+  }
+
+  function exportFile() {
+    try {
+      var json = JSON.stringify(snapshot(), null, 2);
+      var blob = new Blob([json], { type: "application/json" });
+      var name = "impostazioni-" + new Date().toISOString().slice(0, 10) + ".json";
+      if (window.NativeApp && window.NativeApp.shareFile) {
+        window.NativeApp.shareFile(blob, name, "Impostazioni");
+        return;
+      }
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    } catch (e) {
+      alert("Esportazione non riuscita: " + e.message);
+    }
+  }
+
+  function importFile() {
+    var inp = document.createElement("input");
+    inp.type = "file";
+    inp.accept = ".json,application/json";
+    inp.onchange = function () {
+      var f = inp.files && inp.files[0];
+      if (!f) return;
+      var r = new FileReader();
+      r.onload = function () {
+        try {
+          var obj = JSON.parse(r.result);
+          var data = obj && obj.data;
+          if (!data || typeof data !== "object") throw new Error("file non valido");
+          var keys = Object.keys(data);
+          if (!confirm("Ripristinare " + keys.length + " impostazioni dal file? Quelle attuali con lo stesso nome verranno sostituite.")) return;
+          keys.forEach(function (k) {
+            if (typeof data[k] === "string") localStorage.setItem(k, data[k]);
+          });
+          location.reload();
+        } catch (e) {
+          alert("Importazione non riuscita: " + e.message);
+        }
+      };
+      r.readAsText(f);
+    };
+    inp.click();
+  }
+
+  window.SettingsBackup = { exportFile: exportFile, importFile: importFile };
+})();
+</script>
 
   <!-- Moduli TankLabel (refactoring v4.0) -->
   <script src="digit-templates.js"></script>
