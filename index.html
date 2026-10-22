@@ -987,7 +987,22 @@
                     <div class="input-group"><label data-i18n="ui_n2pct_label">N2%</label><input type="text" id="n2E" readonly></div>
                 </div>
             </div>
-        </div>
+
+            <details id="hotCalcBox" style="margin-top:12px; border-top:1px dashed var(--border-ui); padding-top:10px;">
+                <summary id="hc_title" style="cursor:pointer; font-size:0.75em; font-weight:800; letter-spacing:0.04em; text-transform:uppercase; color:var(--accent);">Pressione a caldo &rarr; bar a freddo</summary>
+                <style>
+                    .hc-i { width:18px; height:18px; margin-left:4px; padding:0; border-radius:50%; border:1.5px solid var(--accent); background:transparent; color:var(--accent); font-family:inherit; font-size:11px; font-weight:800; font-style:italic; line-height:1; cursor:pointer; vertical-align:middle; }
+                    #hotInfo { display:none; margin-top:10px; padding:10px 12px; border-radius:10px; border:1px solid var(--border-ui); background:var(--input-bg); font-size:0.78em; font-weight:600; line-height:1.45; }
+                </style>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
+                    <div class="input-group" style="grid-column: span 2;"><label><span id="hc_p">Bar a caldo</span> <button type="button" class="hc-i" onclick="toggleHotInfo('p')" aria-label="info">i</button></label><input type="number" inputmode="decimal" onfocus="this.select()" id="hotP" placeholder="230" oninput="updateHotCalc()"></div>
+                    <div class="input-group"><label><span id="hc_amb">Temp. a freddo</span> <button type="button" class="hc-i" onclick="toggleHotInfo('amb')" aria-label="info">i</button></label><input type="number" inputmode="decimal" onfocus="this.select()" id="hotAmb" value="20" oninput="updateHotCalc()"></div>
+                    <div class="input-group"><label><span id="hc_k">Riscaldamento %</span> <button type="button" class="hc-i" onclick="toggleHotInfo('k')" aria-label="info">i</button></label><input type="number" inputmode="decimal" onfocus="this.select()" id="hotK" value="40" min="0" max="100" oninput="updateHotCalc()"></div>
+                </div>
+                <div id="hotInfo"></div>
+                <div id="hotResult" style="margin-top:10px; font-size:0.85em; font-weight:700; line-height:1.5;"></div>
+                <button type="button" id="hotUseBtn" onclick="applyHotTarget()" style="display:none; margin-top:8px; padding:9px 14px; border:none; border-radius:10px; background:var(--accent); color:#fff; font-family:inherit; font-size:0.75em; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;"></button>
+            </details>        </div>
     </div>
 
     <!-- TOP-OFF GAS BOX -->
@@ -1234,7 +1249,7 @@
 
         <div style="border-top:1px solid var(--border-ui); padding-top:14px; text-align:center; font-size:0.7em; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text);">
             Copyright © 2026 <b>Blending Station</b><br>
-            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.93</b><br><span style="text-transform:none; letter-spacing:0; font-weight:600;"><a href="#" onclick="SettingsBackup.exportFile();return false;" style="color:var(--accent);">Esporta impostazioni</a> · <a href="#" onclick="SettingsBackup.importFile();return false;" style="color:var(--accent);">Importa impostazioni</a></span><br>
+            All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.97</b><br><span style="text-transform:none; letter-spacing:0; font-weight:600;"><a href="#" onclick="SettingsBackup.exportFile();return false;" style="color:var(--accent);">Esporta impostazioni</a> · <a href="#" onclick="SettingsBackup.importFile();return false;" style="color:var(--accent);">Importa impostazioni</a></span><br>
             <span style="font-size:0.9em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569; margin-top:4px; display:block;"><span id="lg_createdby_m">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
@@ -1502,7 +1517,7 @@
             <span id="lg_disclaimer_d">Nota Legale: Questo strumento è destinato esclusivamente a gas blender certificati. Le miscele di gas devono essere sempre analizzate e validate prima dell'uso. Blending Station declina ogni responsabilità per uso improprio o errori di ricarica.</span>
         </p>
         <div class="footer-copyright">
-            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.93</b><br><span style="text-transform:none; letter-spacing:0; font-weight:600;"><a href="#" onclick="SettingsBackup.exportFile();return false;" style="color:var(--accent);">Esporta impostazioni</a> · <a href="#" onclick="SettingsBackup.importFile();return false;" style="color:var(--accent);">Importa impostazioni</a></span><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
+            Copyright © 2026 <b>Blending Station</b> | All Rights Reserved | Tool Version: <b onclick="handleTitleTap()" style="cursor:pointer;" title="Tap 5x per log errori">v1.97</b><br><span style="text-transform:none; letter-spacing:0; font-weight:600;"><a href="#" onclick="SettingsBackup.exportFile();return false;" style="color:var(--accent);">Esporta impostazioni</a> · <a href="#" onclick="SettingsBackup.importFile();return false;" style="color:var(--accent);">Importa impostazioni</a></span><br><span style="font-size:0.85em; font-weight:600; text-transform:none; letter-spacing:0; color:#475569;"><span id="lg_createdby_d">Creato e pensato da</span> <b style="color:var(--accent);">Kiko</b></span>
         </div>
     </div>
 </footer>
@@ -2187,6 +2202,9 @@
             _realSol = solveRealGas(oS, hS, pStartreale, oE, hE, pE, tfO2, tfHe, tfN2, gasTemp, oPurity, hePurity, order);
             dHe = _realSol.dHe; dAir = _realSol.dAir; dO2 = _realSol.dO2;
         }
+        // Il compressore parte (a freddo) dalla pressione "pre aria" = target - passo aria/top-off
+        window._hotPreAirFrac = pE > 0 ? Math.min(1, Math.max(0, (pE - dAir) / pE)) : 0;
+        updateHotCalc();
 
         // Display order follows user choice
         const stepsData = (order === 'HE_FIRST') ?
@@ -3445,6 +3463,125 @@
     }
     // ──────────────────────────────────────────────────────────
 
+
+    // ── PRESSIONE A CALDO -> BAR A FREDDO ─────────────────────
+    // Moli costanti nel volume fisso: P_f / (Z_f * T_f) = P_c / (Z_c * T_c).
+    // T a caldo: bilancio di energia del riempimento adiabatico (gas ideale, gas in ingresso
+    // a T ambiente): T_f / T = g * P_f / (P_f + (g-1) * P_0), con P_0 = pressione a freddo da
+    // cui parte il compressore (target - passo aria, cioe' dopo O2/He gia' raffreddati) e g dalla
+    // miscela. Vale g*T per bombola vuota e resta limitato (a differenza di Poisson sul
+    // residuo, che esplode con residuo basso). Il vero riscaldamento e' solo una frazione di
+    // quello adiabatico (la bombola cede calore alle pareti): "Riscaldamento %" (default 40).
+    const HOT_I18N = {
+        it: ['Pressione a caldo \u2192 bar a freddo','Bar a caldo (stacco compressore)','Temp. a freddo \u00b0C','Riscaldamento (% adiabatico)','Usa come target','Per una miscela corretta inserisci come bar target:','Stima: gas a caldo \u2248 {T} \u00b0C',
+            "Pressione letta sul manometro del compressore nell'istante in cui lo fermi, con la bombola ancora calda.",
+            "Temperatura a cui la bombola sar\u00e0 ferma e raffreddata: di norma quella del locale (o della vasca). Predefinita 20 \u00b0C, il riferimento dei calcoli.",
+            "Quanta parte del calore teorico di compressione resta nel gas (il resto lo assorbe la bombola). Parte da 40 e va tarata sul tuo compressore: annota i bar a caldo e, il giorno dopo, quelli a freddo, poi cambia il valore finch\u00e9 il calcolo coincide."],
+        en: ['Hot pressure \u2192 cold bar','Hot bar (compressor stop)','Cold temp \u00b0C','Heating (% of adiabatic)','Use as target','For a correct mix enter as target bar:','Estimate: hot gas \u2248 {T} \u00b0C',
+            'Pressure read on the compressor gauge the moment you stop it, while the cylinder is still hot.',
+            'Temperature the cylinder will be at once rested and cooled: normally room (or bath) temperature. Default 20 \u00b0C, the reference used by the calculations.',
+            'How much of the theoretical compression heat stays in the gas (the cylinder absorbs the rest). Starts at 40; calibrate it on your compressor: note the hot bar and, next day, the cold bar, then change the value until the result matches.'],
+        de: ['Hei\u00dfdruck \u2192 Kaltdruck','Bar hei\u00df (Kompressor-Stopp)','Temp. kalt \u00b0C','Erw\u00e4rmung (% adiabatisch)','Als Ziel verwenden','F\u00fcr ein korrektes Gemisch als Ziel-Bar eingeben:','Sch\u00e4tzung: Gas hei\u00df \u2248 {T} \u00b0C',
+            'Druck am Kompressor-Manometer im Moment des Abschaltens, solange die Flasche noch hei\u00df ist.',
+            'Temperatur der Flasche nach dem Abk\u00fchlen: normalerweise Raum- (oder Bad-)Temperatur. Standard 20 \u00b0C, die Referenz der Berechnungen.',
+            'Wie viel der theoretischen Kompressionsw\u00e4rme im Gas bleibt (den Rest nimmt die Flasche auf). Startwert 40; am eigenen Kompressor kalibrieren: Bar hei\u00df notieren, am n\u00e4chsten Tag Bar kalt, dann den Wert \u00e4ndern, bis das Ergebnis passt.'],
+        fr: ['Pression \u00e0 chaud \u2192 bar \u00e0 froid','Bar \u00e0 chaud (arr\u00eat compresseur)','Temp. \u00e0 froid \u00b0C','\u00c9chauffement (% adiabatique)','Utiliser comme cible','Pour un m\u00e9lange correct saisir comme bar cible :','Estimation : gaz \u00e0 chaud \u2248 {T} \u00b0C',
+            "Pression lue au manom\u00e8tre du compresseur \u00e0 l'instant o\u00f9 vous l'arr\u00eatez, la bouteille encore chaude.",
+            "Temp\u00e9rature de la bouteille une fois refroidie : normalement celle du local (ou du bac). Par d\u00e9faut 20 \u00b0C, la r\u00e9f\u00e9rence des calculs.",
+            "Part de la chaleur th\u00e9orique de compression qui reste dans le gaz (la bouteille absorbe le reste). D\u00e9marre \u00e0 40 ; \u00e0 calibrer sur votre compresseur : notez les bar \u00e0 chaud puis, le lendemain, \u00e0 froid, et changez la valeur jusqu'\u00e0 ce que le calcul coïncide."],
+        es: ['Presi\u00f3n en caliente \u2192 bar en fr\u00edo','Bar en caliente (parada compresor)','Temp. en fr\u00edo \u00b0C','Calentamiento (% adiab\u00e1tico)','Usar como objetivo','Para una mezcla correcta introduce como bar objetivo:','Estimaci\u00f3n: gas en caliente \u2248 {T} \u00b0C',
+            'Presi\u00f3n le\u00edda en el man\u00f3metro del compresor en el instante en que lo paras, con la botella a\u00fan caliente.',
+            'Temperatura de la botella una vez enfriada: normalmente la del local (o la del ba\u00f1o). Por defecto 20 \u00b0C, la referencia de los c\u00e1lculos.',
+            'Qu\u00e9 parte del calor te\u00f3rico de compresi\u00f3n queda en el gas (la botella absorbe el resto). Empieza en 40; cal\u00edbralo con tu compresor: anota los bar en caliente y, al d\u00eda siguiente, en fr\u00edo, y cambia el valor hasta que el c\u00e1lculo coincida.'],
+        pt: ['Press\u00e3o a quente \u2192 bar a frio','Bar a quente (paragem compressor)','Temp. a frio \u00b0C','Aquecimento (% adiab\u00e1tico)','Usar como alvo','Para uma mistura correta introduza como bar alvo:','Estimativa: g\u00e1s a quente \u2248 {T} \u00b0C',
+            'Press\u00e3o lida no man\u00f3metro do compressor no instante em que o para, com a garrafa ainda quente.',
+            'Temperatura da garrafa depois de arrefecer: normalmente a do local (ou do banho). Predefini\u00e7\u00e3o 20 \u00b0C, a refer\u00eancia dos c\u00e1lculos.',
+            'Que parte do calor te\u00f3rico de compress\u00e3o fica no g\u00e1s (a garrafa absorve o resto). Come\u00e7a em 40; calibre-o no seu compressor: anote os bar a quente e, no dia seguinte, a frio, e altere o valor at\u00e9 o c\u00e1lculo coincidir.']
+    };
+    let _hotCold = null, _hotInfoKey = null;
+
+    function hotLang() { return HOT_I18N[document.getElementById('langSelect').value] || HOT_I18N.it; }
+
+    function toggleHotInfo(key) {
+        const box = document.getElementById('hotInfo');
+        if (_hotInfoKey === key && box.style.display === 'block') { box.style.display = 'none'; _hotInfoKey = null; return; }
+        _hotInfoKey = key;
+        box.textContent = hotLang()[{ p: 7, amb: 8, k: 9 }[key]];
+        box.style.display = 'block';
+    }
+
+    function hotCalcCold() {
+        const o = (parseFloat(document.getElementById('o2E').value) || 0) / 100;
+        const h = (parseFloat(document.getElementById('heE').value) || 0) / 100;
+        const n = Math.max(0, 1 - o - h);
+        const pHot = parseFloat(document.getElementById('hotP').value);
+        if (!(pHot > 0)) return null;
+        const Tc = parseFloat(document.getElementById('hotAmb').value);
+        const Tcold = isFinite(Tc) ? Tc : 20;
+        const TK = Tcold + 273.15;
+        const cv = 1.5 * h + 2.5 * (1 - h);            // in unita' di R: He monoatomico, O2/N2 biatomici
+        const gamma = (cv + 1) / cv;
+        const k = Math.min(1, Math.max(0, (parseFloat(document.getElementById('hotK').value) || 0) / 100));
+        const real = (localStorage.getItem('gasModel') || 'ideal') === 'real';
+        const Z = (p, T) => real ? zMix(o, h, n, p, T) : 1;
+        // Frazione "pre aria": il compressore parte (a freddo) da P0 = frac * P_freddo finale
+        const frac = window._hotPreAirFrac || 0;
+
+        function coldFor(p0) {
+            const Thot = Tcold + k * TK * (gamma * pHot / (pHot + (gamma - 1) * p0) - 1);
+            const A = pHot / Z(pHot, Thot) * TK / (Thot + 273.15);   // = P_c / Z_c
+            let pCold = A;
+            for (let i = 0; i < 60; i++) {
+                const nxt = A * Z(pCold, Tcold);
+                if (Math.abs(nxt - pCold) < 1e-6) { pCold = nxt; break; }
+                pCold = nxt;
+            }
+            return { pCold, Thot, p0 };
+        }
+        // P0 dipende dal risultato (P0 = frac * P_freddo): punto fisso, converge in pochi passi
+        let r = coldFor(frac * pHot);
+        for (let i = 0; i < 30; i++) {
+            const nx = coldFor(frac * r.pCold);
+            const done = Math.abs(nx.pCold - r.pCold) < 1e-4;
+            r = nx;
+            if (done) break;
+        }
+        return r;
+    }
+
+    function updateHotCalc() {
+        if (!document.getElementById('hotCalcBox')) return;
+        const L = hotLang();
+        document.getElementById('hc_title').textContent = L[0];
+        document.getElementById('hc_p').textContent = L[1];
+        document.getElementById('hc_amb').textContent = L[2];
+        document.getElementById('hc_k').textContent = L[3];
+        document.getElementById('hotUseBtn').textContent = L[4];
+        if (_hotInfoKey) document.getElementById('hotInfo').textContent = L[{ p: 7, amb: 8, k: 9 }[_hotInfoKey]];
+        try { localStorage.setItem('hotAmb', document.getElementById('hotAmb').value); localStorage.setItem('hotK2', document.getElementById('hotK').value); } catch (e) {}
+        const res = document.getElementById('hotResult'), btn = document.getElementById('hotUseBtn');
+        _hotCold = hotCalcCold();
+        if (!_hotCold) { res.innerHTML = ''; btn.style.display = 'none'; return; }
+        res.innerHTML = L[5] + ' <span style="font-size:1.5em; color:var(--accent); font-family:\'Azeret Mono\',monospace;">' + _hotCold.pCold.toFixed(0) + ' bar</span>' +
+            '<div style="font-size:0.8em; font-weight:600; color:#64748b;">' + L[6].replace('{T}', _hotCold.Thot.toFixed(0)) + '</div>';
+        btn.style.display = 'inline-block';
+    }
+
+    function applyHotTarget() {
+        if (!_hotCold) return;
+        document.getElementById('pE').value = Math.round(_hotCold.pCold);
+        saveAndCalc();
+    }
+
+    function initHotCalc() {
+        try {
+            const a = localStorage.getItem('hotAmb'), k = localStorage.getItem('hotK2');
+            if (a !== null) document.getElementById('hotAmb').value = a;
+            if (k !== null) document.getElementById('hotK').value = k;
+        } catch (e) {}
+        updateHotCalc();
+    }
+
     function setGasModel(model) {
         localStorage.setItem('gasModel', model);
         ['', 'Mobile'].forEach(function(suffix) {
@@ -4092,6 +4229,7 @@ function mobileNav(tab) {
         loadSavedCosts();
         loadSavedFields();
         initGasModel();
+        initHotCalc();
         initTopOff();
         initPurity();
         initAdvancedSettings();
